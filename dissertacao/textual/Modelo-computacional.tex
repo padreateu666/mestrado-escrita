@@ -1,0 +1,285 @@
+%====================================================================
+% Resultados: Escreva logo após o 
+% \chapter{Resultados} o texto de seu trabalho referente 
+% aos resultados obtidos no desenvolvimento de seu estudo. 
+%====================================================================
+\chapter{Modelos Computacionais}
+
+Com base no modelo numérico, foram construídas rotinas computacionais para solucionar os escoamentos. O código foi desenvolvido em linguagem C, utilizando as bibliotecas padrões de entrada e saída de dados. O software desenvolvido está disponibilizado integralmente no apêndice B, nesta secção serão feitos comentários e explicações pontuais a respeito da implementação dos métodos, as condições de contorno e o valor das propriedades físicas utilizadas
+
+As propriedades físicas do escoamento foram variadas a fim de garantir que os valores adimensionais sejam compatíveis com a literatura, para a comparação de resultados. 
+
+\section{Couette Plano}
+
+Para o escoamento de Couette, como já detalhado no modelo computacional e visível da Figura \ref{Couettefisico}. Tem-se as seguintes condições de contorno.
+
+O valor de u na parede superior é igual a velocidade de referência, neste caso adotado como $1\ \left[\frac{m}{s}\right]$, com esta exceção, todos os valores de condições de contorno, respeitando a Tabela \ref{contorno - couette}, são iguais a zero.	
+\begin{table}[ht]
+    \caption{Condições de contorno para o escoamento de Couette}
+    \vspace{0.1cm}
+    \centering
+    \begin{tabular}{c c c c }
+    \hline
+    {\bfseries Parede/Propriedade} & $ \bm{u}$ & $ \bm{v}$ & $ \bm{p}$ \\
+    \hline
+    Esquerda & 2ª espécie & 2ª espécie & 1ª espécie \\
+
+    Direita & 2ª espécie & 2ª espécie & 1ª espécie \\
+
+    Superior & 1ª espécie & 1ª espécie & 2ª espécie \\
+
+    Inferior & 1ª espécie & 1ª espécie & 2ª espécie \\
+    \hline
+    \end{tabular}
+    \label{contorno - couette}\\
+    \vspace{0.4cm}
+    {\footnotesize Fonte: Do próprio autor}
+\end{table}
+
+
+As propriedades $\eta$, $\nu$ e m foram variadas de forma que se obtivesse diferentes números de Reynolds ao longo do escoamento, tanto no caso newtoniano quanto no caso não-newtoniano. Os valores utilizados bem como os resultados correspondentes a eles são detalhados no capítulo de resultados.
+
+Os valores adimensionais utilizados para os escoamentos de Couette simulados, bem como as propriedades dos métodos numéricos como a tolerância e a quantidade máxima de iterações de Gauss-Seidel são dispostos na tabela \ref{propriedades - couette}, e serão retomados na secção de resultados.
+
+\begin{table}[ht]
+    \caption{Condições de contorno para o escoamento de Couette}
+    \vspace{0.2cm}
+    \centering
+    \begin{tabular}{ l c }
+    \hline
+    {\bfseries Propriedade} & {\bfseries Valor} \\
+    \hline
+    Velocidade fronteira superior ($v_{ref}$) & 1 $\frac{m}{s}$ \\
+    Massa específica ($\rho$) & 1 $\frac{kg}{m^3}$ \\
+    Tolerância & $10^{-9}$ \\
+    H & 1 [m] \\
+    L & 1 [m] \\
+    Máximo de iterações & $10^4$ \\
+    \hline
+    \end{tabular}
+    \label{propriedades - couette} \\
+    \vspace{0.2cm}
+    {\footnotesize Fonte: Do próprio autor}
+\end{table}
+
+O domínio utilizado foi de 41x41, sendo que, para garantir um $CFL$ baixo, se utilizou 9600 passos de tempo, o que garantiu a convergência para todos os escoamentos simulados. O tempo computacional final foi de $100 (s)$.
+
+O domínio utilizado é representado na Figura \ref{Couettenumerico}:
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imagens/Couette-computacional.png}
+    \caption{Modelo computacional do escoamento de Couette.}
+    \label{Couettenumerico}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+\section{Poiseuille Plano}
+
+As condições do escoamento de Poiseuille plano são mostrados na tabela \ref{contorno - Poiseuille}, o escoamento de Poiseulle, assim como o de Couette, foi utilizado para testar tantos fluidos newtonianos quanto os não-newtonianos.
+
+\begin{table}[H]
+    \caption{Condições de contorno para o escoamento de Poiseuille}
+    \vspace{0.2cm}
+    \centering
+    \begin{tabular}{ c c c c }
+    \hline
+    {\bfseries Parede/Propriedade} & $ \bm{u}$ & $ \bm{v}$ & $ \bm{p}$ \\
+    \hline
+    Esquerda & 1ª espécie & 1ª espécie & 2ª espécie \\
+
+    Direita & 2ª espécie & 2ª espécie & 1ª espécie \\
+
+    Superior & 1ª espécie & 1ª espécie & 2ª espécie \\
+
+    Inferior & 1ª espécie & 1ª espécie & 2ª espécie \\
+    \hline
+    \end{tabular}
+    \label{contorno - Poiseuille}\\
+    \vspace{0.2cm}
+    {\footnotesize Fonte: Do próprio autor}
+\end{table}
+
+Pare este escoamento, as condições de contorno são iguais a zero, com exceção da componente $u$ do vetor velocidade à esquerda, que tem um perfil uniforme de velocidade, variável entre os escoamentos.
+
+As mesmas propriedades, que foram variadas no escoamento de Couette, foram variadas para diferentes números de Reynolds neste mesmo escoamento, porém, além destas também se variou a velocidade de entrada a esquerda do escoamento. Como mostrado na secção de resultados.
+
+As dimensões deste escoamento, ilustradas na Figura \ref{Poiseuillenumerico}, são maiores que os demais, pois o perfil de velocidade precisa de espaço e tempo para se desenvolver completamente. Neste caso a escolha do domínio físico pode influenciar no transiente e no resultado, para diferentes números de Reynolds. A escolha de malha utilizada foi de 100x100, para garantir que para altos números de $n$ e de Reynolds, o escoamento possa convergir.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\textwidth]{imagens/Poiseulle-numerico.png}
+    \caption{Modelo computacional do escoamento de Poiseulle.}
+    \label{Poiseuillenumerico}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+As propriedades físicas que não foram variadas para o escoamento de Poiseuille são as mesmas que para o escoamento de Couette, com exceção da dimensão L, de forma que podem ser referenciadas pela tabela \ref{propriedades - Poiseuille}.
+
+\begin{table}[ht]
+    \caption{Propriedades físicas para o escoamento de Poiseuille}
+    \vspace{0.2cm}
+    \centering
+    \begin{tabular}{ll}
+    \toprule
+    {\bfseries Propriedade} & {\bfseries Valor} \\
+    \midrule
+    Velocidade fronteira superior ($v_{ref}$) & \SI{1}{\meter\per\second} \\
+    Massa específica ($\rho$) & \SI{1}{\kilogram\per\cubic\meter} \\
+    Tolerância & \SI{1e-9}{} \\
+    H & \SI{1}{\meter} \\
+    L & \SI{30}{\meter} \\
+    Máximo de iterações & $10^4$ \\
+    Diferença de pressão ($\Delta p$) & \SI{0.6}{\pascal} \\
+    \bottomrule
+    \end{tabular}
+    \label{propriedades - Poiseuille} \\
+    \vspace{0.2cm}
+    {\footnotesize Fonte: Do próprio autor}
+\end{table}
+
+\section{Cavidade com Tampa Deslizante}
+
+Sendo o escoamento da cavidade com tampa deslizante um escoamento mais complexo que os demais, tem-se que suas condições de contorno, mostradas na Tabela \ref{contorno - lid-driven}, trazem complicações numéricas.
+
+\begin{table}[ht]
+    \caption{Condições de contorno para o escoamento de cavidade com tampa deslizante}
+    \vspace{0.2cm}
+    \centering
+    \begin{tabular}{ c c c c }
+    \hline
+    {\bfseries Parede/Propriedade} & $ \bm{u}$ & $ \bm{v}$ & $ \bm{p}$ \\
+    \hline
+    Esquerda & 1ª espécie & 1ª espécie & 2ª espécie \\
+
+    Direita & 1ª espécie & 1ª espécie & 2ª espécie \\
+
+    Superior & 1ª espécie & 1ª espécie & 2ª espécie \\
+
+    Inferior & 1ª espécie & 1ª espécie & 2ª espécie \\
+    \hline
+    \end{tabular}
+    \label{contorno - lid-driven}\\
+    \vspace{0.2cm}
+    {\footnotesize Fonte: Do próprio autor}
+\end{table}
+
+Para este escoamento, por ter condições de segunda espécie em todas as direções de $p$, a equação de Poisson resulta em um sistema indeterminado e singular, com determinante igual a zero. Tal condição faz com que a equação da correção da pressão não satisfaça os critérios para a convergência do método de Gauss-Seidel. Esse é um dos exemplos de escoamentos que mostram a instabilidade da equação de correção da pressão e porque, dentre as equações resolvidas para resolver escoamentos, esta é uma das mais difíceis em termos numéricos. 
+
+Para os valores de condição de contorno, é mostrado na Figura \ref{lid-drivennumerico} que todos os valores, são iguais a zero, com exceção da fronteira superior que é igual a velocidade de referência. A malha utilizada variou de acordo com o número de Reynolds, de forma que um maior número de Reynolds exigiu uma malha mais refinada. Pode-se assumir que uma malha de 131x131 resolve todo o intervalo de número de Reynolds proposto.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.6\textwidth]{imagens/LId-driven-Numerico.png}
+    \caption{Modelo computacional da cavidade com tampa deslizante.}
+    \label{lid-drivennumerico}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+Para este escoamento apenas a viscosidade foi variada a fim de se variar o número de Reynolds, visto que este problema não foi utilizado para validar modelos não-newtonianos. As propriedades constantes são as mesmas que as dos escoamentos de Couette e Poiseuille.
+
+\section{Cavidade Diferencialmente Aquecida}
+
+Para este escoamento, se faz necessário a definição das condições de contorno de mais uma propriedade, a temperatura. As condições de contorno são descritas pela tabela \ref{contorno - thermal}:
+
+\begin{table}[ht]
+    \caption{Condições de contorno para cavidade diferencialmente aquecida}
+    \vspace{0.2cm}
+    \centering
+    \begin{tabular}{ c c c c c }
+    \hline
+    \bfseries {Parede/Propriedade} & $ \bm{u}$ & $ \bm{v}$ & $ \bm{p}$ & $ \bm{T}$ \\
+    \hline
+    Esquerda & 1ª espécie & 1ª espécie & 2ª espécie & 1ª espécie \\
+
+    Direita & 1ª espécie & 1ª espécie & 2ª espécie & 1ª espécie \\
+
+    Superior & 1ª espécie & 1ª espécie & 2ª espécie & 2ª espécie \\
+
+    Inferior & 1ª espécie & 1ª espécie & 2ª espécie & 2ª espécie \\
+    \hline
+    \end{tabular}
+    \label{contorno - thermal}\\
+    \vspace{0.2cm}
+    {\footnotesize Fonte: Do próprio autor}
+\end{table}
+
+Os valores utilizados para as condições de contorno são zero em todos em todas as direções para todas as propriedades com exceção da temperatura. A temperatura das paredes esquerda e direita são definidas como $80 ^\circ\mathrm{C}$ e $50 ^\circ\mathrm{C}$  respectivamente e permanecidas constantes durante todo o escoamento.
+
+As propriedades físicas utilizadas são descritas pela Tabela \ref{propriedades - thermal}.
+
+\begin{table}[ht]
+    \caption{Propriedades físicas utilizadas do escoamento de cavidade diferencialmente aquecida}
+    \vspace{0.2cm}
+    \centering
+    \begin{tabular}{l l}
+    \toprule
+    {\bfseries Propriedade} & {\bfseries Valor} \\
+    \midrule
+    Velocidade fronteira superior ($v_{ref}$) & \SI{1}{\meter\per\second} \\
+    Massa específica ($\rho$) & \SI{1}{\kilogram\per\cubic\meter} \\
+    Tolerância & \SI{1e-9}{} \\
+    H & \SI{1}{\meter} \\
+    L & \SI{1}{\meter} \\
+    Máximo de iterações & $10^4$ \\
+    $\alpha$ & \SI{0.01}{\meter\squared\per\second} \\
+    $g$ & \SI{9.81}{\meter\per\second\squared} \\
+    $\nu$ & \SI{0.0071}{\meter\squared\per\second} \\
+    $Pr = \frac{\nu}{\alpha}$ & 0.71 \\
+    \bottomrule
+    \end{tabular}
+    \label{propriedades - thermal} \\
+    \vspace{0.2cm}
+    {\footnotesize Fonte: Do próprio autor}
+\end{table}
+
+O coeficiente de expansão térmica é variável e calculado a partir da seguinte equação, Eq. \ref{equação para betha}:
+
+\begin{equation}
+\beta = \frac{Ra \cdot \nu  \cdot \alpha}{g \cdot (T_{quente} - T_{frio}) \cdot H^3}
+    \label{equação para betha}
+\end{equation}
+
+De forma que se possa impor o valor de coeficiente de Rayligh para diferentes condições de escoamento. Possibilitando comparar estes valores com a literatura. 
+
+A Figura \ref{Thermal-numerico} exemplifica o domínio físico utilizado para as equações, é possível observar a semelhança com o escoamento anterior, mudando apenas a velocidade da fronteira superior e a questão térmica do escoamento:
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.65\textwidth]{imagens/thermal-numerico.png}
+    \caption{Modelo computacional da cavidade térmica.}
+    \label{Thermal-numerico}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+A malha computacional utilizada para este escoamento foi de 100x100, a fim de se garantir que todo o intervalo de números de Rayleigh fosse atingido. 
+
+\section{Algoritmos de Solução de Sistemas Lineares}
+
+A implementação do método de Gauss-seidel é feita da como mostra a Figura \ref{Algoritmo-Seidel}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[height=0.5\textwidth]{imagens/loop-Gauss-Seidel.png}
+    \caption{Lógica do algoritmo de Gauss-Seidel utilizado no código.}
+    \label{Algoritmo-Seidel}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+Inicialmente, o método começa com a atualização das condições de contorno, garantindo que os valores das células fantasmas sejam atualizadas de forma correta. Em seguida, se aplica a equação \ref{sistema gauss-seidel}, onde cada incógnita é atualizada de forma sucessiva com base nos valores mais recentes das demais incógnitas. Após cada iteração, calcula-se o erro, comparando a solução atual com a obtida no passo anterior. O processo continua até que um dos critérios de parada do número máximo de equações ou o erro menor que o especificado seja atingido. Por ser um método iterativo relativamente simples, o Gauss-Seidel requer menos etapas de implementação em comparação com os gradientes conjugados.
+
+O método dos gradientes conjugados, por ser mais complexo, requer mais etapas para sua implementação. seu algorítimo é representado pela Figura \ref{Algoritmo-Conjulgados}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[height=1.0\textwidth]{imagens/loop-gradientes.png}
+    \caption{Diagrama de blocos do método dos gradientes conjugados.}
+    \label{Algoritmo-Conjulgados}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+
+Inicialmente se inicializa os vetores de resíduo $r$ e o vetor conjugado $p$ com o estado inicial do sistema. Na rotina desenvolvida se utilizou como chute inicial para essa inicialização o passo de tempo anterior para acelerar a convergência do método. Após isto se calcula um passo $\alpha$ e se desloca os vetores $x$ e $r$ na direção $p$ com um passo $\alpha$. Caso o critério de tolerância não tenha sido atingido, se calcula uma correção $\beta_k$ de forma que se possa iniciar o passo de tempo posterior
+
+Devido a teoria de gradientes conjugados garantir a convergência do método em no máximo $n$ iterações para um sistema de $n$ variáveis, não se utilizou o critério de número máximo de iterações para a parada, uma vez que caso a convergência não tenha sido atingida antes desse valor o método falhou em resolver o sistema. Neste caso o código é interrompido.
+

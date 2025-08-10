@@ -1,0 +1,299 @@
+
+\chapter{Modelo Matemático Diferencial}
+
+Para representar adequadamente qualquer fenômeno físico por meio de modelos matemáticos, é preciso que se adote hipóteses simplificadoras. Essas hipóteses são necessárias pois, na maioria dos casos, a realidade é apenas parcialmente conhecida e mensurável pelos cientistas \citep{Aristeu2020}. Essas simplificações permitem que modelos matemáticos ofereçam soluções aproximadas, porém valiosas para problemas complexos, refletindo aspectos fundamentais do comportamento dos sistemas físicos.
+
+O estudo do escoamento de fluidos desperta interesse na humanidade desde civilizações antigas, como a dos gregos e romanos. A primeira formulação matemática sobre o movimento dos fluidos foi desenvolvida por Leonard Euler.  No entanto, conceitos matemáticos mais avançados, utilizados para representar esse comportamento com maior precisão, especialmente em problemas complexos como os industriais que enfrentamos até os dias de hoje, foram desenvolvidos e aprimorados séculos depois por grandes cientistas como Osborne Reynolds, George Stokes e Augustin-Louis Cauchy \citep{Fortuna2000}. Esses modelos têm como objetivo descrever o balanço de todas as propriedades vetoriais e escalares relevantes no domínio físico do escoamento.
+
+As equações fundamentais que representam os escoamentos são amplamente discutidas e desenvolvidas por diversos autores para diferentes propósitos, como \citep{Aristeu2020,Fortuna2000,Bird1987,White2011,Malalasekera2007}. Essencialmente, são utilizadas ao menos três equações para o problema de fluidos, a primeira é descrita pela Equação \ref{eq:Equação da continuidade}:
+
+\begin{equation}
+    \frac{\partial\rho}{\partial t}+\nabla\cdot\left(\rho\vec{v}\right)=0	
+    \label{eq:Equação da continuidade}
+\end{equation}
+
+Tal equação é chamada de equação da continuidade, na qual $\frac{\partial\rho}{\partial t}$ representa a variação da massa especifica ao longo do tempo, $\vec{v}$ representa o vetor velocidade e $\rho$ representa a própria massa específica do fluido. Tal modelo representa o balanço de massa em todo o domínio físico, respeitando a lei de Lavoisier na qual há a conservação da massa total, quando se considera tanto o ambiente do escoamento quanto o ambiente externo. O operador $\nabla\cdot$ representa a operação vetorial chamada de divergente.
+
+A segunda formulação utilizada é descrita pela Equação \ref{eq:continuidade-completa}.
+
+\begin{equation}
+    \rho\frac{\partial\vec{v}}{\partial t}+\rho\left(\vec{v}\cdot\nabla\right)\vec{v}=-\nabla\cdot\overline{\overline{\pi}}+\rho\vec{g}
+    \label{eq:continuidade-completa}
+\end{equation}
+
+Esta equação é chamada de equação de Cauchy \citep{Aristeu2020} e descreve o balanço da quantidade de movimento linear. Esta equação resulta da aplicação da segunda lei de Newton no teorema do transporte de Reynolds em sua forma diferencial \cite{Aristeu2020,Fortuna2000,Bird1987}, que estabelece que a taxa de variação do momento linear de um fluido é igual à soma das forças que atuam sobre ele \citep{Fortuna2000}. Sua dedução, assim como a da equação do balanço de massa é apresentada em detalhes por \citet{White2011} e \cite{Aristeu2020}.
+
+Na equação de Cauchy o termo $\vec{g}$ representa o campo gravitacional, o termo $\frac{\partial\vec{v}}{\partial t}$ representa o acúmulo de momentum linear no domínio do escoamento e o termo $\rho\left(\vec{v}\cdot\nabla\right)\vec{v}$ representa o transporte advectivo de quantidade de movimento linear. O tensor $\overline{\overline{\pi}}$ representa os efeitos de pressão e viscosidade presentes no escoamento \citep{Aristeu2020} e sua modelagem depende da abordagem utilizada para representar a relação entre as forças e a deformação no fluido. No caso de escoamentos newtonianos, o tensor de tensões é diretamente proporcional ao gradiente de velocidade o que resulta nas equações de Navier-Stokes. Já para fluidos não-newtonianos, essa relação é complexa, e diferentes modelos constitutivos são necessários para descrever adequadamente os efeitos das tensões viscosas. 
+
+De forma geral o tensor $\overline{\overline{\pi}}$, pode ser escrito como a soma de duas parcelas, Eq. \ref{eq:tensor-pi}:
+
+\begin{equation}
+\overline{\overline{\pi}}=\ p\overline{\overline{\delta}}+\ \overline{\overline{\tau}}
+    \label{eq:tensor-pi}
+\end{equation}
+
+Na Eq. \ref{eq:tensor-pi} p representa a pressão atuante no escoamento, normal a cada uma das direções e $\overline{\overline{\delta}}$ representa é o tensor identidade, de forma que a parcela $p\overline{\overline{\delta}}$ pode ser escrita como mostra a, Eq. \ref{eq:tensor-p}:
+
+\begin{equation}
+    p\overline{\overline{\delta}} =\ \left(\begin{matrix}p&0&0\\0&p&0\\0&0&p\\\end{matrix}\right)
+    \label{eq:tensor-p}
+\end{equation}
+
+Na equação \ref{eq:tensor-pi}, $\overline{\overline{\tau}}$ é chamado de o tensor das tensões viscosas, que deve ser modelado de acordo com o modelo de fechamento adotado e representa transferência de quantidade de movimento linear por meio das forças viscosas presentes no fluido.
+
+A última equação que será descrita, se limita a escoamentos com efeitos térmicos, Eq. \ref{balanço-termico}.
+
+\begin{equation}
+    \frac{\partial T}{\partial t}+\vec{v}\mathrm{\nabla}\cdot T=\alpha\mathrm{\nabla}^2T+\frac{\phi}{\rho C_p}
+    \label{balanço-termico}
+\end{equation}
+
+A Eq.\ref{balanço-termico} é o chamado balanço de energia térmica \citep{Aristeu2020,wylen2016}, na qual $\frac{\partial T}{\partial t}$ representa a variação de energia térmica em uma partícula de fluido ao longo do tempo, ou o acumulo de energia térmica, $\nabla\cdot\left(\vec{v}T\right)$ representa o fluxo liquido advectivo de energia térmica por meio das componentes do vetor velocidade, também chamado de transporte advectivo de energia térmica, $\alpha\nabla^2T$ representa o fluxo líquido difusivo de energia térmica, por este motivo é chamado de termo difusivo da equação da energia.
+
+O termo $\phi$ representa a transformação de energia cinética em energia térmica, por meio dos efeitos viscosos, tal termo não foi considerado na análise utilizada pois sua modelagem apenas se torna relevante em escoamento onde os efeitos viscosos são muito fortes e provocam aquecimentos relevantes. Exemplos deste tipo de problemas são o escoamento de lubrificante no interior de um mancal, onde as dimensões são muito pequenas, ou na reentrada de um corpo na atmosfera, no qual as velocidades são muito altas. O escalar $\alpha$ é chamado de difusividade térmica, e representa a junção de três termos: $\rho$,$C_p$ que representa o calor específico do material e $k$ que representa a condutividade térmica do mesmo.
+
+\section{Escoamentos Newtonianos}
+
+Para fluidos newtonianos incompressíveis, que obedecem a lei da viscosidade de Newton e não possuem uma variação de velocidade grande o suficiente para invalidar a hipótese de incompressibilidade, o tensor $\overline{\overline{\tau}}$ pode ser modelado utilizando o modelo de Stokes. Tal modelo relaciona o tensor das tensões com o gradiente do vetor velocidade, seguindo o mesmo princípio da lei da viscosidade de Newton. A dedução das equações que modelam este tipo e fluido podem ser encontradas em detalhes em \citet{Bird1987} e \cite{White2011}, são elas, Eq.\ref{eq:continuidade-reduzida} a \ref{eq:definição rho}:
+
+\begin{align}
+    &\vec{\nabla}\cdot\vec{v}\ =\ 0 \label{eq:continuidade-reduzida}\\
+	&\frac{\partial\vec{v}}{\partial t}+\left(\vec{v}\cdot\vec{\nabla}\right)\vec{v}=-\frac{1}{\rho}\vec{\nabla}p+\ \frac{1}{\rho}\vec{\nabla}\cdot[\ \nu\ (\vec{\nabla}\vec{v}+\vec{\nabla}{\vec{v}}^T]+g\\
+	&\overline{\overline{\tau}}=-\mu\left(\vec{\nabla}\vec{v}+\vec{\nabla}{\vec{v}}^T\right) \nonumber\\
+	&\overline{\overline{\tau}}=-\mu\dot{\gamma}\\
+	&\dot{\gamma}\ =\ \left(\vec{\nabla}\vec{v}+\vec{\nabla}{\vec{v}}^T\right)\\
+	&\nu=\frac{\mu}{\rho} \label{eq:definição rho}
+\end{align}
+
+Nas equações consideradas $\mu$ é a viscosidade dinâmica e $\nu$ a viscosidade cinemática do fluido.  O tensor $\dot{\gamma}$ é chamado de tensor taxa de cisalhamento \citep{Bird1987}, ele é proporcional ao gradiente e ao gradiente transposto de velocidade, em alusão à lei da viscosidade de newton este tensor\ pode ser escrito da seguinte forma, Eq. \ref{eq:gama-definição}:
+
+\begin{equation}
+     \dot{\gamma}\ =\ \vec{\nabla}\vec{v}+\vec{\nabla}{\vec{v}}^T\ \ =\left(\begin{matrix}2\frac{\partial u}{\partial x}&\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}&\frac{\partial w}{\partial x}\ +\ \frac{\partial u}{\partial z}\\\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}&2\frac{\partial v}{\partial y}&\frac{\partial w}{\partial y}\ +\ \frac{\partial v}{\partial z}\\\frac{\partial u}{\partial z}\ +\ \frac{\partial w}{\partial x}&\frac{\partial w}{\partial y}\ +\ \frac{\partial v}{\partial z}&2\frac{\partial w}{\partial z}\\\end{matrix}\right)
+     \label{eq:gama-definição}
+\end{equation}
+
+Ou na forma bidimensional, Eq. \ref{eq:gama-bidimensional}: 
+
+\begin{equation}
+    \dot{\gamma}\ =\vec{\nabla}\vec{v}+\vec{\nabla}{\vec{v}}^T=\left(\begin{matrix}2\frac{\partial u}{\partial x}&\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}\\\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}&2\frac{\partial v}{\partial y}\\\end{matrix}\right)
+    \label{eq:gama-bidimensional}
+\end{equation}
+
+A abordagem utilizada para o fechamento da equação de Cauchy e a consequente modelagem do tensor de tensões de Cauchy foi inicialmente proposta por Stokes \citep{White2011}. Esta formulação, é válida para fluidos newtonianos e pode ser simplificada de forma a eliminar as derivadas cruzadas, esta simplificação não será apresentada no trabalho, pois a forma completa do tensor taxa de cisalhamento é mais útil para as formulações utilizadas no trabalho
+
+\section{Fluidos Não-Newtonianos}
+
+A lei da viscosidade de Newton, descreve o tensor $\overline{\overline{\tau}}$ como sendo uma relação linear entre um fator de correção ($\mu$ no caso de fluidos newtonianos) e a taxa de cisalhamento ($\dot{\gamma}$). A principal diferença entre esse comportamento ao dos fluidos não-newtonianos é a não linearidade desta relação, o que faz com que surja a necessidade de outras equações de ajuste desta relação em função de $\dot{\gamma}$. Na Figura \ref{nn-white} são mostrados os comportamentos típicos de vários exemplos destes fluidos.
+
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.4\textwidth]{imagens/white-viscosidade-pag43.png}
+    \caption{Comportamento geral dos diferentes tipos de fluido de acordo com a taxa de deformação.}
+    \label{nn-white}
+    {\footnotesize Fonte: \citet{White2011} pag.43}
+\end{figure}
+
+
+Na Figura apresentada por \citet{White2011} é possível observar as principais classes de fluidos não-newtonianos, os quais divergem entre si pelo tipo de comportamento não linear da tensão de cisalhamento ($\tau$).
+
+O comportamento característico dos fluidos pseudoplásticos é que eles diminuem sua resistência ao cisalhamento com o aumento do mesmo, exemplos desses fluido são o plasma sanguíneo e tinta. Os fluidos plásticos são os que possuem o mesmo comportamento dos pseudoplásticos de forma mais atenuada. O caso limite desses fluido são os plásticos de Bingham, que necessitam de uma tensão inicial grande o suficiente para que comecem a escoar \citep{White2011}. 
+
+Os fluidos dilatantes possuem comportamento oposto aos plásticos, e aumentam sua resistência com o aumento da taxa de cisalhamento, um exemplo dessa classe de fluido é a areia movediça. O presente trabalho não teve como foco nenhum desses modelos específicos, fazendo uma abordagem geral no limite de representatividade dos modelos adotados.
+
+Para se modelar a relação não linear entre viscosidade e taxa de cisalhamento, diversos tipos de abordagens e modelos podem ser encontrados na literatura, de forma que não existe um consenso de um modelo geral representativo de todos os tipos de fluidos. Dentre os modelos mais utilizados está a família de modelos chamada de modelos de fluidos generalizados, que tentam relacionar a viscosidade com o tensor taxa de cisalhamento, como demonstrado na Eq. \ref{tensor-tau}:
+
+\begin{equation}
+    \overline{\overline{\tau}}=-\eta\left(\dot{\gamma}\right)\dot{\gamma}
+    \label{tensor-tau}
+\end{equation}
+
+No qual $\eta\left(\dot{\gamma}\right)$ é chamado de viscosidade não-newtoniana e depende de $\dot{\gamma}$.  A função que define o tensor taxa de cisalhamento depende de cada modelo adotado. Esta formulação busca adotar correlações empíricas para cada um dos fluidos estudados de forma que se consiga ajustar parâmetros para representar seu comportamento físico por meio desta viscosidade. A principal diferença entre os modelos de fluido generalizado é a quantidade de parâmetros a serem ajustados, sendo que de forma geral, quanto mais parâmetros a serem ajustados mais representativo é o modelo, porém mais caro é a experimentação necessária em termos de recursos e tempo.
+
+Dentre as principais variações do modelo de fluido generalizado, as mais utilizadas são a Lei de potência (em inglês \textit{Power Law}) e a chamada Carreau-Yasuda, desenvolvida pelos autores que levam seu nome \citep{Bird1987}.
+
+A Figura \ref{nn-bird} apresentada por \citet{Bird1987} mostra dados experimentais da variação de $\eta$ com a taxa de cisalhamento para alguns fluidos reais. É possível notar na Figura que a variação da viscosidade não-newtoniana pode ser dividida em duas regiões principais, uma horizontal e uma retilínea decrescente sendo essa segunda chamada de região da Lei de Potência.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\linewidth]{imagens/bird-viscosidade-cap4.png}
+    \caption{Viscosidade não-newtoniana de três polímeros fundidos a partir da equação de viscosidade de Carreau (a = 2). Dados experimentais: Poliestireno (453 K), Polietileno de alta densidade (443 K) e Phenoxy-A (485 K), com parâmetros $\eta_0$, $\eta_\infty$, $\lambda$ e $n$ específicos para cada polímero.
+}
+    \label{nn-bird}
+    {\footnotesize Fonte: \citet{Bird1987}}
+\end{figure}
+
+Para a maioria dos fluidos e escoamentos, utilizando os tipos mais simples de viscosímetros, é impossível detectar a região horizontal do comportamento de $\eta$, de forma que a região da Lei de Potência, para esses casos, é a mais importante e representativa do escoamento \citep{Bird1987}. 
+
+O modelo da Lei de Potência é um modelo empírico que busca modelar a região de mesmo nome do comportamento da viscosidade não-newtoniana por meio de dois parâmetros experimentais, $m$ que é chamado de fator de condicionamento e $n$ que tem grande influência no tipo de comportamento não-newtoniano que será apresentado pelo fluido. Tais parâmetros buscam ajustar uma curva para $\eta$ variando de fluido para fluido, por meio de experimentação material.
+
+Por ter poucos parâmetros de ajuste, a Lei de Potência se torna mais rápida e menos onerosa de se ajustar quando comparada com outras variações de modelos de fluidos generalizados. Por esse motivo, por ser capaz de representar a maioria dos problemas industriais estudados e por sua fácil implementação numérica computacional, esse modelo era um dos mais utilizados dentro de sua família de modelos para representar o comportamento não-newtoniano a nível acadêmico e industrial até poucos anos \citep{Bird1987}. Apesar disto, com a evolução da complexidade dos problemas estudados, outros métodos melhores surgiram para representar os escoamentos \citep{Vasconcellos2024}. O modelo em questão, com suas limitações, ainda é útil para validar os softwares para não-newtonianos antes de implementar modelos mais complexos.
+
+O modelo matemático da Lei de potência é apresentado por \citet{Bird1987}, Eq. \ref{lei de potencia}:
+
+\begin{equation}
+    \eta\left(\dot{\gamma}\right)=m{\dot{\gamma}}^{n-1}
+    \label{lei de potencia}
+\end{equation}
+
+Neste modelo o comportamento do fluido de acordo com n varia da seguinte forma:
+
+\begin{itemize}
+    \item 	$n\ <\ 1$ o fluido se comporta como pseudoplástico
+    \item 	$n$\ =\ $1$\ o fluido se comporta como newtoniano
+    \item	$n$\ >\ $1$\ o fluido se comporta como dilatante.
+\end{itemize}
+
+O fator $m$z como já mencionado, é o fator o chamado fator de influência do modelo.
+
+Apesar do modelo da lei de potência ser o mais utilizado industrialmente, a literatura contém diversos outros modelos com suas vantagens e propriedades. Uma lista mais detalhada desses modelos é apresentada por \citet{Vasconcellos2024}.
+
+\section{\texorpdfstring{Modelagem do Tensor $\dot{\gamma}$ em $\eta$}{Modelagem do Tensor de gamma em eta}}
+
+Para manter a consistência da equação do balanço da quantidade de movimento linear, $\eta\left(\dot{\gamma}\right)$ que é utilizado nos modelos de fluidos generalizados, deve ser um escalar. Dessa forma $\dot{\gamma}$ não pode ser considerado em sua forma literal, um tensor com seis componentes, devendo se comportar também como escalar. Por este motivo, é preciso que se use um valor que seja representativo do tensor taxa de cisalhamento ao longo de todo o escoamento. A solução mais comum é o uso de invariantes.
+
+Os invariantes são combinações dos termos de tensores, geralmente seguindo operações matemáticas como o traço ou o determinante do tensor, no qual o valor não varia com observador que as descreve, ou seja, é independente do sistema de coordenadas. Uma abordagem mais rigorosa desse critério pode ser encontrada em \citet{Aristeu2020}, \citet{Bird1987} e \cite{Vasconcellos2024}.
+
+ Várias formas de invariantes podem ser encontrados na literatura, de forma que uma das formas mais comuns é a apresentada e adotada por \citet{Vasconcellos2024}, para uma determinada matriz $A$, tal que, Eq. \ref{matriz A genérica}:
+
+\begin{equation}
+    A\ =\ \left(\begin{matrix}S_{xx}&S_{xy}&S_{xz}\\S_{xy}&S_{yy}&S_{zy}\\S_{xz}&S_{zy}&S_{zz}\\\end{matrix}\right) 
+    \label{matriz A genérica}
+\end{equation}
+
+Os invariantes podem ser escritos da seguinte forma, Eq. \ref{invariariante 1 aristeu} a \ref{invariariante 3 aristeu} \citep{Aristeu2020}:
+
+\begin{align}
+    &I_1\ =\ tr(A)=S_{xx}\ +\ S_{yy}+\ S_{zz}\label{invariariante 1 aristeu}\\
+    &I_2\ =\ \frac{1}{2}(tr(A)^2-tr(A^2))=S_{xx}S_{yy} + S_{yy}S_{zz} + S_{zz}S_{xx} - S_{xy}^2 - S_{xz}^2 - S_{zy}^2 \label{segundo invariante Aristeu}\\
+    &I_3\ =\ det(A)\label{invariariante 3 aristeu}
+\end{align}
+
+Nas equações acima, $det()$ simboliza a operação de determinante e $tr()$ o traço da matriz.
+
+Outra forma de invariante é apresentado por \citet{Bird1987}, Eq. \ref{invariante 1 bird} a \ref{invariante 3 bird}:
+
+\begin{align}
+    &I_1\ =\ tr(A)=S_{xx}\ +\ S_{yy}+\ S_{zz}\label{invariante 1 bird}\\
+    &I_2\ =\ tr(A^2)={S_{xx}}^2\ +\ {S_{yy}}^2+\ {S_{zz}}^2\ +\ {2S_{xy}}^2\ +{\ 2S_{xz}}^2\ +\ {{2S}_{zy}}^2\label{segundo invariante bird} \\
+    &I_3\ =\ tr(A^3)\label{invariante 3 bird}
+\end{align}
+
+Dentre as opções de invariante a serem utilizados, tem-se que em alguns escoamentos o primeiro e o terceiro invariante, independente da abordagem, podem resultar em zero, impossibilitando sua escolha. Sendo assim, o segundo invariante é normalmente utilizado para representar o tensor taxa de deformação.
+
+Devido à natureza quadrática do segundo invariante, diversos autores propõem que operações sejam feitas para que se possa utilizá-lo com consistência na modelagem das equações de balanço da quantidade de movimento linear. Uma das mais utilizada é apresentada por \citet{Vasconcellos2024}, Eq. \ref{gama-nu}:
+
+\begin{equation}
+    \dot{\gamma}\ =\ \sqrt{\frac{1}{2}I_2}
+    \label{gama-nu}
+\end{equation}
+
+Devido ao uso da raiz na modelagem do tensor $\dot{\gamma}$, é razoável que se evite a utilização de valores negativos para o segundo invariante, por essa razão o modelo de invariante apresentado por \citet{Bird1987} foi utilizado como referência neste trabalho, com excessão do escoamento de Poiseuille no qual foram feitas comparações entre os modelos
+
+Uma maior variedade de abordagens do tensor $\dot{\gamma}$ pode ser encontrado no trabalho de \citet{Vasconcellos2024}.
+
+Considerando a matriz bidimensional mostrada na Eq. \ref{eq:gama-bidimensional} o tensor em sua representação escalar, bidimensional, pode ser escrito da seguinte forma, Eq. \ref{gama-bidi-aberto}:
+
+\begin{equation}
+    \dot{\gamma}\ =\ \sqrt{2{\frac{\partial u}{\partial x}}^2+2{\frac{\partial v}{\partial y}}^2\ +\left(\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}\right)^2\ }
+    \label{gama-bidi-aberto}
+\end{equation}
+
+Dessa forma é possível manter $\eta\left(\dot{\gamma}\right)$ como um escalar, preservar a compatibilidade na equação de balanço e simplificando a abordagem numérica que será descrita posteriormente.
+
+\section{Aproximação de Oberbeck-Boussinesq para Escoamentos Não-Isotérmicos}
+
+Em escoamentos onde há a variação de temperatura ao longo do domínio físico, todas as propriedades dependentes do fluido, como viscosidade, massa específica e difusividade térmica são diferentes para cada valor de temperatura, de forma que para a total representação da realidade seria necessário considerar essa variação na modelagem matemática dos escoamentos. 
+
+Estudos experimentais e numéricos, porém, demonstraram que para pequenas variações de temperatura e para escoamentos incompressíveis, essa variação nas propriedades escalares descritas não é de grande relevância para a qualidade dos resultados, sendo seu custo computacional e prático não compatível com sua contribuição \citet{borgnakke2018} e \citet{Bird1987}.
+
+Durante estudos sobre convecção natural em escoamentos, \citet{boussinesq1903,oberbeck1888} \textit{apud} \citet{Santos2022})concluíram que o campo de temperatura exerce influência no balanço da quantidade de movimento linear, através do desequilíbrio forças peso e empuxo ocasionadas pela variação da massa específica do fluido. Dessa forma se utiliza a consideração de que a variação da massa específica é desprezível em todos os termos com exceção do termo gravitacional. Está é a chamada aproximação de Boussinesq-Oberbeck \citep{Santos2022}.
+
+Utilizando esta aproximação a equação de balanço do momentum linear fica da seguinte forma, Eq. \ref{balanço com energia termica} e \ref{delta T}:
+
+\begin{align}
+    &\frac{\partial\vec{v}}{\partial t}+\left(\vec{v}\cdot\vec{\nabla}\right)\vec{v}=-\frac{1}{\rho}\vec{\nabla}p+\frac{1}{\rho}\vec{\nabla}\cdot\overline{\overline{\tau}}+\beta\Delta T\vec{g} \label{balanço com energia termica}\\
+   &\Delta T = (T_{ref} - T) \label{delta T}
+\end{align}
+
+Na qual o termo $\beta$ é o coeficiente de expansão volumétrica, uma propriedade física inerente do fluido de interesse e tem como função correlacionar a variação de massa específica com a variação de temperatura do fluido. Um melhor detalhamento matemático dessas propriedades pode ser encontrado em \cite{borgnakke2018}.
+
+Em escoamentos com fluido não-newtonianos, a variação dos parâmetros que descrevem $\eta\left(\dot{\gamma}\right)$, como $m$ e $n$ na lei de potência, não é desprezível, mesmo utilizando a considerações de Boussinesq-Oberbeck e precisam de modelagem adicional para garantir a fidelidade dos resultados simulados. Não foram feitas simulações térmicas de fluidos não-newtonianos no presente trabalho. \citet{Bird1987} apresenta exemplos de escoamentos não-isotérmicos utilizando fluidos não-newtonianos com a Lei de Potência Carreau-Yasuda, principalmente para escoamentos em canais anulares.
+
+\section{Números Adimensionais}
+
+\subsection{Reynolds}
+
+É geralmente aceito como parâmetro mais importante da grande maioria dos escoamentos, sua formulação foi dada primeiramente por Osborne Reynolds em 1883 \citep{White2011} Este parâmetro pode ser interpretado como uma razão entre os efeitos advectivos e os efeitos difusivos de um escoamento. Sua modelagem é escrita como sendo, Eq. \ref{numero de Reynolds}:
+
+\begin{equation}
+    Re\ =\ \frac{\rho UD}{\mu}\ =\ \frac{UD}{\nu}
+    \label{numero de Reynolds}
+\end{equation}
+
+Na qual $U$ e $D$ são, respectivamente, a velocidade característica e o tamanho característico do escoamento. Para as abordagens analíticas esses valores são definidos de acordo com o escoamento e há um relativo consenso na literatura para os escoamentos clássicos, de forma que geralmente é definido pelo autor quais critérios o mesmo utiliza para a escolha dos parâmetros. Na abordagem numérica, se pode definir o número de Reynolds local, no qual $U$ é a velocidade da célula computacional e $D$ o $dx$ ou $dy$ que são as dimensões da célula computacional \citep{maliska2023}.
+
+O valor deste parâmetro é o principal, na maioria dos escoamentos, para se determinar o quão instável é o problema e qual a sua probabilidade de transicionar para a turbulência devido as instabilidades numéricas presentes no escoamento. 
+
+Para fluidos não-newtonianos, outras formas de se escrever o número de Reynolds são apresentadas pela literatura, exemplos podem ser vistos em \citet{Madlener2009}. Para a lei de potência, uma abordagem comumente utilizada é a apresentada abaixo, Eq. \ref{reynolds não newtoniano}.
+
+\begin{equation}
+    Re\ =\ \frac{\rho U^{2-n}L^n}{m}
+    \label{reynolds não newtoniano}
+\end{equation}
+
+Nos quais $m$ e $n$ são os parâmetros a serem ajustados utilizando a Lei de Potência.
+
+Tal modelo adaptado, permite prever o comportamento dos fluidos não-newtonianos e a comparar resultados entre diferentes trabalhos, de forma que estes se correlacionam pelos números adimensionais.
+
+
+\subsection{Prandtl}
+
+O número de Prandtl é um importante número adimensional para escoamentos não isotérmicos. A definição física deste parâmetro é descrita como a razão da difusividade de momentum linear pela difusividade térmica. Outra forma de se interpretar, segundo \citet{Santos2022} é a efetividade do transporte por difusão de quantidade de movimento linear pela térmica. O número de Prandtl é definido como, Eq. \ref{prandt}:
+
+\begin{equation}
+    Pr\ =\ \frac{\nu}{\alpha}
+    \label{prandt}
+\end{equation}
+
+\subsection{Grashof}
+
+O número de Grashof é utilizado em escoamentos não isotérmicos e pode ser descrito como a razão entre os efeitos de empuxo pelos efeitos viscosos \citep{White2011}. O número de Grashof é definido como sendo, Eq. \ref{grashof}:
+
+\begin{equation}
+    Gr\ =\frac{g\beta\Delta{TL}^3}{\nu^2}\ 
+    \label{grashof}
+\end{equation}
+
+\subsection{Rayleigh}
+
+Em escoamentos de convecção natural, o número de Rayleigh se torna tão importante quanto o número de Reynolds para definir qual será o comportamento do escoamento. A definição inicial deste número foi feita inicialmente por Lord Rayleigh (1842- 1919) \citep{White2011} em seus estudos em convecção natural. A definição física deste número pode ser dada também como uma relação entre os efeitos advectivos e os efeitos difusivos do escoamento, outra interpretação são os efeitos de empuxo sobre os efeitos viscosos \citep{White2011}. A formulação matemática deste número é dada por, Eq. \ref{rayleigh}:
+
+\begin{equation}
+    Ra=\frac{g\beta\Delta{TL}^3}{\nu\alpha}
+    \label{rayleigh}
+\end{equation}
+
+Na qual $\Delta T$ é uma diferença de temperatura caraterística do escoamento, que deve ser definida por cada autor de forma a manter a repetibilidade dos experimentos materiais e computacionais, é a mesma definida pela Eq. \ref{delta T}. $L$ é novamente uma dimensão característica arbitrária do escoamento.
+
+Outra forma de definir o número de Rayleigh comumente utilizada na literatura é com a junção de dois outros números adimensionais, o número de Prandtl e o número de Grashof \citep{Santos2022} da seguinte forma, Eq. \ref{ray alternativo}:
+
+\begin{equation}
+    Ra=Pr\ Gr
+    \label{ray alternativo}
+\end{equation}
+
+Para garantir a repetibilidade dos resultados, é necessário informar o valor dos três parâmetros adimensionais utilizados em cada uma das simulações ou experimentos materiais.
+
+\section{Formulação Geral}
+
+Pode-se resumir a forma das equações utilizadas no desenvolvimento dos modelos numérico e computacionais como, Eq. \ref{continuidade-completa} a \ref{momentum-completa}:
+
+\begin{align}
+    &\vec{\mathrm{\nabla}}\cdot\left(\vec{v}\right)=0 \label{continuidade-completa}\\
+    &\frac{\partial T}{\partial t}+\vec{v}\vec{\mathrm{\nabla}}\cdot T=\alpha\mathrm{\nabla}^2T \label{energia-completa}\\
+    &\frac{\partial\vec{v}}{\partial t}+\left(\vec{v}\cdot\vec{\nabla}\right)\vec{v}=-\frac{1}{\rho}\vec{\nabla}p+\frac{1}{\rho}\vec{\nabla}\cdot\eta\left(\dot{\gamma}\right)\dot{\gamma}+\beta\Delta T\vec{g}\label{momentum-completa}
+\end{align}
+
+De forma que para fluidos newtonianos tem-se que $\eta\left(\dot{\gamma}\right)\ =\ \mu$. 
+

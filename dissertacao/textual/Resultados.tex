@@ -1,0 +1,389 @@
+%====================================================================
+% Conclusões: Escreva logo após o 
+% \chapter{Conclusões} o texto de seu trabalho referente 
+% as conclusões de seu estudo. 
+%====================================================================
+\chapter{Resultados}
+
+Nesta secção serão abordados os resultados obtidos através das simulações e sua comparação com diferentes autores, o objetivo é validar os métodos implementados e verificar o quão aproximado estão com a literatura. Serão utilizados, além de artigos consolidados, resultados analíticos do escoamento como mostrado no apêndice A.
+
+\section{Escoamento de Couette Plano}
+Para este escoamento, devido sua simplicidade, se dispõe na literatura de soluções analíticas para a modelagem de seu comportamento. Primeiramente foi feita a análise em regime permanente para fluidos newtonianos, a fim de se verificar a estabilidade do método. Nas figuras \ref{couette - newton - p1} e \ref{couette - newton - p2}, é visível a evolução do escoamento para fluidos newtonianos para diferentes números de Reynolds.
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[Perfil de velocidade para numéro de Reynolds 100. Utilizando $\nu = 0.01$]{%
+        \includegraphics[width=0.45\textwidth]{imagens/Couette_N_Re100.png}
+    }
+    \hspace{0.05\textwidth} % espaço entre as figuras
+    \subfloat[Perfil de velocidade para numéro de Reynolds 400. Utilizando $\nu = 0.0025$]{%
+        \includegraphics[width=0.45\textwidth]{imagens/Couette_N_Re400.png}
+    }
+    \caption{Perfils de velocidade no centro da cavidade para valores de Reynolds de 100 e 400}
+    \label{couette - newton - p1}
+    {\footnotesize Fonte: Do próprio autor}
+\end{figure}
+
+
+\begin{figure}
+    \centering
+    \subfloat[Perfil de velocidade para numéro de Reynolds 1000. Utilizando $\nu = 0.001$]{%
+        \includegraphics[width=0.45\textwidth]{imagens/Couette_N_Re1000.png}
+    }
+    \hspace{0.05\textwidth} % espaço entre as figuras
+    \subfloat[Perfil de velocidade para numéro de Reynolds 1600. Utilizando $\nu = 0.000625$]{%
+        \includegraphics[width=0.45\textwidth]{imagens/Couette_N_Re1600.png}
+    }
+    \caption{Perfils de velocidade no centro da cavidade para valores de Reynolds de 1000 e 1600}
+    \label{couette - newton - p2}
+    {\footnotesize Fonte: Do próprio autor}
+\end{figure}
+
+É possível observar a influência do número de Reynolds no desenvolvimento do escoamento, de forma que quanto maior esse valor, mais lentamente ele se desenvolve para o regime permanente.
+Independentemente do número de Reynolds ou do tipo de fluido, o escoamento sempre converge para uma reta, como é possível demonstrar em sua solução analítica apresentada por \citet{Vasconcellos2024}.
+
+Para validar a simulação com o modelo analítico, foi simulado o escoamento de Couette, com o tempo indo de 0 a 100, e se comparou as soluções numéricas e analíticas, Figura \ref{couette-newton-analitico}. O valor de $\nu=\ 0.000625\ \frac{m^2}{s}$ foi utilizado para garantir o valor de Reynolds desejado $(Re = 1600)$. É possível observar o nível de coerência entre os resultados, de forma que não são perceptíveis desvios entre eles.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imagens/Perfil de velocidade_Couette_analitico_numerico.png}
+    \caption{Comparação entre o perfil analítico e o perfil numérico simulados para diferentes tempos com um número de Reynolds de 1600 e um valor de $\nu$ igual a 0.000625. As linhas contínuas representam o perfil numérico e as marcas * representam os pontos da solução analítica.}
+    \label{couette-newton-analitico}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+Para os modelos de escoamentos não-newtonianos, foi utilizado a Lei de potência e se variou os valores de m e n para atingir os valores de Reynolds desejado com tempos fixos. Na Figura \ref{couette - nãonewton} é mostrado o comportamento de fluidos com diversos valores de n para $Re = 100$ e $Re =  400$.
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[perfis de velocidade para diversos valores de n e para um número de Reynolds de 100, utilizando a Lei de Potência. Tempo final de simulação 5 s]{%
+        \includegraphics[width=0.45\textwidth]{imagens/NN_couette_Re100.png}
+    }
+    \hspace{0.05\textwidth} % espaço entre as figuras
+    \subfloat[perfis de velocidade para diversos valores de n e para um número de Reynolds de 400, utilizando a Lei de Potência. Tempo final de simulação 5 s]{%
+        \includegraphics[width=0.45\textwidth]{imagens/NN_couette_Re400.png}
+    }
+    \caption{Perfils de velocidade no centro da cavidade para diferentes valores de Reynolds, utilizando fluidos não-newtonianos}
+    \label{couette - nãonewton}
+    {\footnotesize Fonte: Do próprio autor}
+\end{figure}
+
+É possível observar que, apesar de seguirem a mesma tendência que os fluidos newtonianos com a variação do número de Reynolds, para um maior valor deste número mais lenta é a estabilização para regime permanente, os fluidos não-newtonianos são fortemente influenciados pelos valores da Lei de Potência. 
+
+Para fluidos com n\ >\ 1 o escoamento se estabiliza mais rapidamente, um comportamento esperado para fluídos dilatantes que aumentam sua viscosidade com a taxa de cisalhamento o que gera um comportamento similar a um fluido newtoniano de alta viscosidade para o escoamento de Couette. Por outro lado, para valores de n\ <\ 1, tem-se uma demora maior para a estabilização do escoamento quando comparado com fluidos newtonianos (n\ =1), o que é um comportamento esperado de fluidos pseudoplásticos, que tem o comportamento viscoso reduzido com o aumento da taxa de cisalhamento.
+
+Na Figura \ref{couette - nãonewton- compara} se compara os resultados obtidos no presente trabalho, com os resultados obtidos por \citet{Vasconcellos2024}.
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[Perfil de velocidade para t = 5s. Próprio autor.]{%
+        \includegraphics[width=0.45\textwidth]{imagens/NN_couette_Re100.png}
+    }
+    \hspace{0.05\textwidth} % espaço entre as figuras
+    \subfloat[Perfil de velocidade para t = 5s. \citet{Vasconcellos2024}.]{%
+        \includegraphics[width=0.45\textwidth]{imagens/5.1 sec Luiz_melhorado.png}
+    }
+    \caption{Comparação entre os resultados do presente trabalho e aqueles obtidos por \citet{Vasconcellos2024}}
+    \label{couette - nãonewton- compara}
+\end{figure}
+
+Nessa mesma Figura é possível observar que apesar da semelhança qualitativa entre os resutlados, os valores ainda não são exatos entre os mesmos. Tal fato permanece em aberto no presente trabalho e a principal suspeita é a escolha dos invariantes, que se deu de forma diferente entre os trabalhos.
+
+Fluidos com valor de  n maiores que 2 não são comumente utilizados ou encontrados na literatura, de forma que estes apenas foram considerados para fins de visualização de casos limítrofes.
+
+\section{Escoamento de Poiseuille Plano}
+
+Para o escoamento de Poiseuille se tem os resultados das equações analíticas para comparar os resultados da simulação. Como mencionado no modelo físico, o escoamento de Poiseulle se baseia na diferença de pressão entra a entrada e a saída do modelo físico, de forma que se definiu uma diferença de pressão fixa, evidenciada no modelo computacional. Para que se imponha essa diferença de pressão, a velocidade de entrada é ajustada de acordo com as equações do apêndice A.
+
+Inicialmente, para se validar as equações desenvolvidas para este escoamento, é simulado um escoamento newtoniano com valor de número de $Re = 100$. Para este escoamento foram utilizados uma viscosidade cinemática de  $\nu=\ 0.01 \frac{m^2}{s}$ e um perfil de velocidade de entrada de $V\ =\ \frac{1}{6}\ \left[\frac{m}{s}\right]$ para que se mantivesse a diferença de pressão inicialmente definida. O perfil de velocidade resultante no escoamento é mostrado na Figura \ref{Poiseulle-newton-analitico}.
+
+
+ \begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.6\textwidth]{imagens/Poiseulle_newtonian_Re100.png}
+    \caption{Perfil de velocidade analítico em comparação com o modelo computacional, utilizando um valor de $Re = 100$.  Foram impostos uma viscosidade de $\nu=\ 0.01$ e um perfil de velocidade na entrada de $V\ =\ \frac{1}{6}\ \left[\frac{m}{s}\right]$.}
+    \label{Poiseulle-newton-analitico}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+É possível observar, a partir desses resultados, o nível de coerência do modelo analítico com o computacional, de forma que se possa utilizar estes valores de forma confiável para verificar os resultados da simulação. A tabela \ref{poiseulle-newtonian-compara-tabela} mostra a comparação entre os valores analíticos e numéricos e o erro entre eles.
+
+\begin{table}[ht]
+\centering
+\caption{Comparação entre os valores da componente u analíticos e computacional para $Re =100$}
+\begin{tabular}{c c c c}
+\hline
+{\bfseries Distância em $y$} [m] & {\bfseries} Analítico $ \bm{\frac{m}{s}}$ & {\bfseries Numérico} $ \bm{\frac{m}{s}}$ & {\bfseries Erro relativo (\%)} \\
+\hline
+0,99 & 0,012 & 0,012181 & 1,12 \\
+
+0,82 & 0,15  & 0,149436 & 0,02 \\
+
+0,67 & 0,22  & 0,220737 & 0,05 \\
+
+0,52 & 0,249 & 0,249257 & 0,06 \\
+
+0,50 & 0,25  & 0,249851 & 0,06 \\
+
+0,48 & 0,249 & 0,249257 & 0,06 \\
+
+0,33 & 0,22  & 0,220737 & 0,05 \\
+
+0,18 & 0,15  & 0,149436 & 0,02 \\
+
+0,012 & 0,012 & 0,012181 & 1,12 \\
+\hline
+\end{tabular}
+\label{poiseulle-newtonian-compara-tabela}\\
+{\footnotesize Fonte: Do próprio autor} 
+\end{table}
+
+Tem-se que os maiores erros ocorrem nas extremidades das curvas, enquanto o erro no centro do domínio se aproxima de zero. Esse resultado mostra que apesar das considerações feitas nas discretizações do modelo numérico, os resultados obtidos pelo modelo computacional são suficientes para comparação com a literatura.
+
+Define-se a diferença de pressão no escoamento de maneira indireta a partir de outros parâmetros, com base nas seguintes equações (apêndice A):
+
+\begin{align*}
+    &u\left(y\right)=\frac{\lambda y^2}{2}\ \ -\ \frac{\lambda hy}{1} \\
+    &u_{medio}=\frac{\lambda h^3}{12} \\
+    &\lambda\ =\ \frac{1}{\nu}\frac{\mathrm{\Delta p}}{L}
+\end{align*}
+
+Considerando uma altura $H = 1 [m]$, largura $L = 30 [m]$, viscosidade $\nu$ constante, é possível impor a queda de pressão neste tipo de escoamento a partir da imposição da velocidade de entrada $u_{medio}$. Para visualização do efeito da viscosidade no escoamento, considerou-se uma queda de pressão fixa de $\Delta p = 0.6 Pa$. Variando o número de Reynolds para diferentes valores, obteve-se os perfis de velocidade mostrados na Figura \ref{Poiseulle-newton-varios RE}.
+
+ \begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imagens/Poiseulle_nn_Re100_0.6.png}
+    \caption{Diferentes perfis de velocidade a $\Delta p = 0.6$ e diferentes números de Reynolds.}
+    \label{Poiseulle-newton-varios RE}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+Para $Re = 100$, o perfil de velocidade é mais estreito e a velocidade máxima é menor que os demais, de forma que os efeitos viscosos são maiores no escoamento, levando a gradientes de velocidade menores nesta região. Para valores de Reynolds de $400$ e $1000$, o perfil de velocidade é mais acentuado e a velocidade máxima do escoamento é maior, gerando um aumento no gradiente vertical de velocidade a medida que o numero de Reynolds sobe. Tal comportamento é esperado uma vez que os efeitos viscosos são menos predominantes para altos numéros de Reynolds, o escoamento tende a ficar menos amortecido e com gradientes maiores
+
+Para escoamento de Poiseuille utilizando a Lei de Potência, se variou o número de $n$ para valores fixos de velocidade de entrada e se observou como o escoamento se comportou nestas situações. Na Figura \ref{Poiseulle-nao-newton-varios n} mostra-se o comportamento do fluido para valores de $n$ variando de 1 a 3, com Reynolds fixo em 100 e velocidade média de entrada fixa em $V = \frac{1}{6} \left[\frac{m}{s}\right]$.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imagens/Poiseulle_nn_v13.png}
+    \caption{Diferentes perfis de velocidade para o escoamento de Poiseuille, com  valores de $n$ de 1, 1.5 e 3, para velocidade de entrada constante. Comparação com os resultados do modelo analítico}
+    \label{Poiseulle-nao-newton-varios n}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+Os valores de $n$ escolhidos, representam fluidos com comportamento newtoniano, para o caso de $n = 1$, e dilatante. Os pontos '*' mostrados nas retas são os resultados do modelo analítico desenvolvido no apêndice A.
+
+Para o caso de $n = 1$ é possível observar que o comportamento é o mesmo que quando simulado utilizando a formulação puramente newtoniana $\eta = \mu$, como o esperado. O escoamento é parabolico e o modelo analítico se ajusta perfeitamente à curva projetada.
+
+Para um valor de $n = 1.5$ se observa uma tendência do perfil de velocidade a se tornar mais agudo, com o aumento da viscosidade. Dessa forma se tem uma velocidade máxima maior para uma mesma velocidade de entrada, o que indica uma maior queda de pressão deste escoamento. A maior viscosidade leva a uma maior dificuldade do fluido escoar.
+
+Para um perfil de velocidade com $n = 3$, um caso extremo e normalmente não representativo para fluidos, o perfil de velocidade se torna bastante agudo, indicando um forte gradiente de pressão presente no escoamento. Consequentemente, a diferênça de pressão deste perfil de velocidade é significativamente maior que os demais.
+
+Como no escoamento de Poiseuille, se impôs o perfil de velocidade de entrada, a queda de pressão resultante do escoamento, para se obter os dados de entrada para a equação analítica, é obtido de forma indireta, de acordo com a velocidade máxima obtida na simulação numérica. Dessa forma se tem as quedas de pressão obtidas em cada uma das simulações mostradas na Figura \ref{Poiseulle-nao-newton-varios n}, indicadas na tabela \ref{queda de pressão para n maior 1}:
+
+\begin{table}[ht]
+    {\footnotesize Fonte: Do próprio autor}
+    \centering
+    \caption{Valores de $n$ e sua respectiva queda de pressão para velocidade de entrada constante}
+    \begin{tabular}{c c}
+        \hline
+        {\bfseries Valor de} $ \bm{n}$ & {\bfseries Queda de pressão (Pa)} \\
+        \hline
+        1.00 & 12 \\
+        1.5 & 24.06 \\
+        3.0 & 203.26 \\
+        \hline
+    \end{tabular}
+    \label{queda de pressão para n maior 1}
+\end{table}
+
+
+Para comparar os efeitos da escolha do invariante na modelagem do tensor $\eta$, foram simulados escoamentos com valores de $n = 0.5$ e $n = 2$ com os diferentes os modelos descritos pela Equação \ref{segundo invariante bird} e pela Equação\ref{segundo invariante Aristeu}. Os resultados foram comparados com a solução analítica do modelo e são apresentados pelas Figuras \ref{invariantes 2} e \ref{invariantes 0.5}.
+
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imagens/invariantes - n - 2}
+    \caption{Perfis de velocidade pala um valor de \(n = 2\) e um \(\Delta p = 50 \text{Pa}\). Comparação do perfil analítico com os invariantes apresentados por \citet{Bird1987} e \citet{Aristeu2020}.}
+    \label{invariantes 2}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imagens/invariantes - n - 0.5}
+    \caption{Perfis de velocidade para um valor de \( n = 0.5 \) e um \( \Delta p = \sqrt{50} \, \text{Pa} \). Comparação do perfil analítico com os invariantes apresentados por \citet{Bird1987} e \citet{Aristeu2020}.}
+    \label{invariantes 0.5}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+Na Figura \ref{invariantes 2}, é possível observar que o modelo de invariante apresentado por \citet{Aristeu2020} e apresentado da Equação \ref{segundo invariante Aristeu}, se adequa melhor aos fluidos com comportamento dilatante, de forma que o perfil obtido utilizando o invariante de \citet{Bird1987} não condiz com um perfil fisicamente possível para este escoamento. Desta forma, observou-se que este comportamento é constante no geral, de forma que os perfis mostrados na Figura \ref{queda de pressão para n maior 1} foram todos obtidos com o modelo de \citet{Aristeu2020}, mostrando a consistência do mesmo aos fluidos que são representados por um valor de $n > 1$ na lei de potência. Nota-se ainda que apesar do ajuste compativel com o modelo analítico ao longo de todo o escoamento, ainda há uma diferênça de resultados no centro da cavidade, onde os gradientes de velocidade são maiores.
+
+Já na Figura \ref{invariantes 0.5} é possível observar o comportamento oposto do discutido anteriormente, no qual o modelo apresentado por \citet{Bird1987} se ajustou perfeitamente ao modelo analítico apresentado, enquanto o modelo de \citet{Aristeu2020} apresentou desvios no formato parabolico do perfil de velocidades. Este comportamento se manteve constante durante testes realizados na validação dos modelos no qual se variou, para ambos os tipos de fluidos, o perfil de velocidades de entrada e consequentemente a queda de pressão presente no escoamento. 
+
+Apesar do resultado obtido para o perfil de velocidade para o escoamento de Poiseuille, não se pode afirmar que o mesmo comportamento se repetirá para escoamentos complexos, sendo necessário a comparação, de preferência com resultados experimentais com tais escoamentos. Contudo, os perfis obtidos mostram claramente a influência da escolha do invariante no comportamento do fluído e do escoamento, sendo de grande importância o estudo deste fator antes de proceder com as simulações numéricas de diferêntes fluídos. 
+
+\section{Cavidade com Tampa Deslizante}
+
+Para o escoamento da cavidade com tampa deslizante, se construiu, separadamente, os perfis do escoamento para $Re = 100$, de forma a elucidar a análise feita para os diferentes números de Reynolds. Após isto, apresenta-se os gráficos para os demais números de Reynolds. O perfil de velocidade no centro geométrico da cavidade é representado pelas figuras \ref{lid-diven-100-perfil} a \ref{lid-diven-3200-perfil}.
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[Perfil de velocidade u em x = 0.5 para Re = 100.]{%
+        \includegraphics[width=0.45\textwidth]{imagens/lid_driven_Re100_u.png}
+    }
+    \hspace{0.05\textwidth} % espaço entre as figuras
+    \subfloat[Perfil de velocidade v em y = 0.5 para Re = 100.]{%
+        \includegraphics[width=0.45\textwidth]{imagens/lid_driven_Re100_v.png}
+    }
+    \caption{Perfil de velocidade u  e v no centro geométrico da cavidade para Reynolds 100.}
+    \label{lid-diven-100-perfil}
+    {\footnotesize Fonte: Do próprio autor}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[Perfil de velocidade u em x = 0.5 para Re = 400.]{%
+        \includegraphics[width=0.45\textwidth]{imagens/lid_driven_Re400_u.png}
+    }
+    \hspace{0.05\textwidth} % espaço entre as figuras
+    \subfloat[Perfil de velocidade v em y = 0.5 para Re = 400.]{%
+        \includegraphics[width=0.45\textwidth]{imagens/lid_driven_Re100_v.png}
+    }
+    \caption{Perfil de velocidade u  e v no centro geométrico da cavidade para Reynolds 400.}
+    \label{lid-diven-400-perfil}
+    {\footnotesize Fonte: Do próprio autor}
+\end{figure}
+
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[Perfil de velocidade u em x = 0.5 para Re = 1000.]{%
+        \includegraphics[width=0.45\textwidth]{imagens/lid_driven_Re1000_u.png}
+    }
+    \hspace{0.05\textwidth} % espaço entre as figuras
+    \subfloat[Perfil de velocidade v em y = 0.5 para Re = 1000.]{%
+        \includegraphics[width=0.45\textwidth]{imagens/lid_driven_Re1000_v.png}
+    }
+    \caption{Perfil de velocidade u  e v no centro geométrico da cavidade para Reynolds 1000.}
+    \label{lid-diven-1000-perfil}
+    {\footnotesize Fonte: Do próprio autor}
+\end{figure}
+
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[Perfil de velocidade u em x = 0.5 para Re = 3200.]{%
+        \includegraphics[width=0.45\textwidth]{imagens/lid_driven_Re3200_u.png}
+    }
+    \hspace{0.05\textwidth}
+    \subfloat[Perfil de velocidade v em y = 0.5 para Re = 3200.]{%
+        \includegraphics[width=0.45\textwidth]{imagens/lid_driven_Re3200_v.png}
+    }
+    \caption{Perfil de velocidade u  e v no centro geométrico da cavidade para Reynolds 3200.}\label{lid-diven-3200-perfil}
+    {\footnotesize Fonte: Do próprio autor}
+\end{figure}
+
+Para valores de $Re = 100$, observa-se uma compatibilidade grande entre os resultados obtidos e aqueles apresentados por \citet{Ghia1982}, com discrepâncias em regiões com grande gradiente de velocidade. Para um valor de $Re = 400$, tem-se que os pontos seguem compativeis com a referência. A complexidade do escoamento aumenta com o aumento do número de Reynolds, de forma que as diferenças entre os perfis de velocidade, principalmente nas extremidades, começa a ficar mais acentuada.
+
+Para perfis de $Re = 1000$ e $Re = 3200$ verifica-se um aumento das diferenças entre as simulações, principalmente nas extremidades. Tais discrepâncias ocorre pelo aumento da complexidade das recirculações e do movimento do fluido proximo as paredes do escoamento. Além disto, os métodos e a precisão utilizada no presente trabalho, são diferentes dos utilizados por \citet{Ghia1982}, dado a diferença de época dos trabalhos.
+
+Para analisar os resultados obtidos, foram gerados gráficos com as linhas de fluxo para o escoamento com número de Reynolds de 3200, este valor foi escolhido por apresentar maior número de recirculações primárias e secundárias. Na Figura \ref{lid-diven-3200-streamline} se ilustra os resultados obtidos com o código desenvolvido em comparação com os trazidos por \citet{Ghia1982}.
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[Linhas de fluxo para Re = 3200. Próprio autor]{%
+        \includegraphics[width=0.50\textwidth]{imagens/lid_driven_Re3200_streamLine_menor.png}
+    }
+    \hspace{0.05\textwidth}
+    \subfloat[Linhas de fluxo para Re = 3200. \citet{Ghia1982}]{%
+        \includegraphics[width=0.40\textwidth]{imagens/ghia-3200.png}
+    }
+    \caption{Linhas de fluxo para $Re = 3200$.}\label{lid-diven-3200-streamline}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+Observa-se, nas duas figuras, uma boa concordância quanto à presença e à localização da recirculação primária, que ocupa a região central da cavidade, com seu núcleo posicionado ligeiramente abaixo da tampa deslizante. Essa recirculação é bem definida, com linhas de corrente em espiral convergindo para um ponto de estagnação central, o que é esperado para este escoamento devido o movimento promovido pela fronteira superior. Os resultados monstram a precisão dos métodos empregados.
+
+Além disso, as figuras mostram recirculações secundárias nos cantos da cavidade, especialmente nos cantos inferiores esquerdo e direito e no canto superior esquerdo, que são características do escoamento com tampa deslizante para Reynolds elevados. Essas recirculações menores indicam a complexidade da estrutura de recirculação que surge devido às interações entre a tampa em movimento e as paredes laterais da cavidade quando se aumenta o numéro de Reynolds e, consequentemente, as instabilidades do escoamento. Pequenas variações no tamanho e na intensidade dessas recirculações entre as figuras podem ser atribuídas a diferenças na discretização espacial e na resolução numérica empregadas, visto que os métodos utilizados por \citet{Ghia1982} são bem diferentes que os atuais.
+
+\section{Cavidade Diferencialmente Aquecida}
+
+Para avaliar o comportamento da cavidade diferencialmente aquecida, foram gerados resultados com valores de $Ra$ variando de $10^3$ a $10^6$. Estes resultados foram comparados com os de \citet{Santos2022}, nas figuras \ref{isotermas - autor - p1}  e \ref{isotermas - autor - p2}, mostra-se as isotermas obtidas com o código do presente trabalho, enquanto a Figura \ref{isotermas - referencias} mostra as isotermas apresentadas por \citet{Santos2022}.
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[]{
+        \includegraphics[width=0.42\textwidth]{imagens/thermal_cavity_Ra1e3_isotherma.png}
+    }
+    \hspace{0.05\textwidth}
+    \subfloat[]{
+        \includegraphics[width=0.42\textwidth]{imagens/thermal_cavity_Ra1e4_isotherma.png}
+    }
+    \caption{Isotermas para números de Rayleigh  de $10^3$ a $10^4$}
+    \label{isotermas - autor - p1}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[]{
+        \includegraphics[width=0.42\textwidth]{imagens/thermal_cavity_Ra1e5_isotherma.png}
+    }
+    \hspace{0.05\textwidth}
+    \subfloat[]{
+        \includegraphics[width=0.42\textwidth]{imagens/thermal_cavity_Ra1e6_isotherma.png}
+    }
+    \caption{Isotermas para números de Rayleigh de $10^5$ e $10^6$}
+    \label{isotermas - autor - p2}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imagens/isotermas-referencias.png}
+    \caption{Isotermas apresentadas por \citet{Santos2022} Da esquerda para a direita o Rayleigh varia de $10^3$ a $10^6$ em ordem crescente da esquerda para direita.}
+    \label{isotermas - referencias}
+    {\footnotesize Fonte: \citet{Santos2022}} 
+\end{figure}
+
+Para $Ra = 10^3$, ambos os resultados exibem isotermas com pequenas curvaturas, o que caracteriza um regime predominantemente difusivo, de condução térmica. Os resultados apresentados são similares e indicam a baixa influência dos efeitos advectivos que se obtem com baixos valores de Rayleigh.
+
+Para valores de Rayleigh variando de $10^4$ a $10^5$, as isotermas começam a se curvar com relação ao centro da cavidade térmica, exibindo um grandiente de temperatura mais acentuado, provocado pela maior agitação do fluido. É evidente que os efeitos advectivos são mais acentuados para estes regimes de escoamento. A curvatura das isotermas também tende a indicar a presença de recirculações na região.
+
+Para um valor de Rayleigh igual a $10^6$, o escoamento é predominantemente advectivo, as isotermas se alinham horizontalmente. As isotermas obtidas em ambos os trabalhos apresentam semelhanças qualitativas, de forma que transmitem as mesmas informações sobre este regime de escoamento 
+
+
+
+Foram geradas as linhas de fluxo para regimes de escoamento com $Ra = 10^4$ e $Ra = 10^5$. Os resultados mostram o comportamento do escoamento para as diferentes condições. Os resultados foram comparados com o \citet{Gangawane2015}.A Figura \ref{streamline-thermal-autor} mostra as isotermas do autor enquanto a Figura \ref{streamline-thermal-referencia} as de \citet{Gangawane2015}.
+
+\begin{figure}[H]
+    \centering
+    \subfloat[]{
+        \includegraphics[width=0.45\textwidth]{imagens/Thermal_cavity_Ra1e4_streamLine.png}
+    }
+    \hspace{0.05\textwidth}
+    \subfloat[]{
+        \includegraphics[width=0.45\textwidth]{imagens/Thermal_cavity_Ra1e5_streamLine.png}
+    }
+    \caption{Linhas de Fluxo para valores de Rayleigh $10^4$, a esquerda, e $10^5$, a direita.}\label{streamline-thermal-autor}
+    {\footnotesize Fonte: Do próprio autor} 
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imagens/linhas_de_fluxo_referencia.png}
+    \caption{Linhas de Fluxo para valores de Rayleigh $10^4$, a esquerda, e $10^5$, a direita. \citet{Gangawane2015}.}
+    \label{streamline-thermal-referencia}
+    {\footnotesize Fonte: \citet{Gangawane2015}} 
+\end{figure}
+
+As imagens evidenciam que os escoamentos foram feitos por diferentes referenciais entre o presente trabalho e \citet{Gangawane2015}, o que explica a rotação das imagens. Para $Ra = 10^4$, as duas simulações mostram uma recirculação central, com uma certa simetria na cavidade. Os escoamentos estão qualitativamente coerêntes, de forma que a imagem trazida pelo presente trabalho, trás um número maior de informações.
+
+Para o escoamento com $Ra = 10^5$, os efeitos advectivos se tornam mais intensos, de forma que recirculações mais complexas aparecem no centro da cavidade. Os resultados mostrados não são totalmente simétricos, o que pode indicar uma perturbação numérica no mesmo. Considerando a rotação dos eixos, devido ao eixo de coordenadas diferentes entre os autores, os resultados estão qualitativamente coerentes. Os resultados mostram a capacidade do código desenvolvido em captar padrões de recirculação complexos no interior da cavidade diferencialmente aquecida.
+
+
+
+

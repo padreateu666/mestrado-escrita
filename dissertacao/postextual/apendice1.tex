@@ -1,0 +1,107 @@
+%===========================================================equation=========
+% Texto referente ao primeiro apêndice  
+%====================================================================
+\chapter{Solução Analítica para Escoamentos de Poiseuille}
+
+O escoamento de Poiseuille, com suas simplificações, permite que encontremos soluções analíticas para o regime permanente tanto para fluidos newtonianos quanto para fluidos não-newtonianos utilizando a Lei de Potência. De forma que este problema se torna útil para a validação dos modelos de escoamento não-newtoniano e para o tratamento numérico utilizado. Sendo então, pertinente a apresentação matemática de sua formulação analítica. 
+
+\section{Poiseuille Newtoniano}
+
+Considerando um escoamento em regime permanente, com apenas a componente $u$ de velocidade diferente de zero e um gradiente de velocidade e partindo da Equação \ref{momentum-completa}, tem-se:
+
+\begin{align}
+    &\ 0\ =-\vec{\nabla}p+\vec{\nabla}\cdot\eta\left(\dot{\gamma}\right)\dot{\gamma} \nonumber \\
+    &\vec{\nabla}p=\vec{\nabla}\cdot\eta\left(\dot{\gamma}\right)\dot{\gamma}
+\end{align}
+
+
+Considerando $\eta\left(\dot{\gamma}\right)\ =\ \mu$:
+
+\begin{align}
+    &\frac{\partial p}{\partial x}=\mu\frac{\partial^2u}{\partial y^2} \nonumber \\
+    &\frac{1}{\mu}\frac{\partial p}{\partial x}\ =-\lambda \nonumber \\
+    &\frac{\partial^2u}{\partial y^2}\ =-\lambda
+\end{align}
+
+Considerando as condições de contorno, $u(0) = 0$ e $ u(h) = 0$, e realizando as devidas integrações tem-se:
+
+\begin{align}
+    &\frac{\partial\ u}{\partial y}=-\lambda y+c_1 \nonumber \\
+    &u(y)=-\frac{\lambda y^2}{2}+c_1y+c_2 \nonumber \\
+    &u\left(0\right)=-\frac{\lambda0^2}{2}+c_10+c_{2\ }=c_2=0 \nonumber \\
+    &u\left(h\right)=-\frac{\lambda h^2}{2}+c_1h=\ 0 \nonumber \\
+    &c_1=\ \frac{\lambda h}{2} \nonumber \\
+    &u\left(y\right)=-\frac{\lambda y^2}{2}+\frac{\lambda h}{2}y \nonumber \\
+    &u(y)=\frac{\lambda y}{2}(h-y) \nonumber \\
+\end{align}
+
+Para este escoamento, a velocidade máxima atingida pelo fluído ocorre em $y = frac{h}{2}$, que é o meio da cavidade para o sistema de coordenadas adotado. Outro valor importante é a velocidade média do escoamento, que deve ser igual à velocidade uniforme de velocidade de entrada. tem-se então que:
+
+\begin{align}
+    &u\left(\frac{h}{2}\right)=\frac{\lambda h^2}{8}-\frac{\lambda h^2}{4}=v_{max}\ =\ -\frac{\lambda h^2}{8} \nonumber \\
+    &u_{medio}\ =\ \int_{0}^{h}{u(y)\ dy\ }\ =\int_{0}^{h}\left(\frac{\lambda y^2}{2}-\frac{\lambda h}{2}y\right)dy\  \nonumber \\
+    &u_{medio}\ =\ \left(\frac{\lambda y^3}{6}-\frac{\lambda h}{4}y^2\right)_0^h\ =\ \frac{\lambda h^3}{6}-\frac{\lambda h^3}{4}\ =\ -\frac{\lambda h^3}{12}
+\end{align}
+
+Estas equações resolvem bem e completamente o escoamento de Poiseuille newtoniano. 
+
+\section{Poiseuille Não-Newtoniano}
+
+Para fluidos não-newtonianos tem-se que $\eta\left(\dot{\gamma}\right)\ =\ m\dot{\gamma}^{n-1}$, considerando as mesmas simplificações feitas para o escoamento newtoniano tem-se que os dois perfis de invariantes apresentados no presente trabalho levam ao mesmo resultado:
+
+\begin{align}
+    &\frac{\partial p}{\partial x}=\frac{\partial}{\partial y}\left(m{\frac{\partial u}{\partial y}}^{n-1}\frac{\partial u}{\partial y}\right)\nonumber \\
+    &\frac{\partial p}{\partial x}=\frac{\partial}{\partial y}\left(m{\frac{\partial u}{\partial y}}^n\right) \nonumber \\
+    &\frac{\partial p}{\partial x}=m\frac{\partial}{\partial y}\left({\frac{\partial u}{\partial y}}^n\right) \nonumber \\
+    &\frac{1}{m}\frac{\partial p}{\partial x}\ =\ -\ \lambda
+\end{align}
+
+De forma que para esta formulação, é útil redefinir de forma temporária o eixo de coordenadas do domínio considerado. O domínio temporário é mostrado na figura \ref{poiseuille-luiz-temporario}:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{imagens/poiseuille-luiz.png}
+    \caption{Domínio físico temporário para a solução do escoamento de Poiseuille não-newtoniano.}
+    \label{poiseuille-luiz-temporario}
+    {\footnotesize Fonte: Adaptado de \citet{Vasconcellos2024}}
+\end{figure}
+
+De forma que neste novo sistema de coordenadas tem-se o domínio variando de $-h $ a $h$ e com velocidade máxima ocorrendo em $y = 0$. Assim, aplicando as devidas integrais e utilizando duas das novas condições, sendo elas $u(h) = 0$ e $\frac{\partial u(0)}{\partial y} = 0$, tem-se: 
+
+\begin{align}
+    &-\ \lambda y+c_1={\frac{\partial u}{\partial y}}^n \nonumber \\
+    &\frac{\partial u}{\partial y}\ =\ \left(-\ \lambda y+c_1\right)^\frac{1}{n} \nonumber \\
+    &\frac{\partial u}{\partial y}\ =\ \left(-\ \lambda y+c_1\right)^\frac{1}{n} \nonumber \\
+    &\frac{\partial u(0)}{\partial y}\ =\ \left(-\ \lambda0+c_1\right)^\frac{1}{n}\ =0 \nonumber \\
+    &\frac{\partial u\left(0\right)}{\partial y}=c_1\ =0 \nonumber \\
+    &\frac{\partial u}{\partial y}=-\lambda^\frac{1}{n}y^\frac{1}{n} \nonumber \\
+    &u\left(y\right)=-\frac{\lambda^\frac{1}{n}y^{\frac{1}{n}\ +1}}{\frac{1}{n}\ +1}+c_2=-n\frac{\lambda^\frac{1}{n}y^{\frac{1}{n}\ +1}}{n\ +1}+c_2 \nonumber \\
+    &u\left(h\right)=-n\frac{\lambda^\frac{1}{n}h^{\frac{1}{n}\ +1}}{n\ +1}+c_2\ =\ 0 \nonumber \\
+    &c_2\ =n\frac{\lambda^\frac{1}{n}h^{\frac{1}{n}\ +1}}{n\ +1}\  \nonumber \\
+    &u\left(y\right)=\ -\ n\frac{\lambda^\frac{1}{n}y^{\frac{1}{n}\ +1}}{n\ +1}+n\frac{\lambda^\frac{1}{n}h^{\frac{1}{n}\ +1}}{n\ +1} \nonumber 
+\end{align}
+
+É possível calcular o valor da velocidade máxima deste escoamento considerando $u = 0$:
+
+\begin{equation}
+    u\left(0\right)=\ n\frac{\lambda^\frac{1}{n}h^{\frac{1}{n}\ +1}}{n\ +1}\ =v_{max}
+\end{equation}
+
+Pode-se então escrever a equação que descreve o perfil de velocidade em função desta velocidade máxima:
+
+\begin{equation}
+    u\left(y\right)=v_{max}\left(1-\left(\frac{y}{h}\right)^{\frac{1}{n}+1}\right)
+\end{equation}
+
+
+Como se considerou a condição de simetria no meio do escoamento, o perfil de velocidade obtido pela equação pode gerar contornos irreais devido ao sinal negativo de $y$, para valores inferiores à metade da cavidade. Isto se da pelo expoênte fracionário presente na equação. Para solucionar este problema, se aplicou o módulo sobre a variavel dependente da equação obtida com o desenvolvimento apresentado. tem-se então que:
+
+\begin{equation}
+    u\left(y\right)=v_{max}\left(1-\left(\frac{|y|}{h}\right)^{\frac{1}{n}+1}\right)
+\end{equation}
+
+Para que se possa utilizar a equação no domínio considerado no presente trabalho, se utilizou de um deslocamento de $\frac{h}{2}$ da equação acima em y, de forma que o perfil de velocidade obtido esteja dentro do domínio indo de $y = 0$ a $y = h$. Finalmente a equação obtida: 
+
+\begin{equation}
+    u\left(y\right)=v_{max}\left(1-\left(\frac{|y- \frac{h}{2}|}{h}\right)^{\frac{1}{n}+1}\right)
+\end{equation}.

@@ -1,0 +1,95 @@
+%====================================================================
+% Desenvolvimento: Escreva logo após o \chapter{Desenvolvimento} a 
+% texto de seu trabalho referente ao desenvolvimento. 
+%====================================================================
+\chapter{Modelos Físicos}
+
+O código desenvolvido tem como objetivo resolver problemas cuja natureza física possa ser descrita por um domínio bidimensional cartesiano e que apresente comportamento de escoamento incompressível. Apesar dessa generalidade, cada tipo de escoamento apresenta certas peculiaridades, que serão apresentadas adiante.
+
+\section{Escoamento de Couette Plano}
+
+Na Figura \ref{Couettefisico} apresenta-se o modelo físico do problema conhecido na literatura como escoamento de Couette plano \citep{Gibson2008,Case1960,Orszag1980,Bottin1998,Barkley2007} e suas condições de contorno. O problema se trata de um canal plano, cujas placas superior e inferior se movem com diferentes velocidades, assim o que determina a dinâmica do escoamento é a velocidade relativa resultante entre as fronteiras. 
+
+No presente trabalho foi considerada a fronteira superior se movendo com uma velocidade constante $V_0$ e a fronteira inferior com velocidade nula, caracterizando condições de contorno de Dirichlet, considerando também a condição de não deslizamento entre as paredes e o fluido. Nas paredes laterais do escoamento bidimensional, foram consideradas condições de contorno de Neumann, com derivada nula em ambas as componentes de velocidade para representar a condição de simetria. A Figura abaixo mostra o modelo físico do escoamento de Couette.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imagens/Couette-fisico.png}
+    \caption{Modelo Físico do escoamento de Couette.}
+    \label{Couettefisico}
+    {\footnotesize Fonte: Do próprio autor} % Aqui vai a fonte da figura
+\end{figure}
+
+As fronteiras inferior e superior são separadas por uma altura $H$ e possuem uma largura $L$ de forma que $L\ =\ H$. O eixo de coordenadas foi adotado no canto inferior esquerdo do domínio computacional.
+
+Para se manter a coerência numérica que será demonstrada posteriormente, as condições de contorno foram impostas sobre os campos de pressão, sendo mantida a condição de Dirichlet nas fronteiras à esquerda e à direita e condições de segunda espécie das fronteiras superior e inferior.
+
+Foi considerado um escoamento em regime transiente, com condição inicial de velocidade nula em todo o domínio, com exceção das fronteiras superior e inferior. O campo de pressão inicial em todo o escoamento foi considerado uniforme.
+
+O escoamento de Couette foi um dos utilizados para validar o modelo de fluídos não-newtonianos, nos quais as condições de contorno e inicial adotadas são as mesmas do escoamento newtoniano.
+
+Apesar deste escoamento ser popularmente reconhecido como escoamento de Couette, se considera escoamentos de Couette a classe de escoamentos que possuem fronteiras móveis, como tampas ou cilindros rotativos.
+
+\section{Escoamento de Poiseuille Plano}
+
+Outro escoamento comumente encontrado na literatura para a validação de rotinas computacionais, é o promovido pela diferença de pressão no interior de um canal, anular ou plano. Este problema é normalmente chamado de escoamento de Poiseuille \citep{Thomas1953,Bharti2007}, em homenagem ao médico e pesquisador de mesmo nome, que promoveu estudos em escoamentos sanguíneos, que podem ser considerados escoamentos de Poiseuille.
+
+Na Figura \ref{poiseuillefisico} é mostrado o domínio físico bem como as condições de contorno do escoamento de Poiseuille consideradas no presente trabalho:
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.6\textwidth]{imagens/Poiseulle-fisico.png}
+    \caption{Modelo Físico do escoamento de Poiseuille.}
+    \label{poiseuillefisico}
+    {\footnotesize Fonte: Do próprio autor} % Aqui vai a fonte da figura
+\end{figure}
+
+
+Foi considerado um escoamento de Poiseuille em desenvolvimento, com um perfil uniforme de velocidade na entrada, a esquerda, e um perfil totalmente desenvolvido com condição de derivada nula, a direita. Nas fronteiras inferior e superior foram consideradas condições de parede, respeitando o critério de não-deslizamento. As fronteiras inferior e superior são separadas por uma distância $H$ e o canal tem uma largura $L$, de forma que $H \neq\ L$. O centro do sistema de coordenadas foi colocado no canto inferior esquerdo do domínio físico.
+
+Assim foi considerada condição de primeira espécie nas fronteiras superior, inferior e esquerda para todas as componentes de velocidade e condição de Neumann para a parede direita. As condições de contorno para a pressão foram de primeira espécie para a parede direita e segunda espécie para as demais.
+
+A condição inicial do escoamento foi um perfil de velocidade uniforme igual à velocidade de entrada e um gradiente de pressão uniforme em todo o escoamento. Este escoamento foi utilizado para a validação dos modelos não-newtonianos, utilizando a solução contínua. As condições de contorno consideradas são as mesmas para os fluídos newtonianos
+
+Como no caso do escoamento de Couette, a classe dos escoamentos de Poisseulle são todos aqueles escoamentos promovidos por uma diferença de pressão entre a entrada e a saída do escoamento.
+
+\section{Escoamento em Cavidade com Tampa Deslizante}
+
+O escoamento de cavidade com tampa deslizante é um tipo de escoamento de Couette, ou com fronteira móvel, que possui condições de parede, de velocidade nula, em todas as direções do escoamento, com exceção da fronteira superior móvel. 
+
+É mais um tipo de escoamento utilizado para a validação de códigos próprios desenvolvidos para escoamentos, sendo mais complexo que os anteriores por apresentar recirculações e a presença de maiores gradientes de pressão e velocidade. O domínio físico e condições de contorno são mostrados na Figura \ref{lid-drivenfisico}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\textwidth]{imagens/LId-driven-Fisico.png}
+    \caption{Modelo Físico da cavidade com tampa deslizante.}
+    \label{lid-drivenfisico}
+    {\footnotesize Fonte: Do próprio autor} % Aqui vai a fonte da figura
+\end{figure}
+
+A cavidade possui dimensões iguais na largura e na altura, com condições de contorno de primeira espécie para as componentes de velocidade em todas as direções. A pressão possui condição de segunda espécie em todas as fronteiras. 
+
+A condição inicial foi de velocidade nula em todo o escoamento com exceção da fronteira superior, respeitando a condição de não deslizamento. A condição inicial de pressão é de um gradiente de pressão uniforme em todo o escoamento.
+
+Modelos e estudos sobre este tipo de escoamento podem ser encontrados em diversos autores como \citet{Santos2022} \citet{Vasconcellos2024} e \citet{Ghia1982}.
+
+
+\section{Escoamento em Cavidade Diferencialmente Aquecida}
+
+Um dos escoamentos térmicos mais simples que se encontra na literatura é o da cavidade com convecção natural, ou cavidade diferencialmente aquecida. Este escoamento tem o movimento do fluido promovido pela variação da massa específica, devido a uma diferença de temperatura ao longo domínio, que leva a uma diferença de pressão que bombeia uma recirculação dentro da cavidade. 
+
+A Figura \ref{thermal-fisico} mostra o modelo físico do escoamento, no qual, diferente dos demais, possui condições para a temperatura, que é um campo escalar ao longo do escoamento.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.65\textwidth]{imagens/thermal-fisico.png}
+    \caption{Modelo Físico da cavidade diferencialmente aquecida.}
+    \label{thermal-fisico}
+    {\footnotesize Fonte: Do próprio autor} % Aqui vai a fonte da figura
+\end{figure}
+
+As componentes da velocidade recebem condições de primeira espécie com velocidade nula em todo o escoamento, de forma que a pressão, para manter a coerência dos modelos, recebe condições de Neuman em todo o escoamento. 
+
+A temperatura recebe condições de primeira espécie para as fronteiras laterais, o que garante a condição de paredes diferencialmente aquecidas, e condições de segunda espécie nas fronteiras superior e inferior. A condição de segunda espécie para a temperatura, representa uma condição de parede isolada, ou adiabática, na qual não ocorre troca de energia térmica com o meio.
+
+Novamente as fronteiras são quadradas, com uma dimensão de L e H idênticas. As condições iniciais para o problema são as componentes de velocidade nulas, um gradiente de pressão uniforme e uma temperatura uniforme ao longo do escoamento igual a média da temperatura entre as paredes laterais.

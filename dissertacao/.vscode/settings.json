@@ -1,0 +1,52 @@
+{"latex-workshop.latex.tools": [
+    {
+        "name": "pdflatex",
+        "command": "pdflatex",
+        "args": [
+            "-synctex=1",
+            "-interaction=nonstopmode",
+            "%DOC%"
+        ]
+    },
+    {
+        "name": "bibtex",
+        "command": "bibtex",
+        "args": [
+            "%DOCFILE%"
+        ]
+    },
+    {
+        "name": "makeindex",
+        "command": "makeindex",
+        "args": [
+            "%DOCFILE%.nlo",
+            "-s",
+            "nomencl.ist",
+            "-o",
+            "%DOCFILE%.nls"
+        ]
+    },
+    {
+        "name": "pdflatex final",
+        "command": "pdflatex",
+        "args": [
+            "-synctex=1",
+            "-interaction=nonstopmode",
+            "%DOC%"
+        ]
+    }
+],
+"latex-workshop.latex.recipes": [
+    {
+        "name": "pdflatex -> bibtex -> makeindex -> pdflatex x2",
+        "tools": [
+            "pdflatex",
+            "bibtex",
+            "makeindex",
+            "pdflatex final",
+            "pdflatex final"
+        ]
+    }
+],
+"latex-workshop.latex.autoBuild.run": "onSave",
+}

@@ -1,0 +1,540 @@
+%====================================================================
+% Metodologia: Escreva logo após o 
+% \chapter{Metodologia} o texto de seu trabalho referente 
+% aos métodos utilizados no que desenvolvimento de seu estudo. 
+%====================================================================
+\chapter{Modelo Matemático-Numérico}
+
+Para a solução das equações diferenciais por modelos computacionais, se faz necessária a discretização utilizando modelos discretos. Este capítulo tem como objetivo detalhar o tratamento numérico utilizado no desenvolvimento do presente trabalho, bem como exemplificar as dificuldades encontradas. Também serão abordado os modelos utilizados para a resolução de sistemas lineares e suas limitações. 
+
+Uma revisão da teoria de malhas e de métodos de discretização será apresentada para explicar a origem e a formulação dos métodos utilizados na formulação do trabalho.
+
+\section{Malha Deslocada}
+
+Quando se lida com malhas computacionais para fluidos normalmente se tem duas opções de malha a serem utilizadas, malhas deslocadas (Figura \ref{malha deslocada}) e malhas colocadas (Figura \ref{malha colocada}). Tais métodos possuem diferentes aplicações e teorias computacionais desenvolvidas especificamente para cada um, de forma que existem softwares abertos e comerciais com ambos os modelos \cite{Malalasekera2007}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.65\textwidth]{imagens/modelo_de_malha.png}
+    \caption{Modelo de malha deslocada}
+    \label{malha deslocada}
+    {\footnotesize Fonte: Do próprio autor}
+\end{figure}
+
+Neste método de malha as informações escalares, como a temperatura e a pressão, são guardados no centro das células enquanto as componentes vetoriais são armazenadas nas fronteiras laterais de cada célula. A componente $u$ do vetor $\vec{v}$, de forma que $\vec{v}\ =\ (u,v)$, é armazenado nas fronteiras verticais das células (setas horizontais), enquanto a componente $v$ é armazenada nas fronteiras horizontais (setas verticais), como mostrado na Figura \ref{malha deslocada} \citep{Fortuna2000}. Na prática, tem-se múltiplas malhas computacionais, uma para cada uma das componentes vetoriais e uma para as componentes escalares, sendo que cada malha possui suas próprias fronteiras e domínio.
+
+É descrito por \citet{Malalasekera2007}, que esta abordagem corrige algumas inconsistências da malha colocada quanto a descrição do campo de pressão, que é crucial para a convergência numérica do escoamento. Por este motivo a malha deslocada é a mais utilizada em softwares que utilizam malhas estruturadas, na qual as fronteiras e o padrão de malha é bem definido e normalmente cartesiano, apara a resolução dos escoamentos.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.65\textwidth]{imagens/modelo_de_malha_colocada_ingrid.png}
+    \caption{Modelo de malha colocada. }
+    \label{malha colocada}
+    {\footnotesize Fonte: Do próprio autor}
+\end{figure}
+
+Embora a malha colocada apresente algumas inconsistências no cálculo do gradiente de pressão, ela é amplamente utilizada em softwares que adotam malhas não estruturadas. Nesses casos, não existe um padrão rígido para a geração da malha, o que dificulta a aplicação de múltiplas malhas para diferentes variáveis, como ocorre na abordagem deslocada. Malhas não estruturadas são frequentemente empregadas em softwares comerciais e de código aberto, como o Ansys e o OpenFOAM, devido à sua flexibilidade para lidar com geometrias complexas e industriais. Existe uma vasta gama de teorias específicas que buscam mitigar as inconsistências dessa abordagem \citep{Malalasekera2007}.
+
+Apesar das limitações das malhas estruturadas em representar geometrias complexas, frente as malhas não estruturadas, metodologias como a fronteira imersa oferecem uma solução prática para representar geometrias espaciais complexas, tornando-as viáveis para uso em contextos industriais. Essa abordagem tem ganhado relevância, especialmente em áreas como a engenharia aeronáutica e automotiva no Brasil, onde a demanda por soluções eficientes é crescente.
+
+\section{Volumes Finitos}
+
+Dentre as possíveis metodologias para a discretização de equações diferenciais parciais, o mais utilizado para as equações que represemtam os escoamentos, é o método dos volumes finitos, por garantir o correto balanço das informações físicas, como a conservação da massa global dos sistemas \citet{Malalasekera2007} e \citet{maliska2023}.
+
+O método dos volumes finitos divide o domínio computacional em pequenos volumes de controle, chamados células computacionais, e faz a média das informações físicas ao longo desses volumes, com a informação física sendo guardada no centro de cada um deles. Uma abordagem matemática mais detalhada desta metodologia pode ser encontrada em \citet{Malalasekera2007} e \citet{maliska2023}, a partir da discretização das equações utilizadas será possível obter um melhor entendimento da aplicação do método.
+
+Seguindo esta abordagem, utilizando volumes finitos, uma estratégia muito utilizada para a implementação das condições de contorno é a das células fantasmas. Na Figura \ref{modelo de malha} é mostrado um domínio computacional com as células fantasmas em questão. A estratégia é utilizar células que não pertencem ao domínio fluido para que as condições de contorno sejam impostas de forma indireta.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\linewidth]{imagens/malha-modelo-fantasma.png}
+    \caption{Domínio físico com células fantasmas para condições de contorno.}
+    \label{modelo de malha}
+    {\footnotesize Fonte: Do próprio autor}
+\end{figure}
+
+As condições são impostas da seguinte forma para Dirichlet, Eq. \ref{direchlet}:
+
+\begin{equation}
+    P_E=2\ast P-P_P
+    \label{direchlet}
+\end{equation}
+
+E para Neumann, Eq. \ref{neumann}:
+
+\begin{equation}
+    P_E=P_P
+    \label{neumann}
+\end{equation}
+
+Isso é feito para as outras células fantasmas, não foram considerados condições de terceira espécie no presente trabalho.
+
+As direções definidas como positiva são as indicadas pela Figura \ref{malha deslocada}. As direções são definidas com a letra $i$ para a direção $x$ e a letra $j$ para a direção $y$, de forma que, Eq. \ref{definição de ij inicio} a \ref{definição de ij fim}:
+
+\begin{align}
+    &P_P=P_{ij}\label{definição de ij inicio}\\
+    &P_E=P_{i-1j}\\
+    &P_D=P_{i+1j}\\
+    &P_S=P_{ij+1}\\
+    &P_I=P_{ij+1}\label{definição de ij fim}
+\end{align}
+
+Na qual $P_S$ é a célula acima da de interesse (superior) e $P_I$ a célula abaixo. Será considerado $n$  sobrescrito$ (p_{ij}^n)$ para o passo de tempo anterior e $n+1$ para o passo de tempo atual. 
+
+Para o presente trabalho, a menos que se espeficique o contrario, as integrais triplas consideradas são feitas no domínio computacional da célula, sendo assim a seguinte notação se torna equivalente para este trabalho: 
+
+\begin{equation}
+    \int_{t}^{t + \Delta t} \int_{y_{j - \frac{1}{2} \Delta y}}^{y_{j + \frac{1}{2} \Delta y}} \int_{x_{i - \frac{1}{2} \Delta x}}^{x_{i + \frac{1}{2} \Delta x}} \, dx \, dy \, dt = \int \int \int \, dx \, dy \, dt \nonumber
+\end{equation}
+
+\section{Discretização da Equação da Energia}
+
+Retomando a equação \ref{energia-completa} como ponto de partida temos: 
+
+\begin{equation}
+    \frac{\partial T}{\partial t}+\vec{v}\mathrm{\nabla}\cdot T=\alpha\mathrm{\nabla}^2T \nonumber
+\end{equation}
+
+Aplicando os operadores e expandindo a equação, considerando o modelo bidimensional, Eq. \ref{energia-aberta}:
+
+\begin{equation}
+    \frac{\partial T}{\partial t}+\left(u\frac{\partial T}{\partial x}\ +\ v\frac{\partial T}{\partial y}\right)=\alpha\left(\frac{\partial^2T}{\partial x^2}\ +\ \frac{\partial^2T}{\partial x^2}\right) 
+    \label{energia-aberta}
+\end{equation}
+
+Para realizar a discretização, se aplica a integral em cada um dos termos com relação às variáveis $x$, $y$ e $t$. começando pelo termo temporal temos, Eq. \ref{energia-temporal}:
+
+\begin{equation}
+    \int_{t}^{t+\Delta t}{\iint\frac{\partial T}{\partial t}dxdydt}=\left(T_P^{n+1}-T_P^n\right)\mathrm{\Delta x\Delta y}
+    \label{energia-temporal}
+\end{equation}
+
+O passo de tempo no qual será considerado os demais termos é arbitrário e diferentes abordagens podem ser encontradas na literatura \citep{Fortuna2000}. Para a equação de balanço de energia térmica, foi utilizado o método totalmente implícito, tomando todos os termos no tempo atual. O método utilizado para o termo temporal é também chamado de método de Euler.
+
+Para a discretização do termo advectivos temos, Eq. \ref{advec-energia-integral}:
+
+\begin{equation}
+    \iiint{\left(u\frac{\partial T}{\partial x}\ +\ v\frac{\partial T}{\partial y}\right)dydxdt\ =\ }u\left(T_d-T_e\right)\mathrm{\Delta y}\ \mathrm{\Delta t}\ +\ v\left(T_i-T_s\right)\mathrm{\Delta x}\ \mathrm{\Delta t}           
+    \label{advec-energia-integral}
+\end{equation}
+
+Foi utilizado o método das diferenças centradas para calcular o valor das propriedades escalares nas paredes, de forma que Eq. \ref{energia-centradas-inicio} a \ref{energia-centradas-fim}:
+
+\begin{align}
+    &T_e=\frac{T_P+T_E}{2}\label{energia-centradas-inicio}\\
+    &T_d=\frac{T_D+T_P}{2}\\
+    &T_i=\frac{T_I+T_P}{2}\\
+    &T_S=\frac{T_P+T_S}{2}\label{energia-centradas-fim}
+\end{align}
+
+Substituindo as equações \ref{energia-centradas-inicio} a \ref{energia-centradas-fim} na equação \ref{advec-energia-integral} e aplicando as devidas simplificações temos, Eq. \ref{advec-desenvolvida}:
+
+\begin{equation}
+    \left(u\frac{\partial T}{\partial x}\ +\ v\frac{\partial T}{\partial y}\right)\ =\ u\left(\frac{T_D-T_E}{2}\right)\mathrm{\Delta y}\ \mathrm{\Delta t}\ +\ v\left(\frac{T_I-T_S}{2}\right)\mathrm{\Delta x}\ \mathrm{\Delta t}
+    \label{advec-desenvolvida}
+\end{equation}
+
+Apesar do método das diferenças centradas não levar em conta a orientação do escoamento \citep{Malalasekera2007}, seus resultados foram satisfatórios para os problemas apresentados.
+
+Para o termo difusivo temos, Eq. \ref{termo-difusivo-aberto}: 
+
+\begin{equation}
+    \alpha\left(\frac{\partial^2T}{\partial x^2}\ +\ \frac{\partial^2T}{\partial x^2}\right)\ =\ \alpha\left(\left(\ {\frac{\partial T}{\partial x}}_d-\ {\frac{\partial T}{\partial x}}_e\right)\mathrm{\Delta y}\ +\ \left(\ {\frac{\partial T}{\partial y}}_i-\ {\frac{\partial T}{\partial y}}_s\right)\mathrm{\Delta x}\right)\mathrm{\Delta t}              \label{termo-difusivo-aberto}
+\end{equation}
+
+Considerando novamente o esquema de diferenças centradas temos, Eq. \ref{cds-derivadas-inicio} a \ref{cds-derivadas-fim}:
+
+\begin{align}
+    &{\frac{\partial T}{\partial x}}_e\ =\ \frac{T_P-T_E}{\mathrm{\Delta x}}\label{cds-derivadas-inicio}\\
+    &{\frac{\partial T}{\partial x}}_d\ =\ \frac{T_D-T_P}{\mathrm{\Delta x}}\\
+    &{\frac{\partial T}{\partial y}}_i\ =\ \frac{T_I-T_P}{\mathrm{\Delta y}}\\
+    &{\frac{\partial T}{\partial y}}_s\ =\ \frac{T_P-T_S}{\mathrm{\Delta y}}\label{cds-derivadas-fim}\\
+\end{align}
+
+Substituindo as equações \ref{cds-derivadas-inicio} a \ref{cds-derivadas-fim} na equação \ref{termo-difusivo-aberto} temos, Eq. \ref{termo-difusivo-completo}:
+
+\begin{equation}
+    \alpha\left(\frac{\partial^2T}{\partial x^2}\ +\ \frac{\partial^2T}{\partial x^2}\right)\ =\alpha\left(\left(\ \frac{T_E\ -\ 2T_P\ +T_D\ }{\mathrm{\Delta x}}\right)\mathrm{\Delta y}\ +\ \left(\frac{T_I\ -\ 2T_P\ +T_S\ }{\mathrm{\Delta y}}\right)\mathrm{\Delta x}\right)\mathrm{\Delta t}\ 
+    \label{termo-difusivo-completo}
+\end{equation}
+
+Agrupando as equações \ref{energia-temporal}, \ref{advec-desenvolvida} e \ref{termo-difusivo-completo} temos, Eq. \ref{energia-completa-discretizada}:
+
+\begin{align}
+    &\left(T_p^{n+1}-T_p^n\right)\mathrm{\Delta x\Delta y} + u\left(\frac{T_D - T_E}{2}\right)\mathrm{\Delta y}\ \mathrm{\Delta t} \nonumber \\
+    &\quad + v\left(\frac{T_I - T_S}{2}\right)\mathrm{\Delta x}\ \mathrm{\Delta t} \nonumber \\
+    &= \alpha\left(\frac{T_E - 2T_P + T_D}{\mathrm{\Delta x}}\mathrm{\Delta y} + \frac{T_I - 2T_P + T_S}{\mathrm{\Delta y}}\mathrm{\Delta x}\right)\mathrm{\Delta t}  
+    \label{energia-completa-discretizada}
+\end{align}
+
+Substituindo pela nomenclatura adotada no tópico anterior e agrupando termos similares temos, Eq. \ref{energia-discretizada-ij}:
+
+\begin{align}
+    &T_{ij}^{n+1}\left(1 + \frac{2\alpha\Delta t}{\mathrm{\Delta}x^2} + \frac{2\alpha\Delta t}{\mathrm{\Delta}y^2} \right) \nonumber \\
+    &\quad - T_{i+1j}^{n+1}\frac{\alpha\Delta t}{\mathrm{\Delta}x^2} - T_{i-1j}^{n+1}\frac{\alpha\Delta t}{\mathrm{\Delta}x^2} \nonumber \\
+    &\quad - T_{ij+1}^{n+1}\frac{\alpha\Delta t}{\mathrm{\Delta}y^2} - T_{ij-1}^{n+1}\frac{\alpha\Delta t}{\mathrm{\Delta}y^2} \nonumber \\
+    &\quad + u_{ij}^n\left(\frac{T_{i+1j}^{n+1} - T_{i-1j}^{n+1}}{2\mathrm{\Delta x}}\right) \mathrm{\Delta t} \nonumber \\
+    &\quad + v_{ij}^n\left(\frac{T_{ij+1}^{n+1} - T_{ij-1}^{n+1}}{2\mathrm{\Delta y}}\right)\mathrm{\Delta t} = T_{ij}^n
+    \label{energia-discretizada-ij}
+\end{align}
+
+Com essa formulação é possível montar um sistema de equações do tipo:
+
+\begin{equation}
+    Ax\ =\ b\nonumber
+\end{equation}
+
+Que é compatível com os métodos de solução de sistemas lineares.
+
+\section{Acoplamento Pressão-Velocidade}
+
+A solução da equação de balanço da quantidade de movimento, acaba sendo dificultada pela quantidade de incógnitas a serem modeladas em relação a quantidade de equações disponíveis \citep{Aristeu2020}.
+
+De fato, retomando as equações \ref{continuidade-completa} e \ref{momentum-completa} temos:
+
+\begin{align}
+    &\vec{\mathrm{\nabla}}\cdot\left(\vec{v}\right)=0\nonumber\\
+    &\frac{\partial\vec{v}}{\partial t}+\left(\vec{v}\cdot\vec{\nabla}\right)\vec{v}=-\vec{\nabla}p+\vec{\nabla}\cdot\eta\left(\dot{\gamma}\right)\dot{\gamma}+\beta\Delta T\vec{g}\nonumber
+\end{align}
+
+Nas equações de balanço tem-se três incógnitas a serem modeladas: u, v e p de forma que tem-se menos equações variáveis. Se faz necessário recorrer a equação da continuidade, retomando a equação \ref{continuidade-completa} e abrindo temos, Eq. \ref{continuidade - aberta}:
+
+\begin{equation}
+    \frac{\partial u}{\partial x}\ +\ \frac{\partial v}{\partial y}=0
+    \label{continuidade - aberta}
+\end{equation}
+
+É possível perceber que a equação da continuidade não contém a componente de pressão, de forma que seria necessário manipulações matemáticas para utilizar a equação em conjunto com as demais. 
+
+Metodologias como \textit{Semi-Implicit Method for Pressure-Linked Equations (SIMPLE)}, \textit{Pressure-Implicit with Splitting of Operators (PISO)} e o método da projeção de Chorin são comumente utilizadas na literatura para lidar com este problema de fechamento \citep{Malalasekera2007}. No desenvolvimento do software foi adotado uma variação do método de Chorin, também chamado de método do passo fracionado (\textit{Fractional Step em inglês}) \citep{Santos2022}.
+
+A partir do campo inicial de pressão, do passo de tempo anterior, chamado de $p_0$ é determinado um campo de velocidade aproximado $\vec{V^\ast}$. De forma que, Eq. \ref{continuidade-correção} e \ref{continuidade-correção-temporal}:
+
+ \begin{align}
+     &\frac{\partial{\vec{v}}^\ast}{\partial t}+\left(\vec{v}\cdot\vec{\nabla}\right)\vec{v}=-\frac{1}{\rho}\vec{\nabla}p_0+\frac{1}{\rho}\vec{\nabla}\cdot\eta\left(\dot{\gamma}\right)\dot{\gamma}+\beta\Delta T\vec{g}\label{continuidade-correção}\\
+     &\frac{v^\ast-v^n}{\Delta t}+\left(\vec{v}\cdot\vec{\nabla}\right)\vec{v}=-\frac{1}{\rho}\vec{\nabla}p_0+\frac{1}{\rho}\vec{\nabla}\cdot\eta\left(\dot{\gamma}\right)\dot{\gamma}+\beta\Delta T\vec{g}\label{continuidade-correção-temporal}
+ \end{align}
+
+ Foi considerado a integral em $t$ utilizando o método de Euler, para simplificar a descrição do modelo.
+
+ Enquanto a real velocidade seria, Eq. \ref{velocidade-real} e \ref{velocidade-real-temporal}:
+
+ \begin{align}
+     &\frac{\partial\vec{v}}{\partial t}+\frac{1}{\rho}\left(\vec{v}\cdot\vec{\nabla}\right)\vec{v}=-\frac{1}{\rho}\vec{\mathrm{\nabla}}p+\frac{1}{\rho}\vec{\nabla}\cdot\eta\left(\dot{\gamma}\right)\dot{\gamma}+\beta\Delta T\vec{g}\label{velocidade-real}\\
+    &\frac{v^{n+1}-v^n}{\Delta t}+\left(\vec{v}\cdot\vec{\nabla}\right)\vec{v}=-\frac{1}{\rho}\vec{\mathrm{\nabla}}p+\frac{1}{\rho}\vec{\nabla}\cdot\eta\left(\dot{\gamma}\right)\dot{\gamma}+\beta\Delta T\vec{g}\label{velocidade-real-temporal}
+ \end{align}
+
+ Subtraindo a equação \ref{continuidade-correção-temporal} da equação \ref{velocidade-real-temporal} temos, Eq. \ref{correção de  velocidade -nd}:
+
+ \begin{equation}
+     \frac{\vec{v}\ -\ {\vec{v}}^\ast}{\Delta t}=-\frac{1}{\rho}\vec{\mathrm{\nabla}}\left(p-p_0\right)
+     \label{correção de  velocidade -nd}
+ \end{equation}
+
+ É possível definir um fator de correção para levar o campo de pressão do tempo anterior para o tempo atual da seguinte forma, Eq. \ref{p=p-po}:
+
+ \begin{equation}
+     p=p_0+\ p^\prime
+     \label{p=p-po}
+ \end{equation}
+
+ De forma que podemos reorganizar os termos em, Eq. \ref{pl=p-p0}:
+
+ \begin{equation}
+     p^\prime\ =\ p-p_0	
+     \label{pl=p-p0}
+ \end{equation}
+
+ Assim, substituindo a equação \ref{pl=p-p0} na equação \ref{correção de  velocidade -nd}, temos, Eq. \ref{correção-correta-nd}:
+
+ \begin{equation}
+     \frac{\vec{v}\ -\ {\vec{v}}^\ast}{\Delta t}=-\frac{1}{\rho}\vec{\mathrm{\nabla}}p^\prime\ 
+     \label{correção-correta-nd}
+ \end{equation}
+
+ Aplicando o divergente em ambos os lados da equação, Eq. \ref{momentum-desenvolvimento}:
+
+\begin{align}
+     &\vec{\mathrm{\nabla}}\cdot\ \frac{\vec{v}\ -\ {\vec{v}}^\ast}{\Delta t}=-\frac{1}{\rho}\vec{\mathrm{\nabla}}\cdot\vec{\mathrm{\nabla}}p^\prime\ \nonumber\\
+     &\frac{\vec{\mathrm{\nabla}}\cdot\vec{v}\ -\ \vec{\mathrm{\nabla}}\cdot{\vec{v}}^\ast}{\Delta t}=-\frac{1}{\rho}\vec{\mathrm{\nabla}}^2p'\label{momentum-desenvolvimento}
+\end{align}
+
+ Utilizando a equação da continuidade temos, Eq. \ref{correção-pressão-completo}:
+
+\begin{align}
+    &\vec{\mathrm{\nabla}} \cdot \vec{v} = 0 \nonumber \\
+    &\vec{\mathrm{\nabla}} \cdot \vec{v}^* = \frac{\Delta t}{\rho} \vec{\mathrm{\nabla}}^2 p' \label{correção-pressão-completo}
+\end{align}
+
+ Manipulando a equação \ref{momentum-desenvolvimento} temos, Eq. \ref{v=vl-p}: 
+
+ \begin{equation}
+     \vec{v}=\ {\vec{v}}^\ast-\frac{\Delta t}{\rho}\vec{\mathrm{\nabla}}p^\prime
+     \label{v=vl-p}
+ \end{equation}
+
+ Que para o presente trabalho pode ser escrito como, Eq. \ref{correção-ul} e \ref{correção-vl}:
+
+\begin{align}
+    &u=\ u^\ast-\frac{\mathrm{\Delta t}}{\rho}\frac{\partial p^\prime}{\partial x}\label{correção-ul}\\
+   &v=\ v^\ast-\frac{\mathrm{\Delta t}}{\rho}\frac{\partial p^\prime}{\partial x}\label{correção-vl}
+\end{align}
+
+O que fecha a modelagem do acoplamento pressão-velocidade utilizando o método da projeção de Chorin.
+
+Sintetizando as etapas para a resolução dos campos de pressão e velocidade temos:
+
+\begin{itemize}
+    \item Cálculo do campo de velocidade aproximado com a pressão do passo de tempo anterior usando a equação \ref{continuidade-correção-temporal}:
+    \begin{equation*}
+        \frac{v^\ast-v^n}{\Delta t}+\left(\vec{v}\cdot\vec{\nabla}\right)\vec{v}=-\frac{1}{\rho}\vec{\nabla}p_0+\frac{1}{\rho}\vec{\nabla}\cdot\eta\left(\dot{\gamma}\right)\dot{\gamma}+\beta\Delta T\vec{g}
+    \end{equation*}
+    \item Cálculo da correção do campo de pressão, Eq. \ref{correção-pressão-completo}:
+    \begin{equation*}
+    \vec{\mathrm{\nabla}} \cdot \vec{v}^* = \frac{\Delta t}{\rho} \vec{\mathrm{\nabla}}^2 p' \end{equation*}
+    \item Correção do campo de velocidade para o passo de tempo atual, Eq. \ref{v=vl-p}:
+    \begin{equation*}
+        \vec{v}=\ {\vec{v}}^\ast-\frac{\Delta t}{\rho}\vec{\mathrm{\nabla}}p^\prime
+    \end{equation*}
+    
+    
+    \item Correção do campo de pressão para o passo de tempo posterior, Eq. \ref{p=p-po}:
+    \begin{equation*}
+        p=p_0+\ p^\prime
+    \end{equation*} 
+\end{itemize}
+
+\section{Discretização das Equações do Acoplamento Pressão-Velocidade}
+
+Expandindo a equação \ref{momentum-completa} em suas componentes temos, Eq. \ref{momentum-u} e \ref{momentum-v}
+
+\begin{align}
+    &\frac{\partial u}{\partial t}+\left(u\frac{\partial u}{\partial x}\ +\ v\frac{\partial v}{\partial y}\right)=-\frac{1}{\rho}\frac{\partial p}{\partial x}+\frac{1}{\rho}\vec{\mathrm{\nabla}}\cdot\eta\left(\dot{\gamma}\right)\dot{\gamma} \label{momentum-u}\\
+    &\frac{\partial v}{\partial t}+\left(u\frac{\partial v}{\partial x}\ +\ v\frac{\partial v}{\partial y}\right)=-\frac{1}{\rho}\frac{\partial p}{\partial y}+\frac{1}{\rho}\vec{\mathrm{\nabla}}\cdot\eta\left(\dot{\gamma}\right)\dot{\gamma}+\beta\Delta Tg\label{momentum-v}
+\end{align}
+
+Devido à complexidade do termo difusivo é pertinente realizar o detalhamento deste termo separadamente. Assim temos, Eq. \ref{termo difusivo - p1}, \ref{termo difusivo - p2}:
+
+\begin{align}
+    &\vec{\mathrm{\nabla}}\cdot\eta\left(\dot{\gamma}\right)\dot{\gamma}\ =\vec{\mathrm{\nabla}}\ \cdot\left(\begin{matrix}\eta\left(\dot{\gamma}\right)2\frac{\partial u}{\partial x}&\eta\left(\dot{\gamma}\right)\left(\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}\right)\\\eta\left(\dot{\gamma}\right)\left(\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}\right)&\eta\left(\dot{\gamma}\right)2\frac{\partial v}{\partial y}\\\end{matrix}\right)\label{termo difusivo - p1}\\
+    &\vec{\mathrm{\nabla}}\ \cdot\left(\begin{matrix}\eta\left(\dot{\gamma}\right)2\frac{\partial u}{\partial x}&\eta\left(\dot{\gamma}\right)\left(\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}\right)\\\eta\left(\dot{\gamma}\right)\left(\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}\right)&\eta\left(\dot{\gamma}\right)2\frac{\partial v}{\partial y}\\\end{matrix}\right)\ \nonumber\\
+    &=\ \left(\begin{matrix}\frac{\partial}{\partial x}\left(\eta\left(\dot{\gamma}\right)2\frac{\partial u}{\partial x}\right)\ +\frac{\partial}{\partial y}\left(\eta\left(\dot{\gamma}\right)\left(\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}\right)\right)\ \\\frac{\partial}{\partial x}\left(\eta\left(\dot{\gamma}\right)\left(\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}\right)\right)\ +\ \frac{\partial}{\partial y}\left(\eta\left(\dot{\gamma}\right)2\frac{\partial v}{\partial y}\right)\\\end{matrix}\right)\ \label{termo difusivo - p2}
+\end{align}
+
+Resolvendo o divergente e substituindo nas equações \ref{momentum-u} e \ref{momentum-v} resulta em, Eq. \ref{momentum-cdifusivo-u} e \ref{momentum-cdifusivo-v}:
+
+\begin{align}
+    &\frac{\partial u}{\partial t}+\left(u\frac{\partial u}{\partial x}\ +\ v\frac{\partial v}{\partial y}\right)=-\frac{1}{\rho}\frac{\partial p}{\partial x}+\frac{1}{\rho}\frac{\partial}{\partial x}\left(\eta\left(\dot{\gamma}\right)2\frac{\partial u}{\partial x}\right)\ +\frac{1}{\rho}\frac{\partial}{\partial y}\left(\eta\left(\dot{\gamma}\right)\left(\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}\right)\right) \label{momentum-cdifusivo-u} \\
+    &\frac{\partial v}{\partial t}+\left(u\frac{\partial v}{\partial x}\ +\ v\frac{\partial v}{\partial y}\right)=-\frac{1}{\rho}\frac{\partial p}{\partial y}+\frac{1}{\rho}\frac{\partial}{\partial x}\left(\eta\left(\dot{\gamma}\right)\left(\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}\right)\right)\ +\frac{1}{\rho}\ \frac{\partial}{\partial y}\left(\eta\left(\dot{\gamma}\right)2\frac{\partial v}{\partial y}\right)+\beta\Delta Tg\label{momentum-cdifusivo-v}
+\end{align}
+
+Tomando como referência o passo a passo adotado na discretização dos termos da equação da energia, temos:
+
+A discretização do termo temporal, Eq. \ref{temporal-u} e \ref{temporal-v}:
+
+\begin{align}
+    &\iiint\frac{\partial u}{\partial t}dxdydt=\left(u_P^\ast-u_P^n\right)\ \Delta x\Delta y\label{temporal-u}\\
+    &\iiint\frac{\partial v}{\partial t}dxdydt=\left(v_P^\ast-v_P^n\right)\ \Delta x\Delta y\label{temporal-v}
+\end{align}
+
+A discretização do termo advectivo utilizando diferenças centradas, Eq. \ref{discretização - advectivo -  u} e \ref{discretização - advectivo -  v}:
+
+\begin{align}
+    &u\iiint\frac{\partial u}{\partial x}dxdydt+v\iiint\frac{\partial u}{\partial y}dxdydt=u_p\left(\frac{u_D-u_E}{2}\right)\mathrm{\Delta y}\ \Delta t+\ v_p\left(\frac{u_I-u_S}{2}\right)\Delta x\ \Delta t\label{discretização - advectivo -  u} \\
+    &u\iiint\frac{\partial v}{\partial x}dxdydt+v\iiint\frac{\partial v}{\partial y}dxdydt=u_p\left(\frac{v_D-v_E}{2}\right)\mathrm{\Delta y}\ \Delta t+\ v_p\left(\frac{v_I-v_S}{2}\right)\Delta x\ \Delta t  \label{discretização - advectivo -  v}
+\end{align}
+
+Para a discretização do termo de pressão temos, Eq. \ref{discretização - px} e \ref{discretização - py}:
+
+\begin{align}
+    &\frac{\partial p}{\partial x}=\ \Delta t\Delta y\ \left(p_D-p_E\right)\label{discretização - px}\\
+    &\frac{\partial p}{\partial y}=\ \Delta t\Delta x\left(p_I-p_S\right)\label{discretização - py}
+\end{align}
+
+Sendo essa notação baseada na definição de domínio adotada no tópico anterior.
+
+A discretização do termo difusivo pode ser feitas por partes, a primeira resulta em, Eq. \ref{difusivo - p1x} e \ref{difusivo - p1y}:
+
+\begin{align}
+    &\iiint{\frac{\partial}{\partial x}\left(\eta\left(\dot{\gamma}\right)2\frac{\partial u}{\partial x}\right)}dxdydt=\ 2\left(\left(\eta\left(\dot{\gamma}\right)\frac{\partial u}{\partial x}\right)_d-\ \left(\eta\left(\dot{\gamma}\right)\frac{\partial u}{\partial x}\right)_e\right)\Delta y\Delta t \nonumber \\
+    \nonumber \\
+    \nonumber \\
+    &\iiint{\frac{\partial}{\partial y}\left(\eta\left(\dot{\gamma}\right)2\frac{\partial v}{\partial y}\right)}dxdydt=2\left(\left(\eta\left(\dot{\gamma}\right)\frac{\partial v}{\partial y}\right)_i-\ \left(\eta\left(\dot{\gamma}\right)\frac{\partial v}{\partial y}\right)_s\right)\Delta x\Delta t \nonumber \\
+    \nonumber \\
+    \nonumber \\
+    &2\left(\left(\eta\left(\dot{\gamma}\right)\frac{\partial u}{\partial x}\right)_d-\ \left(\eta\left(\dot{\gamma}\right)\frac{\partial u}{\partial x}\right)_e\right)\Delta y\Delta t=2\left({\eta\left(\dot{\gamma}\right)}_d\frac{u_D-u_P\ }{\Delta x}-\ {\eta\left(\dot{\gamma}\right)}_e\frac{u_P-u_E\ }{\Delta x}\right)\Delta y\Delta t\ \label{difusivo - p1x} \\
+    \nonumber \\
+    \nonumber \\
+    &2\left(\left(\eta\left(\dot{\gamma}\right)\frac{\partial v}{\partial y}\right)_i-\ \left(\eta\left(\dot{\gamma}\right)\frac{\partial v}{\partial y}\right)_s\right)\mathrm{\Delta x\Delta t}=2\left({\eta\left(\dot{\gamma}\right)}_i\frac{v_I-v_P\ }{\mathrm{\Delta y}}-\ {\eta\left(\dot{\gamma}\right)}_s\frac{v_P-v_S\ }{\mathrm{\Delta y}}\right)\mathrm{\Delta x\Delta t}\label{difusivo - p1y}
+\end{align}
+
+Para posterior uso nos métodos numéricos, é eficiente dividir o termo que resta da difusão em duas partes, Eq. \ref{difusivo - p2x} e \ref{difusivo - p2y}:
+
+\begin{align}
+    &\frac{\partial}{\partial y}\left(\eta\left(\dot{\gamma}\right)\left(\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}\right)\right)=\frac{\partial}{\partial y}\left(\eta\left(\dot{\gamma}\right)\frac{\partial u}{\partial y}\right)\ +\frac{\partial}{\partial y}\left(\eta\left(\dot{\gamma}\right)\ \frac{\partial v}{\partial x}\right)\nonumber \\
+    &\frac{\partial}{\partial x}\left(\eta\left(\dot{\gamma}\right)\left(\frac{\partial u}{\partial y}\ +\ \frac{\partial v}{\partial x}\right)\right)=\frac{\partial}{\partial x}\left(\eta\left(\dot{\gamma}\right)\frac{\partial u}{\partial y}\right)\ +\frac{\partial}{\partial x}\left(\eta\left(\dot{\gamma}\right)\ \frac{\partial v}{\partial x}\right)\ \  \nonumber \\
+    &\iiint{\frac{\partial}{\partial y}\left(\eta\left(\dot{\gamma}\right)\frac{\partial u}{\partial y}\right) \, dxdydt} 
+    + \iiint{\frac{\partial}{\partial y}\left(\eta\left(\dot{\gamma}\right)\frac{\partial v}{\partial x}\right) \, dxdydt} \nonumber \\
+    = & \left(\eta\left(\dot{\gamma}\right)_i \frac{u_I - u_P}{\Delta y} - \eta\left(\dot{\gamma}\right)_s \frac{u_P - u_S}{\Delta y}\right) \Delta x \Delta t \nonumber \\
+    & + \left(\eta\left(\dot{\gamma}\right)_i \frac{\partial v}{\partial x}_i - \eta\left(\dot{\gamma}\right)_s \frac{\partial v}{\partial x}_s\right) \Delta x \Delta t
+    \label{difusivo - p2x} \\
+    & \iiint{\frac{\partial}{\partial x}\left(\eta\left(\dot{\gamma}\right)\frac{\partial u}{\partial y}\right) dxdydt} 
+    + \iiint{\frac{\partial}{\partial x}\left(\eta\left(\dot{\gamma}\right)\frac{\partial v}{\partial x}\right) dxdydt} \nonumber \\
+    = & \left(\eta\left(\dot{\gamma}\right)_d \frac{\partial u}{\partial y}_d - \eta\left(\dot{\gamma}\right)_e \frac{\partial u}{\partial y}_e\right) \Delta y \Delta t \nonumber \\
+    & + \left(\eta\left(\dot{\gamma}\right)_d \frac{v_D - v_P}{\Delta x} - \eta\left(\dot{\gamma}\right)_e \frac{v_P - v_E}{\Delta x}\right) \Delta y \Delta t
+    \label{difusivo - p2y}
+\end{align}
+
+Unindo as equações \ref{temporal-u}, \ref{discretização - advectivo -  u}, \ref{discretização - px}, \ref{difusivo - p1x} e \ref{difusivo - p2x} para a coordenada u e \ref{temporal-v}, \ref{discretização - advectivo -  v}, \ref{discretização - py}, \ref{difusivo - p1y} e \ref{difusivo - p2y} temos, Eq. \ref{continuidade-u-discretizada-completa} e \ref{continuidade-v-discretizada-completa}:
+
+\begin{align}
+    & \left(u_P^{\ast n+1} - u_P^n\right) \Delta x \Delta y 
+    + u_P \left(\frac{u_D - u_E}{2}\right) \Delta y \Delta t 
+    + v_P \left(\frac{u_I - u_S}{2}\right) \Delta x \Delta t \nonumber \\
+    = & -\frac{\Delta t \Delta y}{\rho} \left(p_D - p_E\right) 
+    + 2 \frac{1}{\rho} \left(\eta\left(\dot{\gamma}\right)_d \frac{u_D - u_P}{\Delta x} 
+    - \eta\left(\dot{\gamma}\right)_e \frac{u_P - u_E}{\Delta x}\right) \Delta y \Delta t \nonumber \\
+    & + \frac{1}{\rho} \left(\eta\left(\dot{\gamma}\right)_i \frac{u_I - u_P}{\Delta y} 
+    - \eta\left(\dot{\gamma}\right)_s \frac{u_P - u_S}{\Delta y}\right) \Delta x \Delta t \nonumber \\
+    & + \frac{1}{\rho} \left(\eta\left(\dot{\gamma}\right)_i \frac{\partial v}{\partial x}_i 
+    - \eta\left(\dot{\gamma}\right)_s \frac{\partial v}{\partial x}_s\right) \Delta x \Delta t
+    \label{continuidade-u-discretizada-completa} \\
+    & \left(v_P^\ast - v_P^n\right) \Delta x \Delta y 
+    + u_P \left(\frac{v_D - v_E}{2}\right) \Delta y \Delta t 
+    + v_P \left(\frac{v_I - v_S}{2}\right) \Delta x \Delta t \nonumber \\
+    = & -\frac{\Delta t \Delta x}{\rho} \left(p_I - p_S\right) 
+    + 2 \frac{1}{\rho} \left(\eta\left(\dot{\gamma}\right)_i \frac{v_I - v_P}{\Delta y} 
+    - \eta\left(\dot{\gamma}\right)_s \frac{v_P - v_S}{\Delta y}\right) \Delta x \Delta t \nonumber \\
+    & + \frac{1}{\rho} \left(\eta\left(\dot{\gamma}\right)_d \frac{\partial u}{\partial y}_d 
+    - \eta\left(\dot{\gamma}\right)_e \frac{\partial u}{\partial y}_e\right) \Delta y \Delta t \nonumber \\
+    & + \frac{1}{\rho} \left(\eta\left(\dot{\gamma}\right)_d \frac{v_D - v_P}{\Delta x} 
+    - \eta\left(\dot{\gamma}\right)_e \frac{v_P - v_E}{\Delta x}\right) \Delta y \Delta t 
+    + \beta \Delta Tg
+    \label{continuidade-v-discretizada-completa}
+\end{align}
+
+Considerando o termo advectivo no passo de tempo anterior, para evitar não linearidades no sistema de equações, e o termo difusivo, com exceção das derivadas cruzadas no tempo atual para aumentar a estabilidade do sistema. Para facilitar a escrita das equações será considerado que $v_P^\ast=\ v_{ij}^{\ast n+1}$, agrupando os termos das equações temos, Eq. \ref{discretizada-u-nomenclatura} e \ref{discretizada-v-nomenclatura}:
+
+\begin{align}
+    &u_{i,j}^{n+1} - a \frac{2 \Delta t}{\rho \Delta x^2} \left[ \eta(y_j) u_{i+1,j}^{n+1} + \eta(y_j) u_{i-1,j}^{n+1} \right] - \frac{\Delta t}{\rho \Delta y^2} \left[ \eta(y_{j+1}) u_{i,j+1}^{n+1} + \eta(y_{j-1}) u_{i,j-1}^{n+1} \right] = b_u\label{discretizada-u-nomenclatura} \\
+    &v_{ij}^{\ast n+1}a_v-\frac{2\mathrm{\Delta t}}{\rho\Delta y^2}\left({\eta\left(\dot{\gamma}\right)}_iv_{ij+1}^{\ast n+1}+\ {\eta\left(\dot{\gamma}\right)}_sv_{ij-1}^{\ast n+1}\right)-\frac{\mathrm{\Delta t}}{\rho\Delta x^2}\left({\eta\left(\dot{\gamma}\right)}_dv_{i+1j}^{\ast n+1}+{\eta\left(\dot{\gamma}\right)}_ev_{i-1j}^{\ast n+1}\right)=b_v\label{discretizada-v-nomenclatura} \\
+    & b_v = v_{ij}^n - \frac{\Delta t}{\rho} \frac{p_{ij}^n - p_{ij-1}^n}{\Delta y} 
+    + \frac{\Delta t}{\rho \Delta x} \left(\eta\left(\dot{\gamma}\right)_d \frac{\partial u}{\partial y}_d - \eta\left(\dot{\gamma}\right)_e \frac{\partial u}{\partial y}_e\right) \nonumber \\
+    & - u_{ij}^n \Delta t \left(\frac{v_{i+1j}^n - v_{i-1j}^n}{2 \Delta x}\right) 
+    - v_{ij}^n \Delta t \left(\frac{v_{ij+1}^n - v_{ij-1}^n}{2 \Delta y}\right) 
+    + \beta (T_{ij} - T_{ref}) g \nonumber \\
+    &b_u = u_{ij}^n - \frac{\Delta t}{\rho} \frac{p_{ij}^n - p_{i-1j}^n}{\Delta x} 
+    - u_{ij}^n \Delta t \left(\frac{u_{i+1j}^n - u_{i-1j}^n}{2 \Delta x}\right) 
+    - v_{ij}^n \Delta t \left(\frac{u_{ij+1}^n - u_{ij-1}^n}{2 \Delta y}\right) \nonumber \\
+    & + \frac{\Delta t}{\rho \Delta y} \left(\eta\left(\dot{\gamma}\right)_i \frac{\partial v}{\partial x}_i - \eta\left(\dot{\gamma}\right)_s \frac{\partial v}{\partial x}_s\right) \nonumber \\
+    &a_u=\left(1+2\frac{\left({\eta\left(\dot{\gamma}\right)}_d+\ {\eta\left(\dot{\gamma}\right)}_e\right)\mathrm{\Delta t}\ }{\rho\Delta x^2}+\ \frac{\left({\eta\left(\dot{\gamma}\right)}_i+\ {\eta\left(\dot{\gamma}\right)}_s\right)\mathrm{\Delta t}\ }{\rho\Delta y^2}\right) \nonumber \\
+\end{align}
+
+Para a discretização do cálculo da correção da pressão, a equação resultante é uma equação de Poisson, de forma que sua estabilidade numérica é mais delicada que as demais equações, não atendendo por exemplo os requisitos de convergência dos métodos numéricos mais comuns, como será demostrado mais adiante. Retomando a equação \ref{correção-pressão-completo} temos, Eq. \ref{p' - aberto}:
+
+\begin{align}
+    &{\vec{\mathrm{\nabla}}}^2p^\prime=\frac{\rho}{\mathrm{\Delta t}}\ \vec{\mathrm{\nabla}}\cdot{\vec{v}}^\ast\nonumber \\
+    &\frac{\partial^2 p'}{\partial x^2} + \frac{\partial^2 p'}{\partial y^2} = \frac{\rho}{\Delta t} \left( \frac{\partial u^*}{\partial x} + \frac{\partial v^*}{\partial y} \right) \label{p' - aberto}
+\end{align}
+
+Seguindo os mesmos critérios das equações anteriores temos, Eq. \ref{correção da pressão - aberta - discretizada}:
+
+\begin{align}
+    &\left(\frac{p_D^\prime - p_P^\prime}{\Delta x} - \frac{p_P^\prime - p_E^\prime}{\Delta x} \right) \Delta y 
+    + \left(\frac{p_I^\prime - p_P^\prime}{\Delta y} - \frac{p_P^\prime - p_S^\prime}{\Delta y} \right) \Delta x \nonumber\\
+    &= \frac{\rho}{\Delta t} \left( (u_p^\ast - u_E^\ast) \Delta y + (v_p^\ast - v_S^\ast) \Delta x \right) \nonumber\\
+    &\quad + \left(\frac{p'_D - 2p'_P + p'_E}{\Delta x^2}\right) + \left(\frac{p'_I - 2p'_P + p'_S}{\Delta y^2}\right) \nonumber\\
+    &= \frac{\rho}{\Delta t} \left( \frac{(u^*_P - u^*_E)}{\Delta x} + \frac{(v^*_P - v^*_S)}{\Delta y} \right)\label{correção da pressão - aberta - discretizada}
+\end{align}
+
+
+Agrupando termos semelhantes e substituindo a nomenclatura, Eq. 5.6-23:
+
+\begin{equation}
+    p_{ij}^\prime\left(\frac{2}{\Delta x^2}+\ \frac{2}{\Delta y^2}\right)-\frac{p_{i+1j}^\prime}{\Delta x^2}\ -\frac{p_{i-1j}^\prime}{\Delta x^2}-\frac{p_{ij+1}^\prime}{\Delta y^2}-\frac{p_{ij-1}^\prime}{\Delta y^2}=\ \frac{\rho}{\mathrm{\Delta t}}\left(\frac{\left(\ u_{ij}^\ast-\ u_{i-1j}^\ast\right)}{\Delta x}+\frac{\left(\ v_{ij}^\ast-\ v_{ij-1}^\ast\right)}{\Delta y}\right)
+    \label{correção-pressão-final-discreto}
+\end{equation}
+
+O desenvolvimento numérico das demais etapas do método de Chorin é simples em relação aos demais, Eq. \ref{chorin - vet} a \ref{chorin - v}:
+
+\begin{align}
+    &\vec{v}=\ {\vec{v}}^\ast-\frac{\Delta t}{\rho}\vec{\mathrm{\nabla}}p^\prime \label{chorin - vet} \\
+    &u=\ u^\ast-\frac{\Delta t}{\rho}\frac{\partial p^\prime}{\partial x} \label{chorin - u} \\
+    &v=\ v^\ast-\frac{\Delta t}{\rho}\frac{\partial p^\prime}{\partial x} \label{chorin - v}
+\end{align}
+
+Utilizando a nomenclatura adotada, Eq. \ref{correção-velocidade-final-u} e \ref{correção-velocidade-final-v}:
+
+\begin{align}
+    &u_{ij}^{n+1}=\ u_{ij}^\ast-\frac{\Delta t}{\rho}\left(\frac{p_{ij}^\prime-p_{i-1j}^\prime}{\Delta x}\right)\label{correção-velocidade-final-u} \\
+    &v_{ij}^{n+1}=\ v_{ij}^\ast-\frac{\Delta t}{\rho}\left(\frac{p_{ij}^\prime-p_{ij-1}^\prime}{\Delta y}\right)\label{correção-velocidade-final-v}
+\end{align}
+
+Finalmente, para a correção da pressão, Eq. \ref{p = p' +p0 discreto}:
+
+\begin{align}
+    &p=p_0+\ p^\prime  \nonumber \\
+    &p_{ij}^{n+1}=p_{ij}^n+\ p_{ij}^\prime \label{p = p' +p0 discreto}
+\end{align}
+
+Com isso se tem todas as equações necessárias para construir as rotinas computacionais.
+
+\section{Métodos de Solução de Sistemas Lineares}
+
+Para a solução de sistemas lineares do tipo Ax=b comumente é utilizado os chamados métodos iterativos. Dois dos métodos iterativos mais utilizados são o método de Gauss-Seidel, utilizado principalmente no meio acadêmico devido sua fácil implementação, e o método dos Gradientes conjugados, utilizado principalmente pela sua rápida convergência.
+
+\subsection{Método de Gauss-Seidel}
+
+O método de Gauss-Seidel se baseia-se na decomposição da matriz $A$ em uma soma de três componentes: a parte diagonal, a parte estritamente triangular inferior e a parte estritamente triangular superior. A cada iteração, o método atualiza os valores de $x$ utilizando diretamente os resultados obtidos nas iterações anteriores \citep{Fortuna2000}.
+
+Sua fórmula iterativa pode ser expressa como, Eq. \ref{sistema gauss-seidel}:
+
+\begin{equation}
+    x_i^{k+1}=\ \frac{1}{a_{ii}}(b_i-\ \sum_{j<i}{a_{ij}k_j^{k+1}-\sum_{j>i}{a_{ij}k_j^{k+1}\ }\ }
+    \label{sistema gauss-seidel}
+\end{equation}
+
+Na qual $x_i^{k+1}$ é o valor atualizado da incógnita $i$-ésima na $k$-ésima iteração.
+
+A condição de convergência do método de Gauss-Seidel é que a matriz $A$ seja diagonal dominante, ou seja, os termos da diagonal da matriz $A$ devem ser maiores que a soma dos demais termos na linha. Por este critério ser simples de se atender para sistemas transientes, como as equações do balanço do momentum linear. Nessas situações, o método de Gauss-Seidel tende a convergir a uma taxa aceitável.
+
+Por outro lado, o método se torna pouco eficiente quando aplicado em equações como a equação de Poisson, por esta não ter uma diagonal dominante claramente definida. Isto faz com que a convergência se torne extremamente difícil para estes casos particulares. 
+
+É importante ressaltar que apesar de sua robustez em alguns casos, o método de Gauss-Seidel geralmente apresenta uma taxa de convergência mais lenta em comparação ao método dos Gradientes Conjugados, mesmo quando os critérios de convergência são atendidos. Mais informações a respeito deste método podem ser encontradas em \citet{Fortuna2000}.
+
+\subsection{Método dos gradientes conjugados}
+
+A teoria acerca do método dos gradientes conjugados, exige uma formulação complexa, que dá origem a vários métodos de resolução de sistemas lineares além deste, como os gradientes biconjugados. Para o melhor entendimento desta formulação, uma descrição matemática detalhada é apresentada por \citet{Shewchuk1994}. No presente trabalho, será abordado apenas os critérios de convergência e as etapas para a aplicação do método, que serão abordadas no modelo computacional.
+
+A convergência do método dos Gradientes Conjugados requer que a matriz $A$ seja simétrica e definida positiva. A condição de definida positiva é satisfeita por todos os sistemas utilizados na presente formulação. No entanto, a simetria da matriz depende do modelo físico em questão. Por exemplo, no caso de fluidos newtonianos, o sistema linear resultante do balanço da quantidade de movimento linear é simétrico. Por outro lado, essa condição de simetria é violada quando a viscosidade varia ao longo do domínio, o que impede a aplicação do método em todos os casos para este conjunto de sistemas.
+
+Sistemas que envolvem propriedades escalares, como temperatura ou correção de pressão, cuja matriz $A$ não varia ao longo do domínio físico, podem ser resolvidos eficientemente com o método dos Gradientes Conjugados. Nessas situações, o método garante uma rápida convergência e supera as dificuldades enfrentadas pelo método de Gauss-Seidel, especialmente ao lidar com a equação de Poisson.
+
+Unindo ambas as metodologias, o presente trabalho adotou o método de Gauss-Seidel para a solução dos sistemas de $u^\ast$ e $v^\ast$, e o método dos gradientes conjugados para a solução de $p^\prime$ e $T$.
+
+\section{Convergência e Estabilidade}
+
+Para garantir a estabilidade dos sistemas lineares de interesse, foi adotado a condição de Courant-Friedrichs-Lewy ou CFL \citep{Courant1928}. Que é um critério que garante que as informações dentro do escoamento não irão “pular” de células dentro de um único passo de tempo, o que poderia deixar o escoamento instável. Um exemplo do caso que é evitado pelo $CFL$ pode ser visto na Figura \ref{informação pulando de celula}. O valor utilizado em todas as simulações presentes foi tal que $ CFL\le0.8$.
+
+Entre os métodos numéricos utilizados, o método de Gauss-Seidel, apesar de sua simplicidade e convergência mais lenta, demonstrou ser menos sensível tanto aos critérios de convergência quanto ao tamanho do passo de tempo nas simulações. Nos testes realizados, o método alcançou a convergência mesmo com valores do número de $CFL$ superiores a 2. 
+
+Em contraste, o método dos Gradientes Conjugados mostrou-se significativamente mais sensível às condições do sistema linear e ao valor do $CFL$. Observou-se que, com valores de $CFL$ ligeiramente superiores a 1, o método perdeu sua convergência. Embora apresente uma taxa de convergência mais rápida quando dentro dos critérios de estabilidade, o método dos Gradientes Conjugados exigiu um controle mais rigoroso sobre o passo de tempo para garantir resultados estáveis.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\linewidth]{imagens/informacao_pulando_de_celula.png}
+    \caption{informação pulando de célula, caso que é evitado com o CFL.}
+    \label{informação pulando de celula}
+    {\footnotesize Fonte: Do próprio autor}
+\end{figure}
+
+Para verificar a convergência das simulações, principalmente da equação de Poisson por ser mais sensível, se utilizou o critério do divergente do campo de pressão. Considerando que a equação da continuidade, que deu origem à equação de Poisson para a correção da pressão, tenha sido bem resolvida pelo sistema, tem-se que, Eq. \ref{gradientes - para - conferir }:
+
+\begin{equation}
+    \vec{\mathrm{\nabla}}\cdot\left(\vec{v}\right)=\frac{\partial u}{\partial x}+\ \frac{\partial v}{\partial y}=0 
+    \label{gradientes - para - conferir }
+\end{equation}
+
+De forma que a soma dessa equação em todo domínio numérico, não pode superar a tolerância dos métodos numéricos adotados. Este cálculo foi realizado a cada passo de tempo durante a validação das rotinas e é feito ao final de cada simulação para garantir coerência física para os resultados.
+
+

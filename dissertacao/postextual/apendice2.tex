@@ -1,0 +1,664 @@
+%====================================================================
+% Texto referente ao segunda apêndice  
+%====================================================================
+
+
+
+
+
+
+\chapter{Código Desenvolvido}
+
+
+Apresenta-se, em sua totalidade, o código desenvolvido:
+
+
+\begin{lstlisting}[caption={Código desenvolvido por Luís Eduardo Silva Borges - 2024}, label={lst:codigo-c}]
+
+//****************************************************************
+//      Código desenvolvido Na Universidade Federal de Uberlândia
+//      Luís Eduardo Silva Borges
+//      MFLAB - 2024
+//****************************************************************
+
+
+    int main(){
+        double *u; //velocidade em x
+        double *us; // u* ustar, a velocidade estimada u com a pressão no passo de tempo anterior
+        double *v; //velocidade em y
+        double *vs; // v* vstar, a velocidade estimada v com a pressão no passo de tempo anterior 
+        double *p; //campo de pressão
+        double *pl; //p' é a correção de p 
+        double *T; // temperatura
+        int nosx,nosy; //quantidade de nós nas direções x e y
+        int nosx_u,nosy_u; // nos utilizados em u
+        int nosx_v,nosy_v; // nos utilizados em u 
+        int nosx_p,nosy_p; // nos utilizados em u 
+        int nost; //nós de tempo
+        double dt,dx,dy; // passos de tempo e de espaço
+        double lx,ly,lt; //altura, largura e tempo final
+        double erro_u = 1 ; //erro em relação à iteração anterior de u 
+        double erro_v = 1 ; //erro em relação à iteração anterior de v
+        double erro_p = 1 ; //erro em relação à iteração anterior de p
+        double erro_T = 1 ; //erro em relação à iteração anterior de T
+        double *residual_T; // para os gradientes conjulgados
+        double *residual_p;
+        double *residual_u;
+        double *residual_v;
+        double *p_p;
+        double *p_u;
+        double *p_v;
+        double *p_t; // para os para os gradientes conjulgados
+        double xalpha; // para os para os gradientes conjulgados
+        double xbetha; // para os para os gradientes conjulgados
+        double tol = 1E-9; // tolerância do método iterativo
+        double v_ref = 1.0*0; // velocidade da tampa da cavidade
+        double ni =  0.04; // viscosidade cinemática do fluido
+        double rho = 1; // densidade do fluido
+        int iteracoes = 0;
+        double omega = 0.8 ; // fator de amortecimento para convergencia
+        int count = 0; // variavel para contar as iterações;  
+        double alpha = 0.0071; //difusividade termica
+        double g = 9.81; // gravidade
+        double betha = 0.00013 ; // coeficiente de expansão volumétrica
+        double Tq = 80,Tf = 50; //temperatura quente e fria
+        double Tref = (Tq+Tf)/2; // temperatura de referencia da convecção
+        double Pr = ni/alpha; //numero de prandtl
+        double Ra = 1e3;
+        double *eta; // Viscosidade não-newtoniana
+        double *gamax; // Fator de correção de u 
+        double *gamay; // fator de correção de v
+        double m,n = 1; // coeficientes da lei de potência
+        int useTermal = 1.0;
+        clock_t start, end;
+        double cpu_time_used;
+        double v_medio = 0;
+        m = 0.01;
+        start = clock();
+    
+        nosx = 33; //125
+        nosy = 33;
+        nost = 1600;
+    
+        lx = 1;
+        ly = 1;
+        lt = 120;
+        dx = lx/(nosx);
+        dy = ly/(nosy);
+        dt = lt/(nost);
+        
+        betha = (Ra*ni*alpha)/(g*(Tq-Tf)*ly*ly*ly)*useTermal;
+    
+        printf("Prandtl = %f",Pr);
+        printf("\n Raylgh = %f\n ",Ra);
+    
+        nosx_u = nosx+3;
+        nosy_u = nosy+2;
+    
+        nosx_v = nosx+2;
+        nosy_v = nosy+3;
+    
+        nosx_p = nosx+2;
+        nosy_p = nosy+2;
+    
+        u = malloc((nosx_u)*(nosy_u)*sizeof(double));
+        residual_u = malloc((nosx_u)*(nosy_u)*sizeof(double));
+        p_u = malloc((nosx_u)*(nosy_u)*sizeof(double));
+        us = malloc((nosx_u)*(nosy_u)*sizeof(double));
+    
+    
+        cond_iniciais_u(u,(nosx_u),(nosy_u),v_ref,v_medio);
+        cond_iniciais_u(us,(nosx_u),(nosy_u),v_ref,v_medio);
+        cond_iniciais_conjul(p_u,nosx_u*nosy_u);
+        cond_iniciais_conjul(residual_u,nosx_u*nosy_u);
+    
+        v = malloc((nosx_v)*(nosy_v)*sizeof(double));
+        vs = malloc((nosx_v)*(nosy_v)*sizeof(double));
+        residual_v = malloc((nosx_v)*(nosy_v)*sizeof(double));
+        p_v = malloc((nosx_v)*(nosy_v)*sizeof(double));
+    
+        cond_iniciais_v(v,nosx_v,nosy_v);
+        cond_iniciais_v(vs,nosx_v,nosy_v);
+        cond_iniciais_conjul(p_v,nosx_v*nosy_v);
+        cond_iniciais_conjul(residual_v,nosx_v*nosy_v);
+    
+        p = malloc((nosx_p)*(nosy_p)*sizeof(double));
+        pl = malloc((nosx_p)*(nosy_p)*sizeof(double));
+        residual_p = malloc((nosx_p)*(nosy_p)*sizeof(double));
+        p_p = malloc((nosx_p)*(nosy_p)*sizeof(double));
+    
+        cond_iniciais_p(p,nosx_p,nosy_p);
+        cond_iniciais_p(pl,nosx_p,nosy_p);
+        cond_iniciais_conjul(residual_p,nosx_p*nosy_p);
+        cond_iniciais_conjul(p_p,nosx_p*nosy_p);
+    
+        T = malloc((nosx_p)*(nosy_p)*sizeof(double));
+        residual_T = malloc((nosx_p)*(nosy_p)*sizeof(double));
+        p_t = malloc((nosx_p)*(nosy_p)*sizeof(double));
+        
+        cond_iniciais_T(T,nosx_p,nosy_p,Tq,Tf,Tref);
+        cond_iniciais_conjul(residual_T,nosx_p*nosy_p);
+        cond_iniciais_conjul(p_t,nosx_p*nosy_p);
+        
+    
+        eta = malloc((nosx_p)*(nosy_p)*sizeof(double));
+        gamax = malloc((nosx_p)*(nosy_p)*sizeof(double));
+        gamay = malloc((nosx_p)*(nosy_p)*sizeof(double));
+    
+        saveXY(nosy_p, nosx_p, dx, dy);
+        
+        for(int k=1; k<nost;k++)
+        {
+        /*campo de eta*/
+    
+        for(int i = 1;i<nosy_p-1;i++)
+            {
+                for(int j =1; j<nosx_p -1;j++)
+                {
+                    double ux = (u[j+i*nosx_u+1]-u[j+i*nosx_u])/dx; //influencia de u* em p por diferenças finitas
+                    double vy = (v[j+(i+1)*nosx_v]-v[j+i*nosx_v])/dy; //influencia de v* em p por diferenças finitas
+                    double uy = ((u[j+(i+1)*nosx_u+1]+u[j+(i+1)*nosx_u])   -  (u[j+(i-1)*nosx_u+1]+us[j+(i-1)*nosx_u]))/(4*dy);
+                    double vx = ((v[j+(i+1)*nosx_v +1]+v[j+i*nosx_v +1]) - (v[j+(i+1)*nosx_v-1]+vs[j+i*nosx_v-1]))/(4*dx);
+                    
+                    double invariante = abs(4*(ux*vy) - (uy+vx)*(uy+vx));
+                    //double invariante =2*ux*ux + 2*uy*uy + (uy+vx)*(uy+vx);
+                    double gama = sqrt(invariante);
+                    if(gama == 0 )
+                    {
+                        
+                        eta[j+i*nosx_p] = m;
+                    }
+                    else
+                    {
+                        eta[j+i*nosx_p] = m*pow(gama,n-1);
+                    }
+                }               
+            }
+            
+        /***************************** */
+        
+            /*campo de gamax e gamay*/
+            for(int i = 1;i<nosx_p-1;i++)
+            {
+                eta[i] = 2*(eta[i+nosx_p] - eta[i+nosx_p+nosx_p]) + eta[i+nosx_p+nosx_p];//superior
+                eta[nosx_p*(nosy_p-1) + i] =  2*(eta[nosx_p*(nosy_p-1) + i - nosx_p] - eta[nosx_p*(nosy_p-1) + i - nosx_p - nosx_p]) + eta[nosx_p*(nosy_p-1) + i - nosx_p - nosx_p]; //inferior 
+            }
+            /******************************* */
+            /*ghost cells esquerda e direita*/
+            for(int i = 1;i<nosy_p-1;i++)
+            {
+                eta[i*nosx_p] = 2*(eta[i*nosx_p+1] - eta[i*nosx_p+2]) + eta[i*nosx_p+2]; //esquerda
+                eta[(i+1)*nosx_p-1]= 2*(eta[((i+1)*nosx_p-1)-1] - eta[((i+1)*nosx_p-1)-2])+eta[((i+1)*nosx_p-1)-2]; //direita
+            }
+            for(int i = 1;i<nosy_p-1;i++)
+                {
+                    for(int j =1; j<nosx_p -1;j++)
+                    {
+                        double ux = (u[j+i*nosx_u+1]-u[j+i*nosx_u])/dx; //influencia de u* em p por diferenças finitas
+                        double vy = (v[j+(i+1)*nosx_v]-v[j+i*nosx_v])/dy; //influencia de v* em p por diferenças finitas
+                        double uy = ((u[j+(i+1)*nosx_u+1]+u[j+(i+1)*nosx_u])   -  (u[j+(i-1)*nosx_u+1]+u[j+(i-1)*nosx_u]))/(4*dx);
+                        double vx = ((v[j+(i+1)*nosx_v +1]+v[j+i*nosx_v +1]) - (v[j+(i+1)*nosx_v-1]+v[j+i*nosx_v-1]))/(4*dy);
+                        
+                        double etax = (eta[j+i*nosx_p+1] - eta[j+i*nosx_p-1])/(2*dx);
+                        double etay = (eta[j+(i+1)*nosx_p] - eta[j+(i-1)*nosx_p])/(2*dy);
+    
+                        
+    
+                        gamax[j+i*nosx_p] = (etax*(2*ux) + etay*(uy+vx));
+                        gamay[j+i*nosx_p] = (etay*(2*vy) + etax*(uy+vx));
+                    }               
+                }
+    
+    
+        /***************************** */
+            erro_u=1;
+            while(erro_u>tol)
+            {
+                for(int i = 1;i<nosy_u-1;i++)
+            {
+                us[i*nosx_u+1] = v_medio +  0*us[i*nosx_u+2]; // esquerda
+                us[(i+1)*nosx_u-2] = 0*us[(i+1)*nosx_u-2-1]; // direita
+            }
+            /*****************************/
+    
+            /*ghost cells esquerda e direita*/
+            for(int i = 1;i<nosy_u-1;i++)
+            {
+                us[i*nosx_u] = v_medio + 0*us[i*nosx_u+1]; //esquerda
+                us[(i+1)*nosx_u-1] = 0*us[(i+1)*nosx_u-1-2]; //direita
+            }
+            /*****************************/
+            /*ghost cells baixo e cima****/
+            for(int i = 1;i<nosx_u-1;i++)
+            {
+                us[i] = 2*v_ref - us[i + nosx_u]; // superior
+                us[(nosx_u)*(nosy_u-1)+i] = -us[(nosx_u)*(nosy_u-2)+i];//inferior
+            }
+                /*****************************/
+                /**********''***meio***********/
+                for(int i = 1;i<nosy_u-1;i++)
+                {
+                    for(int j = 2;j<nosx_u-2;j++)
+                    {
+                    double etaij = (eta[j+i*nosx_p]+eta[j+i*nosx_p-1])/2;
+                    double gamaxij = (gamax[j+i*nosx_p]+gamax[j+i*nosx_p-1]/2);
+    
+                    double a1 = 1 + 2*dt*etaij/(dx*dx)+2*dt*etaij/(dy*dy); //coeficiente que acompanha uij
+                        
+                    double difusivo = 
+                    (etaij*dt/(dx*dx))*(us[j+i*nosx_u+1] + us[j+i*nosx_u-1]) + 
+                    (etaij*dt/(dy*dy))*(us[j+(i+1)*nosx_u] + us[j+(i-1)*nosx_u]); // termo difusivo por diferenças centradas implicito
+                    
+                    
+                    double vij = (v[j+i*nosx_v] + v[j+i*nosx_v-1]+ v[j+(i+1)*nosx_v-1]+ v[j+(i+1)*nosx_v])/4;
+    
+                    double Pex = u[j+i*nosx_u]*dx/etaij;
+                    double Pey = vij*dy/etaij;
+    
+                    double advec;
+                    double advecx;
+                    double advecy;
+    
+                    advecx =  (us[j+i*nosx_u+1] - us[j+i*nosx_u-1])/2.0;
+                    advecy =  (us[j+(i+1)*nosx_u] - us[j+(i-1)*nosx_u])/2.0;
+    
+                    advec = 
+                    dt*u[j+i*nosx_u]*advecx/dx + dt*vij*advecy/dy;
+    
+                    double fonte = u[j+i*nosx_u] - (dt/(rho*dx))*(p[j+i*nosx_p]-p[j+i*nosx_p-1]) + gamaxij*0;
+                    
+                    us[j+i*nosx_u] = (
+                            fonte
+                        + advec
+                        + difusivo
+                        )/a1;
+                    }
+                }
+                /*****************************/
+                iteracoes = iteracoes +1;
+                if(iteracoes == 10000){
+                    break;
+                }
+                erro_u = calcula_erro(us,residual_u,nosx_u*nosy_u);
+                for(int i = 0;i<(nosx_u)*(nosy_u);i++)
+                {
+                    residual_u[i] = us[i];
+                }
+            }
+            
+            printf("passo : %d iteracao de u :%d\n",k,iteracoes);
+    
+    
+    
+            erro_v = 1;
+            while(erro_v >tol){  
+                /********* solver de v* ******/
+                /*parede esquerda e direita ghost cells*/
+                for(int i = 1;i<nosy_v-1;i++)
+                {
+                    vs[i*nosx_v] =  -vs[i*nosx_v+1]; //esquerda
+                    vs[(i+1)*nosx_v-1] = -vs[((i+1)*nosx_v-1)-1]; //direita
+                }
+                /******************************/
+                /*parede superior e inferior ghost cells*/
+                for(int i = 1;i<nosx_v-1;i++)
+                {
+                    vs[i] = 0; //superior
+                    vs[(nosy_v-1)*nosx_v + i] = 0; //inferior
+                }
+                /****************************/
+                /*parede superior e inferior*/
+                    for(int i = 1;i<nosx_v-1;i++)
+                {
+                    vs[nosx_v+i] = 0; //superior
+                    vs[(nosy_v-2)*nosx_v + i] = 0; //inferior
+                }
+                /******************************/
+                /************meio*************/
+                for(int i = 2;i<nosy_v-2;i++)
+                {
+                    for(int j = 1;j<nosx_v -1;j++)
+                    {
+                    double etaij = (eta[j+i*nosx_p]+eta[j+(i-1)*nosx_p])/2;
+                    double gamayij = (gamay[j+i*nosx_p]+gamay[j+(i-1)*nosx_p])/2;
+    
+                    double a1 = 1 + 2*etaij*dt/(dx*dx) + 2*etaij*dt/(dy*dy)   ;//coeficiente que acompanha uij
+    
+                    double difusivo = 
+                    (etaij*dt/(dx*dx))*(vs[j+i*nosx_v+1]+vs[j+i*nosx_v-1]) + 
+                    (etaij*dt/(dy*dy))*(vs[j+(i+1)*nosx_v] + vs[j+(i-1)*nosx_v]);// termo difusivo por diferenças centradas implicito
+    
+                    double uij = (u[j+i*nosx_u] + u[j+(i-1)*nosx_u] + u[j+(i-1)*nosx_u+1] + u[j+i*nosx_u+1])/4;
+    
+    
+                    double Pex = uij*dx/etaij;
+                    double Pey = v[j+i*nosx_v]*dy/etaij;
+    
+                    double advec;
+                        double advecx = (vs[j+i*nosx_v+1] - vs[j+i*nosx_v-1])/(2);
+                        double advecy = (vs[j+(i+1)*nosx_v] - vs[j+(i-1)*nosx_v])/(2);
+                        advec = 
+                        dt*uij*advecx/dx + dt*vs[j+i*nosx_v]*advecy/dy;
+    
+    
+    
+                    double Tij = (T[j+i*nosx_p]+T[j+(i-1)*nosx_p])/2;
+    
+                    double fonte = v[j+i*nosx_v] - (dt/(rho*dy))*(p[j+i*nosx_p]-p[j+(i-1)*nosx_p]) - g*betha*dt*(Tij - Tref) + gamayij*0;//termo de pressão e passo anterior
+    
+                    vs[j+i*nosx_v] = (fonte+advec+difusivo)/a1;
+                    }
+                }
+                /*****************************/
+                /*****************************/
+                
+                iteracoes = iteracoes +1;
+                if(iteracoes == 10000){
+                    break;
+                }
+                erro_v = calcula_erro(vs,residual_v,nosx_v*nosy_v);
+                for(int i = 0;i<(nosx_v)*(nosy_v);i++)
+                {
+                    residual_v[i] = vs[i];
+                }
+            }
+    
+            printf("passo : %d iteracao de v :%d\n",k,iteracoes);
+    
+            erro_p = 0;
+            for(int i = 1;i<nosy_p-1;i++)
+            {
+                for(int j =1; j<nosx_p -1;j++)
+                {
+                    double uij = (us[j+i*nosx_u+1]-us[j+i*nosx_u]); //influencia de u* em p por diferenças finitas
+                    double vij = (vs[j+(i+1)*nosx_v]-vs[j+i*nosx_v]); //influencia de v* em p por diferenças finitas
+    
+                    double px = pl[j+i*nosx_p+1] + pl[j+i*nosx_p-1];
+                    double py = pl[j+(i+1)*nosx_p] + pl[j+(i-1)*nosx_p];
+    
+    
+                    double af = rho/dt; // termo que acompanha as derivadas
+                    double a1 = 2/(dx*dx)+2/(dy*dy);
+                    double fonte = af*(uij/dx+vij/dy);
+    
+                    residual_p[j+i*nosx_p] =  - fonte  - (pl[j+i*nosx_p]*a1-px/(dx*dx)-py/(dy*dy));
+                    p_p[j+i*nosx_p] = residual_p[j+i*nosx_p];
+                    erro_p = erro_p + residual_p[j+i*nosx_p]*residual_p[j+i*nosx_p];
+                
+                }               
+            }
+    
+            erro_p = sqrt(erro_p);
+            
+            iteracoes = 0;
+    
+            while(erro_p>tol){
+    
+                for(int i = 1;i<nosx_p-1;i++)
+                {
+                    p_p[i] = p_p[i+nosx_p];//superior
+                    p_p[nosx_p*(nosy_p-1) + i] =  p_p[nosx_p*(nosy_p-1) + i - nosx_p]; //inferior 
+                }
+    
+                for(int i = 1;i<nosy_p-1;i++)
+                {
+                    p_p[i*nosx_p] = p_p[i*nosx_p+1]; //esquerda
+                    p_p[(i+1)*nosx_p-1]= p_p[((i+1)*nosx_p-1)-1]; //direita
+                }
+    
+                double numerador = 0;
+                double numeradorBetha = 0;
+                double denominador = 0; 
+    
+                for(int i = 1;i<nosy_p-1;i++)
+                {
+                    for(int j =1; j<nosx_p -1;j++)
+                    {
+                        double px = p_p[j+i*nosx_p+1] + p_p[j+i*nosx_p-1];
+                        double py = p_p[j+(i+1)*nosx_p] + p_p[j+(i-1)*nosx_p];
+    
+    
+                        double a1 = 2/(dx*dx)+2/(dy*dy);
+    
+                        denominador = denominador + (p_p[j+i*nosx_p]*a1-px/(dx*dx)-py/(dy*dy))*p_p[j+i*nosx_p];
+                        
+                        numerador = numerador + residual_p[j+i*nosx_p]*residual_p[j+i*nosx_p];
+                    }               
+                }
+    
+                xalpha = numerador/denominador;
+                erro_p = 0;
+    
+                for(int i = 1;i<nosy_p-1;i++)
+                {
+                    for(int j =1; j<nosx_p -1;j++)
+                    {
+                        double px = p_p[j+i*nosx_p+1] + p_p[j+i*nosx_p-1];
+                        double py = p_p[j+(i+1)*nosx_p] + p_p[j+(i-1)*nosx_p];
+    
+    
+                        double a1 = 2/(dx*dx)+2/(dy*dy);
+                        
+                        pl[j+i*nosx_p] = pl[j+i*nosx_p] + xalpha*p_p[j+i*nosx_p];
+    
+                        residual_p[j+i*nosx_p] = residual_p[j+i*nosx_p] - xalpha*(p_p[j+i*nosx_p]*a1-px/(dx*dx)-py/(dy*dy));
+                        
+                        erro_p = erro_p + residual_p[j+i*nosx_p]*residual_p[j+i*nosx_p];
+    
+                        numeradorBetha = numeradorBetha +  residual_p[j+i*nosx_p]*residual_p[j+i*nosx_p];
+                    }               
+                }
+    
+                erro_p = sqrt(erro_p);
+                xbetha = numeradorBetha/numerador;
+    
+                for(int i = 1;i<nosy_p-1;i++)
+                {
+                    for(int j = 1; j<nosx_p -1;j++)
+                    {
+                        p_p[j+i*nosx_p] = residual_p[j+i*nosx_p] +  xbetha*p_p[j+i*nosx_p];
+                    }           
+                }
+    
+                iteracoes = iteracoes +1;
+                
+                if(iteracoes == 10000)
+                    break;
+            }
+            for(int i = 1;i<nosx_p-1;i++)
+            {
+                pl[i] = pl[i+nosx_p];//superior
+                pl[nosx_p*(nosy_p-1) + i] =  pl[nosx_p*(nosy_p-1) + i - nosx_p]; //inferior 
+            }
+            /******************************* */
+            /*ghost cells esquerda e direita*/
+            for(int i = 1;i<nosy_p-1;i++)
+            {
+                pl[i*nosx_p] = pl[i*nosx_p+1]; //esquerda
+                pl[(i+1)*nosx_p-1]= pl[((i+1)*nosx_p-1)-1]; //direita
+            }
+            
+            printf("passo : %d iteracao de P :%d\n",k,iteracoes);
+            iteracoes = 0;
+            
+            /*atualização para a pressão****/
+            
+            /*******************************/
+            /*atualização para a velocidade*/
+            /********atualização de u*******/
+            for(int i = 1;i<nosy_u-1;i++)
+            {
+                for(int j = 1; j<nosx_u-1;j++){
+                    u[j+i*nosx_u] = us[j+i*nosx_u] - (dt/(rho*dx))*(pl[j+i*nosx_p]-pl[j+i*nosx_p-1]);
+                }
+            }
+            /*******************************/
+            /********atualização de v*******/
+            for(int i = 1;i<nosy_v-1;i++)
+            {
+                for(int j = 1; j<nosx_v-1;j++){
+                    v[j+i*nosx_v] = vs[j+i*nosx_v] - (dt/(rho*dy))*(pl[j+i*nosx_p]-pl[j+(i-1)*nosx_p]) ;
+                }
+            }
+            /*******************************/
+            /*******************************/
+            for(int i = 1;i<nosy_p-1;i++)
+            {
+                for(int j = 1; j<nosx_p-1;j++){
+                    p[j+i*nosx_p] =p[j+i*nosx_p]+pl[j+i*nosx_p];
+                }
+            }
+            erro_T = 0;
+            for(int i = 1;i<nosy_p-1;i++)
+                {
+                    for(int j = 1; j<nosx_p -1;j++)
+                    {
+                        double a1 = (1 + 2.0*dt*alpha/(dx*dx) + 2.0*dt*alpha/(dy*dy));
+    
+                        double uij = (u[j+i*nosx_u+1]+u[j+i*nosx_u])/2.0;
+                        double vij = (v[j+(i+1)*nosx_v]+v[j+i*nosx_v])/2.0;
+                        double advec = 
+                        uij*dt/(2*dx)*(T[j+i*nosx_p+1]-T[j+i*nosx_p-1])+
+                        vij*dt/(2*dy)*(T[j+(i+1)*nosx_p]-T[j+(i-1)*nosx_p]);
+    
+                        double difusivo = 
+                        alpha*dt*
+                        ((T[j+i*nosx_p+1]+T[j+i*nosx_p-1])/(dx*dx) + 
+                        (T[j+(i+1)*nosx_p]+T[j+(i-1)*nosx_p])/(dy*dy));
+    
+                        residual_T[j+i*nosx_p] = -(T[j+i*nosx_p]*a1-difusivo+advec - T[j+i*nosx_p]);
+    
+                        p_t[j+i*nosx_p] = residual_T[j+i*nosx_p];
+                        erro_T = erro_T + residual_T[j+i*nosx_p]*residual_T[j+i*nosx_p];
+                    }           
+                }
+                erro_T = sqrt(erro_T);
+                iteracoes = 0;
+            //***************************solver de T***************/
+            while(erro_T>tol && useTermal){
+                erro_T = 0;
+                for(int i = 1;i<nosx_p-1;i++)
+                {
+                    p_t[i] = p_t[i+nosx_p];//superior
+                    p_t[nosx_p*(nosy_p-1) + i] =  p_t[nosx_p*(nosy_p-1) + i - nosx_p]; //inferior 
+                }
+                for(int i = 1;i<nosy_p-1;i++)
+                {
+                    p_t[i*nosx_p] = -p_t[i*nosx_p+1]; //esquerda
+                    p_t[(i+1)*nosx_p-1]= -p_t[((i+1)*nosx_p-1)-1]; //direita
+                }
+                double numerador = 0;
+                double numeradorBetha = 0;
+                double denominador = 0; 
+    
+                for(int i = 1;i<nosy_p-1;i++)
+                {
+                    for(int j = 1; j<nosx_p -1;j++)
+                    {
+                        double a1 = (1.0 + 2.0*dt*alpha/(dx*dx) + 2.0*dt*alpha/(dy*dy));
+    
+                        double uij = (u[j+i*nosx_u+1]+u[j+i*nosx_u])/2.0;
+                        double vij = (v[j+(i+1)*nosx_v]+v[j+i*nosx_v])/2.0;
+                        double advec = 
+                        uij*dt/(2*dx)*(p_t[j+i*nosx_p+1]-p_t[j+i*nosx_p-1])+
+                        vij*dt/(2*dy)*(p_t[j+(i+1)*nosx_p]-p_t[j+(i-1)*nosx_p]);
+    
+                        double difusivo = 
+                        alpha*dt*
+                        ((p_t[j+i*nosx_p+1]+p_t[j+i*nosx_p-1])/(dx*dx) + 
+                        (p_t[j+(i+1)*nosx_p]+p_t[j+(i-1)*nosx_p])/(dy*dy));
+    
+    
+    
+                        denominador = denominador + (p_t[j+i*nosx_p]*a1-difusivo+advec)*p_t[j+i*nosx_p];
+    
+    
+                        numerador = numerador + residual_T[j+i*nosx_p]*residual_T[j+i*nosx_p];
+                    }           
+                }
+                xalpha = numerador/denominador;
+    
+            
+                for(int i = 1;i<nosy_p-1;i++)
+                {
+                    for(int j = 1; j<nosx_p -1;j++)
+                    {
+                        double a1 = (1.0 + 2.0*dt*alpha/(dx*dx) + 2.0*dt*alpha/(dy*dy));
+    
+                        double uij = (u[j+i*nosx_u+1]+u[j+i*nosx_u])/2.0;
+                        double vij = (v[j+(i+1)*nosx_v]+v[j+i*nosx_v])/2.0;
+                        double advec = 
+                        uij*dt/(2*dx)*(p_t[j+i*nosx_p+1]-p_t[j+i*nosx_p-1])+
+                        vij*dt/(2*dy)*(p_t[j+(i+1)*nosx_p]-p_t[j+(i-1)*nosx_p]);
+    
+                        double difusivo = 
+                        alpha*dt*
+                        ((p_t[j+i*nosx_p+1]+p_t[j+i*nosx_p-1])/(dx*dx) + 
+                        (p_t[j+(i+1)*nosx_p]+p_t[j+(i-1)*nosx_p])/(dy*dy));
+    
+                        T[j+i*nosx_p] = T[j+i*nosx_p] + xalpha*p_t[j+i*nosx_p];
+    
+                        residual_T[j+i*nosx_p] = residual_T[j+i*nosx_p] - xalpha*(p_t[j+i*nosx_p]*a1-difusivo+advec);
+    
+    
+                        numeradorBetha = numeradorBetha +  residual_T[j+i*nosx_p]*residual_T[j+i*nosx_p];
+                        erro_T = erro_T + residual_T[j+i*nosx_p]*residual_T[j+i*nosx_p];
+                    }           
+                }
+    
+                erro_T = sqrt(erro_T);
+                xbetha = numeradorBetha/numerador;
+                for(int i = 1;i<nosy_p-1;i++)
+                {
+                    for(int j = 1; j<nosx_p -1;j++)
+                    {
+                        p_t[j+i*nosx_p] = residual_T[j+i*nosx_p] +  xbetha*p_t[j+i*nosx_p];
+                    }           
+                }
+    
+                iteracoes = iteracoes +1;
+                if(iteracoes == 1000)
+                break;
+            }
+    
+            for(int i = 1;i<nosx_p-1;i++)
+            {
+                T[i] = T[i+nosx_p];//superior
+                T[nosx_p*(nosy_p-1) + i] =  T[nosx_p*(nosy_p-1) + i - nosx_p]; //inferior 
+            }
+            /******************************* */
+            /*ghost cells esquerda e direita*/
+            for(int i = 1;i<nosy_p-1;i++)
+            {
+                T[i*nosx_p] = 2.0*Tf - T[i*nosx_p+1]; //esquerda
+                T[(i+1)*nosx_p-1]= 2.0*Tq -T[((i+1)*nosx_p-1)-1]; //direita
+            }
+            printf("passo : %d iteracao de T :%d\n",k,iteracoes);
+        }
+    
+    
+        end = clock();
+        cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    
+        saveToCSV(u,v, p,T,nosy_p,nosx_p,nosx_u,nosx_v);    
+        free(u);
+        free(us);
+        free(v);
+        free(vs);
+        free(p);
+        free(pl);
+        free(T);
+        free(residual_p);
+        free(residual_T);
+        free(residual_u);
+        free(residual_v);
+        free(p_t);
+        free(p_p);
+        free(p_u);
+        free(p_v);
+        free(eta);
+        free(gamax);
+        free(gamay);
+        return 0;
+    }
+\end{lstlisting}
