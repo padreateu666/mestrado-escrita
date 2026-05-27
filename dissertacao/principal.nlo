@@ -1,0 +1,41 @@
+\nomenclatureentry{S$V_0$@[{$V_0$}]\begingroup Velocidade de referência\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{S$L$@[{$L$}]\begingroup Largura do domínio físico e computacional\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{S$H$@[{$H$}]\begingroup Altura do domínio físico e computacional\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{S$\rho$@[{$\rho$}]\begingroup Massa específica do fluido\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{S$\vec{v}$@[{$\vec{v}$}]\begingroup Vetor velocidade\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{S$t$@[{$t$}]\begingroup Tempo\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\vec{g}$@[{$\vec{g}$}]\begingroup Vetor campo gravitacional\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\overline{\overline{\pi}}$@[{$\overline{\overline{\pi}}$}]\begingroup Tensor das tensões\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\overline{\overline{\delta}}$@[{$\overline{\overline{\delta}}$}]\begingroup Tensor unitário\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$p$@[{$p$}]\begingroup Pressão\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\overline{\overline{\tau}}$@[{$\overline{\overline{\tau}}$}]\begingroup Tensor das Tensões viscosas\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$T$@[{$T$}]\begingroup Temperatura\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\alpha$@[{$\alpha$}]\begingroup Difusividade térmica\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\phi$@[{$\phi$}]\begingroup Tensor taxa de transformação de energia cinética em térmica\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$C_p$@[{$C_p$}]\begingroup Calor específico\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$k$@[{$k$}]\begingroup Condutividade térmica\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\mu$@[{$\mu$}]\begingroup Viscosidade dinâmica\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\nu$@[{$\nu$}]\begingroup Viscosidade cinemática\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\dot{\gamma}$@[{$\dot{\gamma}$}]\begingroup Tensor taxa de cisalhamento\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$m$@[{$m$}]\begingroup Fator de condicionamento da Lei de potência\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$n$@[{$n$}]\begingroup Expoente da Lei de Potência\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\beta$@[{$\beta$}]\begingroup Coeficiente de expansão volumétrica\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$D$@[{$D$}]\begingroup Comprimento característico do escoamento\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$U$@[{$U$}]\begingroup Velocidade característico do escoamento\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{A$Re$@[{$Re$}]\begingroup Número de Reynolds\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{A$Pr$@[{$Pr$}]\begingroup Número de Prandtl\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{A$Gr$@[{$Gr$}]\begingroup Número de Grashof\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{A$Ra$@[{$Ra$}]\begingroup Número de Rayleigh\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\eta$@[{$\eta$}]\begingroup Viscosidade não-newtoniana\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$p_0$ @[{$p_0$ }]\begingroup Campo de pressão inicial\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\vec{V^\ast}$@[{$\vec{V^\ast}$}]\begingroup Campo de Velocidade Aproximado\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\Delta y$@[{$\Delta y$}]\begingroup Altura da célula computacional\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\Delta t$@[{$\Delta t$}]\begingroup Passo de tempo\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$\Delta x$@[{$\Delta x$}]\begingroup Largura da célula computacional\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{A$CFL$@[{$CFL$}]\begingroup Número de Courant-Friedrichs-Lewy\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{A$DFC$@[{$DFC$}]\begingroup Dinâmica dos fluidos computacional\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{A$CFD$@[{$CFD$}]\begingroup Computational Fluid Dynamics\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{A$MFLab$@[{$MFLab$}]\begingroup Laboratório de Mecânica dos Fluidos\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{A$FEMEC$@[{$FEMEC$}]\begingroup Faculdade de Engenharia Mecânica\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{A$UFU$@[{$UFU$}]\begingroup Universidade Federal de Uberlândia\nomeqref {0}|nompageref}{2}
+\nomenclatureentry{s$P^\prime$@[{$P^\prime$}]\begingroup Correção do campo de pressão\nomeqref {0}|nompageref}{2}

@@ -34,6 +34,15 @@
             "-interaction=nonstopmode",
             "%DOC%"
         ]
+    },
+    {
+        "name": "cleanup",
+        "command": "powershell",
+        "args": [
+            "-NoProfile",
+            "-Command",
+            "Remove-Item -ErrorAction SilentlyContinue '%DOC%.aux','%DOC%.bbl','%DOC%.blg','%DOC%.fdb_latexmk','%DOC%.fls','%DOC%.lof','%DOC%.log','%DOC%.lot','%DOC%.nlo','%DOC%.nls','%DOC%.out','%DOC%.toc'"
+        ]
     }
 ],
 "latex-workshop.latex.recipes": [
@@ -44,7 +53,8 @@
             "bibtex",
             "makeindex",
             "pdflatex final",
-            "pdflatex final"
+            "pdflatex final",
+            "cleanup"
         ]
     }
 ],

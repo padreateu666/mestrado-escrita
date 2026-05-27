@@ -1,0 +1,47 @@
+\babel@toc {brazilian}{}\relax 
+\contentsline {chapter}{Lista de Figuras}{I}{chapter*.5}%
+\contentsline {chapter}{Lista de Tabelas}{II}{chapter*.6}%
+\contentsline {chapter}{\numberline {1}Introdução}{1}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Modelos Físicos}{2}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Escoamento de Couette Plano}{2}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Escoamento de Poiseuille Plano}{3}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Escoamento em Cavidade com Tampa Deslizante}{4}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Escoamento em Cavidade Diferencialmente Aquecida}{5}{section.2.4}%
+\contentsline {chapter}{\numberline {3}Modelo Matemático Diferencial}{7}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Escoamentos Newtonianos}{9}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Fluidos Não-Newtonianos}{10}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Modelagem do Tensor $\dot {\gamma }$ em $\eta $}{12}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Aproximação de Oberbeck-Boussinesq para Escoamentos Não-Isotérmicos}{14}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Números Adimensionais}{15}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Reynolds}{15}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Prandtl}{16}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.3}Grashof}{16}{subsection.3.5.3}%
+\contentsline {subsection}{\numberline {3.5.4}Rayleigh}{16}{subsection.3.5.4}%
+\contentsline {section}{\numberline {3.6}Formulação Geral}{17}{section.3.6}%
+\contentsline {chapter}{\numberline {4}Modelo Matemático-Numérico}{18}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Malha Deslocada}{18}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Volumes Finitos}{19}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Discretização da Equação da Energia}{21}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Acoplamento Pressão-Velocidade}{23}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Discretização das Equações do Acoplamento Pressão-Velocidade}{26}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Métodos de Solução de Sistemas Lineares}{31}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Método de Gauss-Seidel}{31}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}Método dos gradientes conjugados}{32}{subsection.4.6.2}%
+\contentsline {section}{\numberline {4.7}Convergência e Estabilidade}{32}{section.4.7}%
+\contentsline {chapter}{\numberline {5}Modelos Computacionais}{34}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Couette Plano}{34}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Poiseuille Plano}{35}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Cavidade com Tampa Deslizante}{37}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Cavidade Diferencialmente Aquecida}{38}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Algoritmos de Solução de Sistemas Lineares}{40}{section.5.5}%
+\contentsline {chapter}{\numberline {6}Resultados}{42}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Escoamento de Couette Plano}{42}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Escoamento de Poiseuille Plano}{45}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Cavidade com Tampa Deslizante}{50}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Cavidade Diferencialmente Aquecida}{53}{section.6.4}%
+\contentsline {chapter}{\numberline {7}Conclusão}{56}{chapter.7}%
+\contentsline {chapter}{Ap\^endice \numberline {A}Solução Analítica para Escoamentos de Poiseuille}{57}{appendix.1.A}%
+\contentsline {section}{\numberline {A.1}Poiseuille Newtoniano}{57}{section.1.A.1}%
+\contentsline {section}{\numberline {A.2}Poiseuille Não-Newtoniano}{58}{section.1.A.2}%
+\contentsline {chapter}{Ap\^endice \numberline {B}Código Desenvolvido}{62}{appendix.1.B}%
+\contentsfinish 
