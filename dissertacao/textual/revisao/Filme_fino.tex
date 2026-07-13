@@ -1,0 +1,18 @@
+\section{Filme Fino}
+
+A formação de filmes finos de líquido é característica de diversos escoamentos bifásicos de interesse industrial, como o transporte de petróleo pesado em tubulações, o escoamento anular gás-líquido, processos de resfriamento e ambientes sujeitos a corrosão (ref). O traço que define esses escoamentos, e que motiva o presente trabalho, é a disparidade de escalas: a espessura do filme é, em geral, ordens de grandeza menor que o comprimento característico do escoamento no qual está inserido (ref).
+
+O termo "filme fino" abrange uma literatura ampla, que inclui fenômenos térmicos, reações químicas, espumas, surfactantes, filmes de evaporação e aplicações em microfluídica. Este estudo restringe-se a filmes finos de líquido isotérmicos e sem efeitos químicos, onde a disparidade de escalas entre o filme e o núcleo do escoamento é o fator dominante.
+
+É possível mensurar essa diferença de escalas por meio de um parâmetro adimensional, que quantifica a diferença entre a espessura do filme e o comprimento característico do escoamento. Esse termo é definido aqui pela Eq. (\ref{eq:espessura_adimensional}), onde $h$ é a espessura do filme e $L$ é o comprimento característico do escoamento. Em escoamentos típicos, $\epsilon$ pode assumir valores da ordem de $10^{-3}$ a $10^{-5}$ (ref), evidenciando a magnitude da disparidade de escalas.
+
+\begin{equation}
+\epsilon = \frac{h}{L}
+\label{eq:espessura_adimensional}
+\end{equation}
+
+Essa diferença de escalas faz com que por vezes e o filme e o escoamentos principal sejam regidos por diferentes fenômenos, com a viscosidade muitas vezes dominando o filme e a inércia dominando o escoamento principal.
+
+Essa disparidade é também a origem da dificuldade em simular computacionalmente o fenômeno. Métodos de captura direta de interface, como VOF, exigem resolução de malha da ordem da espessura do filme na banda por ele ocupada, o que eleva a contagem de elementos e o custo computacional a patamares frequentemente proibitivos. A análise da exigência de malha e da restrição de passo de tempo, é apresentada na Seção (ref), dedicada ao método VOF.
+
+No polo oposto, para viabilizar a simulação a baixo custo, desenvolveu-se uma família de métodos reduzidos, em sua maioria derivados da teoria da lubrificação (ref) e discutidos na Seção (ref). Esses métodos substituem a resolução direta do filme por um modelo simplificado, porém repousam sobre hipóteses restritivas quanto à geometria e ao regime do filme, nem sempre satisfeitas nas aplicações de interesse. O método proposto neste trabalho posiciona-se entre esses dois polos, buscando descrever a dinâmica do filme com maior fidelidade que os modelos reduzidos e a custo inferior ao da captura direta.
