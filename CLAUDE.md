@@ -1,4 +1,4 @@
-# CLAUDE.md — Contexto: Revisão Bibliográfica da Dissertação de Mestrado
+<!-- # CLAUDE.md — Contexto: Revisão Bibliográfica da Dissertação de Mestrado
 
 > Coloque este arquivo na raiz do projeto LaTeX. O Claude Code o lê automaticamente
 > no início de cada sessão. Ele resume decisões já tomadas em conversa anterior
@@ -137,4 +137,4 @@ Acoplamento / DD heterogênea (Seção 5):
    (org petrobrasbr) — se a tarefa envolver o código, pedir o caminho antes
    de assumir.
 5. Ao escrever LaTeX, manter as citações em BibTeX; criar/atualizar o .bib
-   com as referências confirmadas acima.
+   com as referências confirmadas acima. -->
