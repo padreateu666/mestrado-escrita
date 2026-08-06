@@ -72,23 +72,6 @@
   year={2017}
 }
 
-@article{Stanton1998,
-   abstract = {The focus of this work is to formulate and validate a multi-dimensional, fuel film model to help account for the fuel distribution during combustion in internal combustion engines. Spray-wall interaction and spray-film interaction are also incorporated into the model. The fuel film model simulates thin fuel film flow on solid surfaces of arbitrary configuration. This is achieved by solving the continuity, momentum, and energy equations for the two-dimensional film that flows over a three-dimensional surface. The major physical processes considered in the model include mass and momentum contributions to the film due to spray drop impingement, splashing effects, various shear forces, piston acceleration, dynamic pressure effects, gravity driven flow, conduction, and convective heat and mass transfer. In order to adequately represent the drop interaction process, impingement regimes and post-impingement behavior have been modeled using experimental data and mass, momentum and energy conservation constraints. The regimes modeled for spray-film interaction are stick, rebound, spread, and splash. In addition, modified wall functions for evaporating wavy films are provided and tested. The fuel film model is validated through a series of comparisons to experimental data for secondary droplet velocities, secondary droplet sizes, spray radius, spray height, film thickness, film spreading radius, and percentage of fuel adhered to the surface.},
-   author = {Donald W. Stanton and Christopher J. Rutland},
-   doi = {10.1016/S0017-9310(98)00054-4},
-   issn = {0017-9310},
-   issue = {20},
-   journal = {International Journal of Heat and Mass Transfer},
-   month = {10},
-   note = {Utiliza EWF para modelar o filme em camaras de combustãoé um dos artigos mais antigos que achei de filme fino fala que o filme fica entre 10 e 300 micrometrosas definições de filme fino já existem em  1998},
-   pages = {3037-3054},
-   publisher = {Pergamon},
-   title = {Multi-dimensional modeling of thin liquid films and spray-wall interactions resulting from impinging sprays},
-   volume = {41},
-   url = {https://www.sciencedirect.com/science/article/pii/S0017931098000544?via%3Dihub},
-   year = {1998}
-}
-
 @article{Ghosh2009,
    abstract = {The emerging energy efficient technology in the field of high viscous oil transportation is water-lubricated transport of heavy oil, known as core annular flow or CAF. This paper provides a brief review of the past studies on oil-water core annular flows-including studies on hydrodynamics as well as stability of flow. © 2009 Elsevier Ltd. All rights reserved.},
    author = {S. Ghosh and T. K. Mandal and G. Das and P. K. Das},
@@ -179,4 +162,96 @@
    title = {A Numerical Model for Simulation of Thin-Film Water Transport over Solid Fuel Surfaces},
    volume = {10},
    year = {2011}
+}
+
+@article{Noh1976,
+   abstract = {SLIC is an alternating-direction method for the geometric approximation of fluid interfaces. It may be used in one, two, or three space dimensions, and it is characterized by the following features: (1) Fluid surfaces are represented locally for each mixed- fluid...},
+   author = {W. F. Noh and Paul Woodward},
+   doi = {10.1007/3-540-08004-X_336},
+   isbn = {978-3-540-37548-7},
+   issn = {1616-6361},
+   pages = {330-340},
+   publisher = {Springer, Berlin, Heidelberg},
+   title = {SLIC (Simple Line Interface Calculation)},
+   url = {https://link.springer.com/chapter/10.1007/3-540-08004-X_336},
+   year = {1976}
+}
+
+@article{Mohan2024,
+   abstract = {Understanding and predicting multiphase flows is of great relevance due to the ubiquitous nature of such flows in both nature and in many industrial applications. Rapid development of high speed computers and problem-specific algorithms in the last 2 decades has enabled the study of multiphase flows through numerical simulations. In this paper, we give a brief overview of different methods used in direct numerical simulations of two-phase flows. In particular, we focus on the volume of fluid (VOF) method used for locating and advecting the interface. VOF method is a mesh based interface capturing method in which a scalar function called void fraction field (which is the ratio of tracked fluid to the cell volume) is advected in order to track the interface position. A geometric VOF algorithm is detailed in this work. which strikes a balance between accuracy, ease of implementation and volume conservation on a structured grid. Another challenge in two-phase flow simulations is the inclusion of surface tension forces accurately. Here, we give a brief overview of Eulerian surface tension models and detail an approach balancing computational cost, curvature estimation and imposed timestep restriction. Finally, we discuss the most recent advances in VOF methods and outline the various numerical challenges we expect to encounter.},
+   author = {Ananthan Mohan and Gaurav Tomar},
+   doi = {https://doi.org/10.1007/s41745-024-00424-w},
+   issn = {00194964},
+   issue = {1},
+   journal = {Journal of the Indian Institute of Science},
+   keywords = {Multiphase flows,Simulations,VOF},
+   month = {1},
+   pages = {229-248},
+   publisher = {Springer},
+   title = {Volume of Fluid Method: A Brief Review},
+   volume = {104},
+   url = {https://link.springer.com/article/10.1007/s41745-024-00424-w},
+   year = {2024}
+}
+
+@article{Weymouth2010,
+   abstract = {This paper contributes to the state of the art in Cartesian-grid methods through development of new advection and reconstruction Volume-of-Fluid (VOF) algorithms which are applicable to two and three-dimensional flows. A computationally efficient and secondorder VOF reconstruction method is presented which uses no inversions to determine the interface normal direction. Next, the lack of conservation of fluid volume in previous VOF advection methods are shown to be due to improper treatment of one-dimensional stretching in the velocity field. This paper uses simple explicit time stepping and a cell-center estimate of the volume fraction in the dilatation term to achieve a completely conservative advection method. The new methods are simple, robust and shown to out perform existing approaches for canonical test problems relevant to breaking wave flows. © 2009 Elsevier Inc. All rights reserved.},
+   author = {G. D. Weymouth and Dick K.P. Yue},
+   doi = {10.1016/J.JCP.2009.12.018},
+   issn = {0021-9991},
+   issue = {8},
+   journal = {Journal of Computational Physics},
+   keywords = {Breaking waves,Cartesian-grid,Volume-of-Fluid},
+   month = {4},
+   pages = {2853-2865},
+   publisher = {Academic Press},
+   title = {Conservative Volume-of-Fluid method for free-surface simulations on Cartesian-grids},
+   volume = {229},
+   url = {https://www.sciencedirect.com/science/article/pii/S0021999109006974},
+   year = {2010}
+}
+
+@incollection{Youngs1982,
+  author    = {Youngs, D. L.},
+  title     = {Time-dependent multi-material flow with large fluid distortion},
+  booktitle = {Numerical Methods for Fluid Dynamics},
+  editor    = {Morton, K. W. and Baines, M. J.},
+  publisher = {Academic Press},
+  address   = {New York},
+  pages     = {273--285},
+  year      = {1982}
+}
+
+@article{Scardovelli2000,
+   abstract = {The computational-geometric problems arising when a linear interface cuts a cube are considered. They are of interest in particular for the calculation of volume fractions or interface positions in three-dimensional interface calculations in the Volume of Fluid (VOF) methods. Typically, the normal vector is known. One then wants to compute the volume fraction knowing the interface position, or conversely the interface position knowing the volume fraction. Explicit expressions of general use are given, and the algorithms used to search for solutions are described in detail. Explicit formulas for cubic roots are found to be less than two thirds as time consuming as Newton-Raphson iterations. © 2000 Academic Press.},
+   author = {Ruben Scardovelli and Stephane Zaleski},
+   doi = {10.1006/JCPH.2000.6567},
+   issn = {0021-9991},
+   issue = {1},
+   journal = {Journal of Computational Physics},
+   keywords = {Interfaces,VOF methods},
+   month = {10},
+   pages = {228-237},
+   publisher = {Academic Press},
+   title = {Analytical Relations Connecting Linear Interfaces and Volume Fractions in Rectangular Grids},
+   volume = {164},
+   url = {https://www.sciencedirect.com/science/article/pii/S0021999100965677},
+   year = {2000}
+}
+
+@article{Aulisa2007,
+   abstract = {In this paper we present and analyze different volume-of-fluid (VOF) reconstruction and advection algorithms that approximate the interface separating two immiscible fluids in the three-dimensional space. The paper describes the improvement of the reconstruction when a least-square fit algorithm, which minimizes a distance functional, is applied. Its performance is tested for several smooth surfaces against other simple reconstruction methods. Then Eulerian, Lagrangian and mixed split advection schemes are presented and analyzed. In particular, one advection method is discussed that conserves mass exactly for a divergence-free velocity field, thus allowing computations to machine precision. © 2007 Elsevier Inc. All rights reserved.},
+   author = {E. Aulisa and S. Manservisi and R. Scardovelli and S. Zaleski},
+   doi = {10.1016/J.JCP.2007.03.015},
+   issn = {0021-9991},
+   issue = {2},
+   journal = {Journal of Computational Physics},
+   keywords = {Incompressible flow,Interface reconstruction,Lagrangian and Eulerian advection,Mass conservation,VOF/PLIC methods},
+   month = {8},
+   pages = {2301-2319},
+   publisher = {Academic Press},
+   title = {Interface reconstruction with least-squares fit and split advection in three-dimensional Cartesian geometry},
+   volume = {225},
+   url = {https://www.sciencedirect.com/science/article/pii/S0021999107001325},
+   year = {2007}
 }

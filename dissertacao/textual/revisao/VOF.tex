@@ -1,3 +1,59 @@
 \section{Volume of Fluid (VOF)}
 
+O método \textit{Volume of Fluid} é pertencente à família de métodos de captura de interface (\textit{single fluid}) que resolve um conjunto de equações para ambas as fases, com a interface entre elas sendo definida por uma função de volume de fluido. O método, assim como seu nome, foi primeiramente apresentado por \citet{Hirt1981} que o desenvolveu a partir de uma adaptação do método desenvolvido por \citet{Noh1976} chamado \textit{Simple Line Interface Calculation} (\textit{SLIC}). O método \textit{VOF} é amplamente utilizado devido sua versatilidade, robustez e capacidade de lidar com problemas de interface complexos, com grandes deformações e topologias complexas, além do baixo custo de implementação. Enquanto alguns dos métodos e equações mostradas abaixo para exemplificar o método são os mesmos utilizados no código base para o desenvolvimento do presente trabalho, uma recente revisão mais detalhada do estado da arte do mesmo pode ser encontrado em \citet{Mohan2024}. A figura \ref{fig:vof-esquema} mostra um esquema da metodologia utilizada no presente trabalho.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{imagens/vof-esquema-maria.png}
+    \caption{Esquema do método \textit{VOF} utilizado no presente trabalho.}
+    \label{fig:vof-esquema}
+\end{figure}
+
+A modelagem single fluid utiliza apenas uma equação de momento para descrever todo o campo euleriano do escoamento:
+
+\begin{equation}
+    \rho (c) \left( \frac{\partial u}{\partial t} + u \cdot \nabla u \right) = -\nabla p + \nabla \cdot \left[ \mu (c) (\nabla u + (\nabla u)^T) \right] + \rho (c) g + f_e,
+    \label{eq:momentum-vof-general}
+\end{equation}
+
+Na qual $f_e$ é um termo fonte que neste caso representa a tensão superficial na interface entre os fluidos.  $\rho$ e $\mu$ são funções de $c$, sendo $c$ a função coloração do fluido, que é o objeto de trabalho do método \textit{VOF}. $c$ é uma função descontínua que representa a fração de volume do fluido em cada célula computacional, sendo $c=1$ para células totalmente preenchidas com o fluido 1, $c=0$ para células totalmente preenchidas com o fluido 2 e $0<c<1$ para células que contêm a interface entre os dois fluidos. A figura \ref{fig:vof-exemplo} mostra um exemplo de como a interface é representada. A função coloração é um escalar e transportada por meio da equação de advecção pura:
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{imagens/vof-grid-weymouth.png}
+    \caption{Exemplo de como a função coloração representa ambos os fluidos (adaptada de \citet{Weymouth2010}).}
+    \label{fig:vof-exemplo}
+\end{figure}
+
+
+\begin{equation}
+    \frac{\partial c}{\partial t} + u \cdot \nabla c = 0.
+    \label{eq:advection-vof}
+\end{equation}
+
+Sendo a derivada de $c$ descontínua no espaço e no tempo, define-se uma variável auxiliar $f$ chamada de fração volumétrica, definida como \citep{Weymouth2010}:
+
+\begin{equation}
+    f = \frac{1}{V} \int_V c dV,
+    \label{eq:fraction-vof}
+\end{equation}
+
+após a integração da equação \ref{eq:advection-vof} sobre o volume de cada célula computacional, obtém-se a equação de transporte da fração volumétrica (válida para fluidos incompressíveis):
+
+\begin{equation}
+    \frac{\partial f}{\partial t}V + F_net = 0.
+    \label{eq:advection-fraction-vof}
+\end{equation}
+
+Sendo $F_net = \oint_{V} cu_n ds$ o fluxo líquido de fração volumétrica através das faces da célula computacional. A equação \ref{eq:advection-fraction-vof} é resolvida em todo domínio e, a partir do campo de f, a advecção deste termo é desenvolvida por \citet{Weymouth2010}. É possível reconstruir a interface entre os fluidos, sendo que a forma como isso é feito depende do método de reconstrução utilizado. 
+
+\citet{Youngs1982} propôs um método de reconstrução da interface baseado em uma aproximação linear, chamado de \textit{Piecewise Linear Interface Calculation} (\textit{PLIC}). O método consistia em reconstruir a interface em cada célula computacional que contém a interface entre os fluidos, utilizando a equação:
+
+\begin{equation}
+    m \vec{x} = \alpha,
+    \label{eq:plic}
+\end{equation}
+
+Na qual $m$ é o vetor normal à interface, $\vec{x}$ é o vetor de posição e $\alpha$ é a distância da origem até a interface. Os métodos de obtenção de $m$ e $\alpha$ utilizados são melhores explicados em \citet{Aulisa2007} e \citet{Scardovelli2000} respectivamente.
 
