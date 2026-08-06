@@ -1,22 +1,49 @@
 \section{Volume of Fluid (VOF)}
 
-O método \textit{Volume of Fluid} é pertencente à família de métodos de captura de interface (\textit{single fluid}) que resolve um conjunto de equações para ambas as fases, com a interface entre elas sendo definida por uma função de volume de fluido. O método, assim como seu nome, foi primeiramente apresentado por \citet{Hirt1981} que o desenvolveu a partir de uma adaptação do método desenvolvido por \citet{Noh1976} chamado \textit{Simple Line Interface Calculation} (\textit{SLIC}). O método \textit{VOF} é amplamente utilizado devido sua versatilidade, robustez e capacidade de lidar com problemas de interface complexos, com grandes deformações e topologias complexas, além do baixo custo de implementação. Enquanto alguns dos métodos e equações mostradas abaixo para exemplificar o método são os mesmos utilizados no código base para o desenvolvimento do presente trabalho, uma recente revisão mais detalhada do estado da arte do mesmo pode ser encontrado em \citet{Mohan2024}. A figura \ref{fig:vof-esquema} mostra um esquema da metodologia utilizada no presente trabalho.
+O método \textit{Volume of Fluid} é pertencente à família dos métodos de captura de interface, formulado segundo a abordagem de um único fluido (\textit{one-fluid}) que resolve um conjunto de equações para ambas as fases, com a interface entre elas sendo definida por uma função de volume de fluido. Foi primeiramente apresentado por \citet{Hirt1981} cuja ideia de representar a interface por uma fração volumétrica já estava presente em métodos anteriores, como o \textit{SLIC} de \citet{Noh1976}. O método \textit{VOF} é amplamente utilizado devido sua versatilidade, robustez e capacidade de lidar com problemas de interface e topologias complexas, com grandes deformações, além de conservar massa e volume. Enquanto algums das equações mostradas abaixo para exemplificar a $VOF$ são os mesmos utilizados no código base para o desenvolvimento do presente trabalho, uma recente revisão mais detalhada do estado da arte do mesmo pode ser encontrado em \citet{Mohan2024}. A figura \ref{fig:vof-esquema} mostra um esquema do que foi utilizado localmente.
 
 \begin{figure}
     \centering
     \includegraphics[width=1\textwidth]{imagens/vof-esquema-maria.png}
-    \caption{Esquema do método \textit{VOF} utilizado no presente trabalho.}
+    \caption{Esquema do método \textit{VOF} utilizado no presente trabalho (adaptado de \citet{Mohan2024}).}
     \label{fig:vof-esquema}
 \end{figure}
 
-A modelagem single fluid utiliza apenas uma equação de momento para descrever todo o campo euleriano do escoamento:
+Como mencionado, a modelagem \textit{single fluid} utiliza apenas uma equação de momento para descrever todo o campo euleriano do escoamento:
 
 \begin{equation}
-    \rho (c) \left( \frac{\partial u}{\partial t} + u \cdot \nabla u \right) = -\nabla p + \nabla \cdot \left[ \mu (c) (\nabla u + (\nabla u)^T) \right] + \rho (c) g + f_e,
+    \rho (c) \left( \frac{\partial \vec{u}} {\partial t} + \vec{u} \cdot \nabla \vec{u} \right) = -\nabla p + \nabla \cdot \left[ \mu (c) (\nabla \vec{u} + (\nabla \vec{u})^T) \right] + \rho (c) \vec{g} + \vec{f}_e,
     \label{eq:momentum-vof-general}
 \end{equation}
 
-Na qual $f_e$ é um termo fonte que neste caso representa a tensão superficial na interface entre os fluidos.  $\rho$ e $\mu$ são funções de $c$, sendo $c$ a função coloração do fluido, que é o objeto de trabalho do método \textit{VOF}. $c$ é uma função descontínua que representa a fração de volume do fluido em cada célula computacional, sendo $c=1$ para células totalmente preenchidas com o fluido 1, $c=0$ para células totalmente preenchidas com o fluido 2 e $0<c<1$ para células que contêm a interface entre os dois fluidos. A figura \ref{fig:vof-exemplo} mostra um exemplo de como a interface é representada. A função coloração é um escalar e transportada por meio da equação de advecção pura:
+Na qual $\vec{f}_e$ é um termo fonte que neste caso representa a tensão superficial na interface entre os fluidos.  $\rho$ e $\mu$ são funções de $c$, sendo $c$ a chamada função coloração do fluido, que é o objeto principal na metodologia \textit{VOF}. $c$ é uma função descontínua, que representa a distribuição dos fluidos no domínio. Define-se $c=1$ para regiões com o fluido 1, $c=0$ para regiões com o fluido 2 com um salto na interface entre os dois fluidos, $c$ é uma função característica de Heaviside. A função coloração é um escalar e transportada por meio da equação de advecção pura:
+
+\begin{equation}
+    \frac{\partial c}{\partial t} + \vec{u} \cdot \nabla c = 0.
+    \label{eq:advection-vof}
+\end{equation}
+
+Como $c$ é descontínua através da interface, não é possível representá-la diretamente na malha discreta. Define-se então a fração volumétrica $f$, média de $c$ no volume da célula \citep{Weymouth2010}:
+
+\begin{equation}
+    f = \frac{1}{V} \int_V c dV,
+    \label{eq:fraction-vof}
+\end{equation}
+
+com $0 < f < 1$. Integrando a Eq.\ref{eq:advection-vof} sobre o volume de cada célula computacional e utilizando a condição de incompressibilidade (Eq. \ref{eq:incompressible}) para reescrever o termo advectivo na forma conservativa, o teorema da divergência conduz à equação de transporte da fração volumétrica:
+
+\begin{equation}
+    \nabla\cdot\vec u = 0
+    \label{eq:incompressible}
+\end{equation}
+
+\begin{equation}
+    \frac{\partial f}{\partial t}V + F_{net} = 0.
+    \label{eq:advection-fraction-vof}
+\end{equation}
+
+
+Sendo $F_{net} = \oint_{\partial V} c\, \vec{u}\cdot\vec{n} \, dS$ o fluxo líquido de fração volumétrica através das faces da célula computacional. É possível reconstruir a interface entre os fluidos utilizando $f$, sendo que a forma como isso é feito depende do método de reconstrução utilizado. A figura \ref{fig:vof-exemplo} mostra um exemplo de como a interface é representada. 
 
 
 \begin{figure}
@@ -26,34 +53,26 @@ Na qual $f_e$ é um termo fonte que neste caso representa a tensão superficial 
     \label{fig:vof-exemplo}
 \end{figure}
 
+\citet{Youngs1982} propôs uma reconstrução linear por partes, hoje conhecida genericamente como \textit{PLIC}, na qual a normal é estimada a partir do gradiente do campo de fração volumétrica. O método consiste em reconstruir a interface em cada célula computacional utilizando a equação:
 
 \begin{equation}
-    \frac{\partial c}{\partial t} + u \cdot \nabla c = 0.
-    \label{eq:advection-vof}
-\end{equation}
-
-Sendo a derivada de $c$ descontínua no espaço e no tempo, define-se uma variável auxiliar $f$ chamada de fração volumétrica, definida como \citep{Weymouth2010}:
-
-\begin{equation}
-    f = \frac{1}{V} \int_V c dV,
-    \label{eq:fraction-vof}
-\end{equation}
-
-após a integração da equação \ref{eq:advection-vof} sobre o volume de cada célula computacional, obtém-se a equação de transporte da fração volumétrica (válida para fluidos incompressíveis):
-
-\begin{equation}
-    \frac{\partial f}{\partial t}V + F_net = 0.
-    \label{eq:advection-fraction-vof}
-\end{equation}
-
-Sendo $F_net = \oint_{V} cu_n ds$ o fluxo líquido de fração volumétrica através das faces da célula computacional. A equação \ref{eq:advection-fraction-vof} é resolvida em todo domínio e, a partir do campo de f, a advecção deste termo é desenvolvida por \citet{Weymouth2010}. É possível reconstruir a interface entre os fluidos, sendo que a forma como isso é feito depende do método de reconstrução utilizado. 
-
-\citet{Youngs1982} propôs um método de reconstrução da interface baseado em uma aproximação linear, chamado de \textit{Piecewise Linear Interface Calculation} (\textit{PLIC}). O método consistia em reconstruir a interface em cada célula computacional que contém a interface entre os fluidos, utilizando a equação:
-
-\begin{equation}
-    m \vec{x} = \alpha,
+    \vec{m} \cdot \vec{x} = \alpha,
     \label{eq:plic}
 \end{equation}
 
-Na qual $m$ é o vetor normal à interface, $\vec{x}$ é o vetor de posição e $\alpha$ é a distância da origem até a interface. Os métodos de obtenção de $m$ e $\alpha$ utilizados são melhores explicados em \citet{Aulisa2007} e \citet{Scardovelli2000} respectivamente.
+Na qual $\vec{m}$ é o vetor normal à interface, obtido através do gradiente de $f$ utilizando o método proposto por \citet{Aulisa2007} que utiliza mínimos quadrados para minimizar o erro de reconstrução, esse método é uma melhoria do proposto originalmente no artigo de \citet{Youngs1982}. $\alpha$ é a variável que indica onde o vetor normal intercepta a célula de interface, sendo obtido por meio de uma inversão analítica a partir do valor de $f$ na célula seguindo o método proposto por \citet{Scardovelli2000}. A reconstrução é feita em cada célula de interface, e a partir dela é possível calcular o fluxo líquido de fração volumétrica $F_{net}$ através das faces da célula computacional, que é utilizado na equação de transporte da fração volumétrica (Eq. \ref{eq:advection-fraction-vof}).
+
+A partir dos valores de $f$ é possível calcular os campos de $\rho (f)$ e $\mu (f)$ bem como a tensão superficial $\vec{f}_e$ na equação de momento (Eq. \ref{eq:momentum-vof-general}). Os dois primeiros campos são obtidos utilizando as equações \ref{eq:rho-vof} e \ref{eq:mu-vof}, respectivamente:
+
+\begin{equation}
+    \rho (f) = f \rho_1  + (1-f) \rho_2 ,
+    \label{eq:rho-vof}
+\end{equation}
+
+\begin{equation}
+    \mu (f) = f \mu_1 + (1-f) \mu_2,
+    \label{eq:mu-vof}
+\end{equation}
+
+Já a tensão superficial é calculada utilizando o método \textit{CSF} (\textit{Continuum Surface Force}) proposto por \citet{Brackbill1992}. A tensão superficial é representada como uma força volumétrica distribuída em uma região difusa ao redor da interface, sendo proporcional à curvatura da interface e à constante de tensão superficial entre os fluidos. A curvatura é calculada a partir do gradiente do campo de fração volumétrica, e a força resultante é adicionada como um termo fonte na equação de momento.
 
