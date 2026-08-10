@@ -1,0 +1,19 @@
+\chapter{Metodo}
+
+\section{visão geral}
+
+
+A ideia principal da metodologia é tratar o problema do filme e escoamento principal de forma separada, utilizando uma abordagem multiescala, visto que o problema ocorre em duas dimensões de escalas diferentes. A comunicação entre os dois domínios é feita através das condições de contorno de ambas, de forma a minimzar o custo computacional mantendo a precisão do resultado. Como o método foi implementado em um código CFD já estruturado, aproveitou-se a hierarquia de níveis utilizada pelo AMR e pelo multigrid para separar os domínios e para extrair os dados necessários no acoplamento. O filme é resolvido de forma simplificada, porém mantendo o máximo possível as informações necessárias para não se perder a física do escoamento. A figura \ref{fig:metodo-esquema} mostra um esquema do que foi implementado.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{imagens/completo_s_mesh.png}
+    \caption{Divisão da simulação em domínios separados.}
+    \label{fig:metodo-esquema}
+\end{figure}
+
+Tem-se então uma simulação dividida em dois domínios, o domínio mais refinado na hierarquia de níveis tem ambos os fluidos e resolve todas as equações da VOF, como reconstrução da interface, forçagem, etc. além de conter a fronteira física. Os níveis mais grosseiros resolvem apenas o escoamento principal, sendo estão uma simulação monofásica clássica, com as condições de contorno transmitindo a influencia do filme. Existem ainda, na metodologia, a possibilidade de níveis intermediários, considerando que o salto entre o nível mais fino e os grosseiros pode ser maior que 1 nível, tais níveis intermediários servem apenas para fornecer infomações do escoamento para o filme, sendo preenchidos com propriedades interpoladas, os detalhes de cada etapa e domínio são apresentados adiante.
+
+%=====================================================================
+\input{textual/metodo/Escoamento_Principal}
+%=====================================================================
