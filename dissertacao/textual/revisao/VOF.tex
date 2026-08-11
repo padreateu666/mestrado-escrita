@@ -30,20 +30,15 @@ Como $c$ é descontínua através da interface, não é possível representá-la
     \label{eq:fraction-vof}
 \end{equation}
 
-com $0 < f < 1$. Integrando a Eq.\ref{eq:advection-vof} sobre o volume de cada célula computacional e utilizando a condição de incompressibilidade (Eq. \ref{eq:incompressible}) para reescrever o termo advectivo na forma conservativa, o teorema da divergência conduz à equação de transporte da fração volumétrica:
+com $0 < f < 1$. Integrando a Eq.\ref{eq:advection-vof} sobre o volume de cada célula computacional para reescrever o termo advectivo na forma conservativa, o teorema da divergência conduz à equação de transporte da fração volumétrica:
 
 \begin{equation}
-    \nabla\cdot\vec u = 0
-    \label{eq:incompressible}
-\end{equation}
-
-\begin{equation}
-    \frac{\partial f}{\partial t}V + F_{net} = 0.
+    \frac{\partial f}{\partial t}V + F_{net} = \oint_{V} c^* \vec{\nabla} \cdot \vec{u} dv.
     \label{eq:advection-fraction-vof}
 \end{equation}
 
 
-Sendo $F_{net} = \oint_{\partial V} c\, \vec{u}\cdot\vec{n} \, dS$ o fluxo líquido de fração volumétrica através das faces da célula computacional. É possível reconstruir a interface entre os fluidos utilizando $f$, sendo que a forma como isso é feito depende do método de reconstrução utilizado. A figura \ref{fig:vof-exemplo} mostra um exemplo de como a interface é representada. 
+Sendo $F_{net} = \oint_{\partial V} c\, \vec{u}\cdot\vec{n} \, dS$ o fluxo líquido de fração volumétrica através das faces da célula computacional e $\oint_{V} c^* \vec{\nabla} \cdot \vec{u} dv$ o termo de dilatação, que é igual a zero em um escoamento incompressível. É possível reconstruir a interface entre os fluidos utilizando $f$, sendo que a forma como isso é feito depende do método de reconstrução utilizado. A figura \ref{fig:vof-exemplo} mostra um exemplo de como a interface é representada. 
 
 
 \begin{figure}

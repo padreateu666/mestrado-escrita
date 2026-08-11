@@ -7,13 +7,16 @@ A ideia principal da metodologia é tratar o problema do filme e escoamento prin
 
 \begin{figure}
     \centering
-    \includegraphics[width=1\textwidth]{imagens/completo_s_mesh.png}
+    \includegraphics[width=0.8\textwidth]{imagens/completo_s_mesh.png}
     \caption{Divisão da simulação em domínios separados.}
     \label{fig:metodo-esquema}
 \end{figure}
 
 Tem-se então uma simulação dividida em dois domínios, o domínio mais refinado na hierarquia de níveis tem ambos os fluidos e resolve todas as equações da VOF, como reconstrução da interface, forçagem, etc. além de conter a fronteira física. Os níveis mais grosseiros resolvem apenas o escoamento principal, sendo estão uma simulação monofásica clássica, com as condições de contorno transmitindo a influencia do filme. Existem ainda, na metodologia, a possibilidade de níveis intermediários, considerando que o salto entre o nível mais fino e os grosseiros pode ser maior que 1 nível, tais níveis intermediários servem apenas para fornecer infomações do escoamento para o filme, sendo preenchidos com propriedades interpoladas, os detalhes de cada etapa e domínio são apresentados adiante.
 
+\input{textual/Modelo-matematico.tex}
+
 %=====================================================================
 \input{textual/metodo/Escoamento_Principal}
 %=====================================================================
+
