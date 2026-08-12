@@ -164,12 +164,14 @@
    year = {2011}
 }
 
-@article{Noh1976,
+@inproceedings{Noh1976,
    abstract = {SLIC is an alternating-direction method for the geometric approximation of fluid interfaces. It may be used in one, two, or three space dimensions, and it is characterized by the following features: (1) Fluid surfaces are represented locally for each mixed- fluid...},
    author = {W. F. Noh and Paul Woodward},
    doi = {10.1007/3-540-08004-X_336},
    isbn = {978-3-540-37548-7},
    issn = {1616-6361},
+   booktitle = {Fifth International Conference on Numerical Methods in Fluid Dynamics},
+   month = {7},
    pages = {330-340},
    publisher = {Springer, Berlin, Heidelberg},
    title = {SLIC (Simple Line Interface Calculation)},
@@ -254,4 +256,41 @@
    volume = {225},
    url = {https://www.sciencedirect.com/science/article/pii/S0021999107001325},
    year = {2007}
+}
+
+@article{Brackbill1992,
+   abstract = {A new method for modeling surface tension effects on fluid motion has been developed. Interfaces between fluids of different properties, or "colors," are represented as transition regions of finite thickness, across which the color variable varies continuously. At each point in the transition region, a force density is defined which is proportional to the curvature of the surface of constant color at that point. It is normalized so that the conventional description of surface tension on an interface is recovered when the ratio of local transition region thickness to local radius of curvature approaches zero. The continuum method eliminates the need for interface reconstruction, simplifies the calculation of surface tension, enables accurate modeling of two- and three-dimensional fluid flows driven by surface forces, and does not impose any modeling restrictions on the number, complexity, or dynamic evolution of fluid interfaces having surface tension. Computational results for two-dimensional flows are given to illustrate the properties of the method. © 1992.},
+   author = {J. U. Brackbill and D. B. Kothe and C. Zemach},
+   doi = {10.1016/0021-9991(92)90240-Y},
+   issn = {0021-9991},
+   issue = {2},
+   journal = {Journal of Computational Physics},
+   month = {6},
+   pages = {335-354},
+   publisher = {Academic Press},
+   title = {A continuum method for modeling surface tension},
+   volume = {100},
+   url = {https://www.sciencedirect.com/science/article/pii/002199919290240Y},
+   year = {1992}
+}
+
+@article{Shirani2004,
+   abstract = {A new method for the calculation of interface pressure for front capturing methods is developed. This method is based on the calculation of the pressure force at each interfacial cell face using the exact pressure due to the portion of the cell face that is occupied by each fluid. Special formulations for the pressure in the interfacial cells are derived for different orientations of an interface. This method (referred to as pressure calculation based on the interface location (PCIL)) is applied to the time evolution of a two-dimensional initially stagnant liquid drop in a gas, as well as, a gas bubble in liquid (gravity effects are not considered). A two-fluid, PLIC-VOF method is used to simulate the flow numerically. Both the continuum surface force (CSF) and the continuum surface stress (CSS) methods are used. A wide range of Ohnesorge numbers and density and viscosity ratios of two fluids are tested. It is shown that the new method reduces the spurious currents by up to three orders of magnitude for the cases tested.},
+   author = {E Shirani and N Ashgriz and J Mostaghimi},
+   doi = {10.1016/j.jcp.2004.08.017},
+   keywords = {Continuum surface force,Continuum surface stress,Free surface flows,Interface,PCIL,Parasitic currents,Pressure calcu-lation based on interface location,Spurious currents,Two-phase flow,Volume-of-fluid method},
+   title = {Interface pressure calculation based on conservation of momentum for front capturing methods},
+   url = {www.elsevier.com/locate/jcp},
+   year = {2004}
+}
+
+@book{versteeg2007,
+  author    = {Versteeg, H. K. and Malalasekera, W.},
+  title     = {An Introduction to Computational Fluid Dynamics: The Finite Volume Method},
+  edition   = {2},
+  publisher = {Pearson Education Limited},
+  address   = {Harlow, England},
+  year      = {2007},
+  isbn      = {978-0-13-127498-3},
+  pages     = {503}
 }

@@ -1,0 +1,26 @@
+\section{Sistema de Hierarquia de Níveis}
+
+O código utilizado pelo MFSim possui uma hierarquia de níveis que atende tanto o método \textit{multigrid} quando o \textit{AMR}. A figura \ref{fig:hierarquia_de_niveis} mostra como está estruturada esta hierarquia.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{imagens/estrutura_grid_mfsim.png}
+    \caption{Esquema de como os níveis de malha se comportam no MFSim.}
+    \label{fig:hierarquia_de_niveis}
+\end{figure}
+
+Dessa forma, temos então a divisão entre os níveis físicos, aqueles que resolvem o escoamento em si, e os níveis virtuais, que servem exclusivamente para a aplicação do método \textit{multigrid}. No exemplo da Figura \ref{fig:hierarquia_de_niveis} os níveis de L3 a L5 seriam os níveis físicos e os níveis L1 e L2 seriam apenas virtuais.
+
+Dessa forma, os níveis físicos guardam os campos, escalares e vetoriais, das propriedades físicas como: pressão, velocidade, e $f$ quando aplicável necessários para as interpolações do \textit{AMR} bem como os campos de resíduo e erro, necessários para a aplicação do \textit{multigrid}. Os níveis virtuais, porém, guaram apenas os campos resíduo e erro, sem terem informações dos campos vetoriais e escalares.
+
+
+Dentro desta estrutura, os níveis físicos mais refinados resolvem suas condições de contorno a partir das condições globais, nas faces que encostam no limite do domínio, e a partir de interpolações de valores dos níveis inferiores nos pontos que não tocam a fronteira do domínio.
+
+A metodologia proposta prevê confinar o escoamento bifásico no nível mais fino da hierarquia (convenciona-se aqui \textit{ltop}) enquanto os níveis inferiores são escoamentos monofásicos que realizam os ciclos e interpolações dos métodos mencionados sem a interferência do nível mais alto. Existem ainda níveis intermediários, que não são resolvidos e recebem os campos vetoriais e escalares a partir de interpolações conservativas vindas de níveis inferiores, esses níveis intermediários alimentam as condições de contorno de \textit{ltop}. A figura \ref{fig:hierarquia_metodo} mostra como a divisão funciona e o que roda em cada nível.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{imagens/hierarquia_de_interpolacoes.png}
+    \caption{Esquema de como cada nível observa o outro e a direção na qual as interpolações são feitas.}
+    \label{fig:hierarquia_metodo}
+\end{figure}

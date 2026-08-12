@@ -1,10 +1,10 @@
-\section{Modelagem matemática e numérica}
+\section{Modelagem matemática}
 
 A metodologia proposta prevê que o filme e o core flow serão resolvidos em níveis diferentes e com formulações matemáticas distintas. Este capítulo apresenta as equações resolvidas para cada um dos domínios bem como as simplificações adotadas.
 
 Assume-se a hipótese de fluidos incompressível, newtoniano, e imiscíveis, com tensão superficial constante. Além disso o escoamento é isotérmico e laminar, sendo desconsiderados quaisquer efeitos de turbulência.
 
-Ambos os fluidos foram resolvidos utilizando abordagem single-fluid, com método VOF utilizando reconstrução geométrica. Assim sendo, a equação para balanço de momento é resolvida é representada pela EQ. \ref{eq:navier-stokes-incompressivel-completa} e a equação para balanço de massa é representada pela EQ. \ref{eq:continuidade-completa}.
+Ambos os fluidos foram resolvidos utilizando abordagem single-fluid, com método VOF utilizando reconstrução geométrica. Assim sendo, a equação para balanço de momento é representada pela EQ. \ref{eq:navier-stokes-incompressivel-completa} e a equação para balanço de massa é representada pela EQ. \ref{eq:continuidade-completa}.
 
 \begin{equation}
      \frac{\partial \vec{u}}{\partial t} + \vec{u} \cdot \nabla \vec{u}
@@ -21,46 +21,21 @@ Ambos os fluidos foram resolvidos utilizando abordagem single-fluid, com método
     \label{eq:continuidade-completa}
 \end{equation}
 
-Nas quais $u$ é o vetor velocidade, $\rho$ é a massa específica, $\mu$ é a viscosidade, $\vec{p}$ a pressão, $\vec{g}$ o vetor gravidade, $\vec{f}_{ib}$ é a força de interação com a fronteira imersa - quando presente -  e $\vec{f}_{\sigma}$ é a força de tensão superficial provocada pela interface. Para uma distinção, onde for cabível, adota-se fluido 1 como sendo aquele que compões o filme e fluido 2 aquele que compõe o escoamento principal.
+Nas quais $u$ é o vetor velocidade, $\rho$ é a massa específica, $\mu$ é a viscosidade, $p$ a pressão, $\vec{g}$ o vetor gravidade, $\vec{f}_{ib}$ é a força de interação com a fronteira imersa - quando presente -  e $\vec{f}_{\sigma}$ é a força de tensão superficial provocada pela interface. Para uma distinção, onde for cabível, adota-se fluido 1 como sendo aquele que compõe o filme e fluido 2 aquele que compõe o escoamento principal.
 
 A massa específica e viscosidade são funções do campo de volume fracionário $f$, que representa a fração de volume do fluido 1 em cada célula do domínio computacional. As equações de transporte do volume fracionário são resolvidas utilizando o método VOF, com reconstrução geométrica da interface, a equação de transporte de $f$ é representada pela EQ. \ref{eq:transporte-f}.
 
 \begin{equation}
-    \frac{\partial f}{\partial t} V F_{net} = \oint_{V} c^* \vec{\nabla} \cdot \vec{u} dv
+    \frac{\partial f}{\partial t} V + F_{net} = \int_{V} c \vec{\nabla} \cdot \vec{u} dv,
     \label{eq:transporte-f}
 \end{equation}
 
-A Eq. \ref{eq:transporte-f} é resolvida pelo esquema conservativo com separação direcional proposto por \citet{Weymouth2010}. A cada passo de tempo são executadas três varreduras unidimensionais, uma por direção $d$, com permutação cíclica da ordem entre passos consecutivos para evitar viés direcional. O termo $c^*$ é a função
-indicadora na célula:
-
-% \begin{equation}
-%     \gamma_{i \pm 1/2} = \frac{u_{i \pm 1/2}\,\Delta t}{\Delta x_d},
-%     \label{eq:cfl-face}
-% \end{equation}
-
-% a atualização da fração volumétrica em cada varredura é
-
-% \begin{equation}
-%     f^{(d)}_{ijk} = f^{(d-1)}_{ijk}
-%     - \left( \Phi_{i+1/2} - \Phi_{i-1/2} \right)
-%     + c^{*}_{ijk} \left( \gamma_{i+1/2} - \gamma_{i-1/2} \right),
-%     \label{eq:weymouth-yue}
-% \end{equation}
-
-% na qual $\Phi_{i \pm 1/2}$ é o fluxo líquido de fração volumétrica através da face, obtido pela integração analítica do plano reconstruído sobre a região doadora,
-
-% \begin{equation}
-%     \Phi_{i+1/2} = V^{R}_{ijk} - V^{L}_{i+1,jk},
-%     \qquad
-%     V^{R}_{ijk} = \int_{1-\gamma_{i+1/2}}^{1} \!\! \int_{0}^{1} \!\! \int_{0}^{1}
-%     H\!\left( \alpha - \vec{m} \cdot \vec{x} \right) d\vec{x},
-%     \label{eq:fluxo-plic}
-% \end{equation}
-
-% com coordenadas normalizadas pelo tamanho da célula, $H$ a função de Heaviside, e $V^{L}$ definido de forma análoga para a face oposta quando $\gamma_{i-1/2} < 0$. O termo $c^{*}$ é a função indicadora
+sendo $F_{net}$ o fluxo líquido de fração volumétrica através das faces.
+A Eq. \ref{eq:transporte-f} é resolvida pelo esquema conservativo com separação direcional proposto por \citet{Weymouth2010}. A cada passo de tempo são executadas três varreduras unidimensionais, uma por direção $d$, com permutação cíclica da ordem entre passos consecutivos para evitar viés direcional. O termo $c$ é a função
+coloração na célula:
 
 \begin{equation}
-    c^{*} =
+    c =
     \begin{cases}
         1, & f > 1/2 \\
         0, & \text{caso contrário,}
@@ -68,7 +43,6 @@ indicadora na célula:
     \label{eq:indicadora-wy}
 \end{equation}
 
-% avaliada uma única vez no início do passo de tempo, a partir de $f^{n}$, e mantida constante ao longo das três varreduras. O termo em $c^{*}$ compensa o fato de que cada varredura unidimensional, isoladamente, não satisfaz a condição de incompressibilidade. É essa compensação que garante conservação exata de volume e limitação $0 \leq f \leq 1$, desde que $\gamma \leq 1/2$ \citep{Weymouth2010}.
 
 Após a obtenção de $f$ no domínio, os campos de $\rho$ e $\mu$ são reconstruídos utilizando Eq. \ref{eq:rho-reconstruido} e Eq. \ref{eq:mu-reconstruido}:
 
@@ -84,24 +58,44 @@ Após a obtenção de $f$ no domínio, os campos de $\rho$ e $\mu$ são reconstr
 
 Sendo $\mu$ reconstruído com a formulação clássica e $\rho$ reconstruído com média geométrica que suaviza o gradiente na interface, de forma a evitar saltos abruptos e problemas de convergência. 
 
-% a obtenção de $m$ e $\alpha$ são obtidos com os métodos \textit{MYCS} \citep{Aulisa2007} e a inversão analítica de \citet{Scardovelli2000} respectivamente.
-
-A tensão superficial é tratada como força de campo pelo modelo \textit{Continuum Surface Force} \citep{Brackbill1992}, avaliada diretamente na face onde reside a componente de quantidade de movimento,
+A tensão superficial é tratada como força de campo pelo modelo \textit{Continuum Surface Force} \citep{Brackbill1992}, Eq.\ref{eq:csf}: 
 
 \begin{equation}
-    \vec{f}_{\sigma} \cdot = \sigma \kappa_{x} \nabla f \frac{\rho}{\langle \rho \rangle},
+    \vec{f}_{\sigma} = \frac{\sigma \kappa \nabla f}{\langle \rho \rangle},
     \label{eq:csf}
 \end{equation}
 
-na qual $\sigma$ é a tensão superficial, $\kappa_{x}$ é a curvatura obtido a partir do método mostrado por \citet{Shirani2004}.
+na qual $\sigma$ é a tensão superficial, $\kappa$ é a curvatura obtido a partir do método mostrado por \citet{Shirani2004} e ${\langle \rho \rangle = \frac{\rho_1 + \rho_2}{2}}$ que é a ponderação por massa específica que faz com que a aceleração resultante deste termo dependa da média das fases, sem saltos.
 
-O sistema resolvido pelo escoamento principal 
-% na qual a curvatura de face é obtida por interpolação ponderada dos valores de centro de célula,
+%Falta IB
 
-% \begin{equation}
-%     \kappa_{i-1/2} = \frac{w_{i-1}\,\kappa_{i-1} + w_{i}\,\kappa_{i}}{w_{i-1} + w_{i}},
-%     \qquad w_{i} = f_{i}\left(1 - f_{i}\right),
-%     \label{eq:curvatura-face}
-% \end{equation}
+Para o escoamento principal, tem-se uma consideração adicional de escoamento monofásico, visto que o filme é confinado no nível mais fino, como explicado na (citar capitulo de escoamento principal).
 
-% com $\rho_{i-1/2} = \frac{1}{2}(\rho_{i-1} + \rho_{i})$ e $\left\langle \rho \right\rangle = \frac{1}{2}(\rho_1 + \rho_2)$. O peso $w = f(1-f)$ concentra a interpolação nas células efetivamente cortadas pela interface, e o fator $\rho_{i-1/2}/\left\langle \rho \right\rangle$ distribui a força proporcionalmente à massa específica local, reduzindo correntes espúrias.
+\section{Modelagem Numérica}
+
+Apesar da modelagem numérica ser complexa, são abordados os detalhes essenciais para o desenvolvimento do método. Adota-se o sobrescrito $n$ para o passo de tempo.
+
+Como padrão na literatura para malhas estruturadas cartesianas \citep{versteeg2007}, o método de volumes finitos (\textit{MVF} ou, em inglês, \textit{FVM}) foi utilizado para a discretização das equações propostas e as demais na ferramenta computacional. Além disto, o esquema de malha deslocada para variáveis vetoriais e escalares (\textit{staggered grid}) também é utilizado.
+
+O esquema de acoplamento pressão-velocidade utilizado deriva do método de projeção de Chorin, também chamado de método do passo fracionado (Fractional Step em inglês), o método completo pode ser encontrado em (cite santos) e em (cite Luis), de forma resumida:
+
+\begin{itemize}
+    \item Determina-se, a partir do campo de pressão vindo do passo de tempo anterior, uma estimativa do campo e velocidade
+    \item A partir da equação da continuidade, deriva-se uma equação para a correção da pressão
+    \item A partir da correção do campo de pressão e do campo de velocidade estimado, chega-se na velocidade do tempo $n+1$
+    \item a partir do campo de pressão do tempo anterior e da correção do campo de pressão, chega-se na pressão do tempo $n+1$
+\end{itemize}
+
+Considerando que o escoamento do fluido principal será monofásico, a Eq. \ref{eq:navier-stokes-incompressivel-completa} se resume a:
+
+\begin{equation}
+\frac{\partial \vec{u^{*}}}{\partial t} + \vec{u^{*}} \cdot \nabla \vec{u^{*}}
+    = -\frac{1}{\rho_2}\nabla p^n
+    + \nu_2 \nabla^2 \vec{u^{*}}
+    + \vec{g}
+    + \vec{f}_{ib}
+    \label{eq:momento-simplificada-estrela}
+\end{equation}
+
+Sendo $\vec{u^{*}}$ a estimativa do vetor velocidade e $\nu_2 = \frac{\mu}{\rho_2}$.
+
