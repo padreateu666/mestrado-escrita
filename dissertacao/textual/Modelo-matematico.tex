@@ -31,11 +31,10 @@ A massa específica e viscosidade são funções do campo de volume fracionário
 \end{equation}
 
 sendo $F_{net}$ o fluxo líquido de fração volumétrica através das faces.
-A Eq. \ref{eq:transporte-f} é resolvida pelo esquema conservativo com separação direcional proposto por \citet{Weymouth2010}. A cada passo de tempo são executadas três varreduras unidimensionais, uma por direção $d$, com permutação cíclica da ordem entre passos consecutivos para evitar viés direcional. O termo $c$ é a função
-coloração na célula:
+A Eq. \ref{eq:transporte-f} é resolvida pelo esquema conservativo com separação direcional proposto por \citet{Weymouth2010}. A cada passo de tempo são executadas três varreduras unidimensionais, uma por direção $d$, com permutação cíclica da ordem entre passos consecutivos para evitar viés direcional. O termo $c$ é aproximado por \citet{Weymouth2010} como função indicadora $c^*$ na célula:
 
 \begin{equation}
-    c =
+    c^* =
     \begin{cases}
         1, & f > 1/2 \\
         0, & \text{caso contrário,}
@@ -97,5 +96,5 @@ Considerando que o escoamento do fluido principal será monofásico, a Eq. \ref{
     \label{eq:momento-simplificada-estrela}
 \end{equation}
 
-Sendo $\vec{u^{*}}$ a estimativa do vetor velocidade e $\nu_2 = \frac{\mu}{\rho_2}$.
+Sendo $\vec{u^{*}}$ a estimativa do vetor velocidade e $\nu_2 = \frac{\mu_2}{\rho_2}$.
 

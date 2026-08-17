@@ -1,0 +1,40 @@
+\chapter{Modelo Físico}
+
+Para verificar a validade da teoria e avaliar seu comportamento em ambiente isolado, utilizou-se primeiramente o escoamento de Poiseuille desenvolvido entre duas chapas planas com condições de simetria. (falar do tridimensional, quando tiver resultados).Todos os escoamentos foram realizados utilizando o método clássico de VOF presente no código e a metodologia proposta, para efeitos comparativos.
+
+\section{Escoamento de Poiseuille entre placas planas}
+
+O escoamento de Poiseuille em placas planas é utilizado para verificar a validade do modelo, avaliar as condições de contorno propostas e fazer estudos de independência de malha que são posteriormente transferidos para os casos mais complexos. O problema considerado utiliza as seguintes hipóteses simplificadoras: escoamento bifásico, desenvolvido, unidirecional, incompressível, isotérmico e com simetria no meio do domínio. A figura \ref{fig:poiseuille_plano} e a tabela \ref{tab:poiseuille_plano} mostram o domínio e coordenadas consideradas e os valores das propriedades utilizadas no escoamento, respectivamente.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\textwidth]{imagens/poiseuille-fisico.png}
+    \caption{Modelo físico do escoamento bidimensional considerado}
+    \label{fig:poiseuille_plano}
+\end{figure}
+
+O código utilizado é essencialmente tridimensional, sendo assim o que foi simulado foi um escoamento pseudo-bidimensional com as seguintes condições de contorno disponíveis na tabela \ref{tb:condicoes_de_contorno}
+
+\begin{table}[htb]
+    \centering
+    \caption{Condições de contorno impostas nas fronteiras do domínio}
+    \label{tb:condicoes_de_contorno}
+    \begin{tabular}{@{}l cccc@{}}
+        \toprule
+        \multirow{2}{*}{Fronteira}  & \multicolumn{3}{c}{Componentes de velocidade}                                                             & \multirow{2}{*}{Pressão}                \\
+        \cmidrule(lr){2-4}
+                                    & $u$                              & $v$                              & $w$                              &                                         \\
+        \midrule
+        $x = 0$                     & $0$                              & $0$                              & $0$                              & $\partial p / \partial x = 0$           \\
+        $x = x_\mathrm{max}$        & $0$                              & $\partial v / \partial x = 0$    & $\partial w / \partial x = 0$    & $p$                                     \\
+        \addlinespace
+        $y = 0$                     & $\partial p / \partial x = 0$    & $\partial p / \partial x = 0$    & $\partial p / \partial x = 0$    & $p = p_\mathrm{max}$                    \\
+        $y = y_\mathrm{max}$        & $\partial p / \partial x = 0$    & $\partial p / \partial x = 0$    & $\partial p / \partial x = 0$    & $p = 0$                                 \\
+        \addlinespace
+        $w = 0$                     & $\partial p / \partial x = 0$    & $\partial p / \partial x = 0$    & $w = 0$                          & $\partial p / \partial x = 0$           \\
+        $w = w_\mathrm{max}$        & $\partial p / \partial x = 0$    & $\partial p / \partial x = 0$    & $w = 0$                          & $\partial p / \partial x = 0$           \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+na qual a direção z é considerada periódica com um número mínimo de 4 células para garantir o funcionamento do código, a parede mais externa de x também utiliza condição de simetria, considerando um canal plano simétrico. O escoamento é desenvolvido, sendo assim, a pressão é imposta em ambas as faces da direção y, sendo que a diferença de pressão total varia de acordo com  os casos que foram simulados, não sendo constante. 
