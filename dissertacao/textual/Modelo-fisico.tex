@@ -4,16 +4,29 @@ Para verificar a validade da teoria e avaliar seu comportamento em ambiente isol
 
 \section{Escoamento de Poiseuille entre placas planas}
 
-O escoamento de Poiseuille em placas planas é utilizado para verificar a validade do modelo, avaliar as condições de contorno propostas e fazer estudos de independência de malha que são posteriormente transferidos para os casos mais complexos. O problema considerado utiliza as seguintes hipóteses simplificadoras: escoamento bifásico, desenvolvido, unidirecional, incompressível, isotérmico e com simetria no meio do domínio. A figura \ref{fig:poiseuille_plano} e a tabela \ref{tab:poiseuille_plano} mostram o domínio e coordenadas consideradas e os valores das propriedades utilizadas no escoamento, respectivamente.
+O escoamento de Poiseuille em placas planas é utilizado para verificar a validade do modelo, avaliar as condições de contorno propostas e fazer estudos de independência de malha que são posteriormente transferidos para os casos mais complexos. O problema considerado utiliza as seguintes hipóteses simplificadoras:
+
+\begin{itemize}
+    \item bifásico
+    \item desenvolvido
+    \item unidirecional
+    \item incompressível
+    \item simetria no meio do domínio
+    \item simetria em z
+\end{itemize}
+
+
+Na figura \ref{fig:poiseuille_plano} é mostrado o domínio e coordenadas consideradas. O problema é considerado unidimensional pois o perfil de velocidade varia apenas em $x$.
+
 
 \begin{figure}
     \centering
     \includegraphics[width=0.6\textwidth]{imagens/poiseuille-fisico.png}
-    \caption{Modelo físico do escoamento bidimensional considerado}
+    \caption{Modelo físico do escoamento unidimensional considerado}
     \label{fig:poiseuille_plano}
 \end{figure}
 
-O código utilizado é essencialmente tridimensional, sendo assim o que foi simulado foi um escoamento pseudo-bidimensional com as seguintes condições de contorno disponíveis na tabela \ref{tb:condicoes_de_contorno}
+O código utilizado é essencialmente tridimensional, sendo assim o que foi simulado foi um escoamento pseudo-unidimensional com as seguintes condições de contorno disponíveis na tabela \ref{tb:condicoes_de_contorno}.
 
 \begin{table}[htb]
     \centering
@@ -37,4 +50,8 @@ O código utilizado é essencialmente tridimensional, sendo assim o que foi simu
     \end{tabular}
 \end{table}
 
-na qual a direção z é considerada periódica com um número mínimo de 4 células para garantir o funcionamento do código, a parede mais externa de x também utiliza condição de simetria, considerando um canal plano simétrico. O escoamento é desenvolvido, sendo assim, a pressão é imposta em ambas as faces da direção y, sendo que a diferença de pressão total varia de acordo com  os casos que foram simulados, não sendo constante. 
+na qual a direção z é considerada periódica com um número mínimo de 4 células para garantir o funcionamento do código, a parede mais externa de x também utiliza condição de simetria. O escoamento é desenvolvido, sendo assim, a pressão é imposta em ambas as faces da direção y. 
+
+\subsection{Convergência de malha}
+
+O estudo de convergência de malha foi realizado no problema 1D

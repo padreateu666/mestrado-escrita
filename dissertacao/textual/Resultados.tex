@@ -6,5 +6,24 @@
 
 O primeiro resultado obtido a partir do escoamento de Poiseuille entre placas planas foi o número necessário de células computacionais para que se obtenha independência de malha e, principalmente, quantas células ao longo do filme são necessárias para descreve-lo de maneira satisfatória.
 
-O estudo foi realizado utilizando VOF puro 
+O estudo foi realizado utilizando o método VOF tradicional com apenas 1 nível de refinamento (mais níveis virtuais gerados automaticamente pelo algoritmo responsável pelo \textit{multigrid}). A sequência de malhas é mostrada na Tabela \ref{tab:malhas-independência}. Os perfis de velocidade obtidos em cada uma das malhas estão representados na figura \ref{figura-indepêndencia_de_malha-A} juntamente com a referência, obtida através da solução analítica do problema. O erro de cada uma das curvas em relação à referência está mostrado Figura \ref{figura-indepêndencia_de_malha-B}.
+
+
+
+\begin{table}[htb]
+    \centering
+    \caption{Sequência de malhas utilizada no estudo de independência de malha}
+    \label{tab:malhas-independência}
+    \begin{tabular}{@{}l cc@{}}
+        \toprule
+        Malha                       & Domínio                          & $dx = dy = dz$                          \\
+        \midrule
+        $64 \times 4 \times 4$      & $0{,}256 \times 0{,}016 \times 0{,}016$   & $0{,}004$                      \\
+        $128 \times 4 \times 4$     & $0{,}256 \times 0{,}008 \times 0{,}008$   & $0{,}002$                      \\
+        $256 \times 4 \times 4$     & $0{,}256 \times 0{,}004 \times 0{,}004$   & $0{,}001$                      \\
+        $512 \times 4 \times 4$     & $0{,}256 \times 0{,}002 \times 0{,}002$   & $0{,}0005$                     \\
+        $1024 \times 4 \times 4$    & $0{,}256 \times 0{,}001 \times 0{,}001$   & $0{,}00025$                    \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
