@@ -54,4 +54,44 @@ na qual a direção z é considerada periódica com um número mínimo de 4 cél
 
 \subsection{Convergência de malha}
 
-O estudo de convergência de malha foi realizado no problema 1D
+O estudo de convergência de malha foi realizado no problema 1D, utilizando as malhas e domínios mostrados na da tabela \ref{tab:malhas-independência}. O estudo foi feito comparando as curvas de velocidade obtidas com o perfil de velocidade analítico para o canal plano e verificando o critério de convergência, seguindo (citar roarse). Também foi utilizado a sequencia de report mostrada em (citar asme) e utilizdo o parâmetro (citar richardson) para determinar a malha ideal. 
+
+
+\begin{table}[htb]
+    \centering
+    \caption{Sequência de malhas utilizada no estudo de independência de malha}
+    \label{tab:malhas-independência}
+    \begin{tabular}{@{}l cc@{}}
+        \toprule
+        Malha                       & Domínio                          & $dx = dy = dz$                          \\
+        \midrule
+        $64 \times 4 \times 4$      & $0{,}256 \times 0{,}016 \times 0{,}016$   & $0{,}004$                      \\
+        $128 \times 4 \times 4$     & $0{,}256 \times 0{,}008 \times 0{,}008$   & $0{,}002$                      \\
+        $256 \times 4 \times 4$     & $0{,}256 \times 0{,}004 \times 0{,}004$   & $0{,}001$                      \\
+        $512 \times 4 \times 4$     & $0{,}256 \times 0{,}002 \times 0{,}002$   & $0{,}0005$                     \\
+        $1024 \times 4 \times 4$    & $0{,}256 \times 0{,}001 \times 0{,}001$   & $0{,}00025$                    \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+O domínio foi modificado ente uma interação e outra para preservar a razão de aspecto das células, visto que o número de células por simulação nas direções y e z é constante. As propriedades utilizadas para analisar a independência de malha são:
+
+
+\begin{itemize}
+    \item falar das propriedades físicas
+\end{itemize}
+
+\subsection{Comparação entre as Condições de contorno}
+
+Foram avaliadas as seguintes condições de contorno para verificar qual forneceria os melhores resultado:
+
+\begin{itemize}
+    \item falar das condições de contorno
+    \item 
+\end{itemize}
+
+
+Os valores utilizados para simular essas condições são (decidir o que usar depois dos testes)
+ 
+As curvas obtidas por cada uma das malhas comparadas com a solução analítica estão mostradas na figura (citar figura). O erro relativo de cada um dos pontos no espaço para a malha mais refinada está mostrado na figura (citar figura). É possível verificar que o erro em si é desprezível e cresce exatamente na região de interface, esse erro de interface então se propaga para a região do fluido 2 (confirmar) e sofre pequenas alterações na mesma, mantendo um patamar.
