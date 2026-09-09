@@ -1,8 +1,35 @@
-\section{Filme Fino}
+\section{Modelos reduzidos}
 
-Como mencionado n início deste trabalho, a principal teoria utilizada para embasar os modelos de filme fino é a teoria de lubrificação. Isso fica evidenciado mesmo em revisões clássicas sobre o tema como em \citet{Craster2009} e \citet{Oron1997} apresenta a técnica de forma geral para servir de base para a modelagem do mesmo.
+Como mencionado n início deste trabalho, quando a espessura do filme $lembrar$ é muito menor que o comprimento característico do escoamento $relacao$ e muito menor que as outras dimensões do mesmo, é comum na literatura que se utilize as teorias de lubrificação e onda longa. No lugar de se resolver as equações de forma direta, a variação das propriedades ao longo da espessura é integrada e equações bidimensionais simplificadas do escoamento do filme são resolvidas. Com a dimensão mais custosa removida do escoamento, a ampla utilização dessa teoria se da pela redução de custo que ela proporciona, apesar de suas limitações \citep{Oron1997,Craster2009}.
+
+\subsection{Teoria da Lubrificação e Aproximação de Onda Longa}
+
+A teoria da lubrificação nasceu a partir do artigo de \citet{Reynolds1886}, no qual ele trata sobre filme lubrificantes entre superfícies quase paralelas. Ele aplicou a teoria de escoamentos viscosos com baixos efeitos de inercia, $Re \ll 1$, e com $\epsilon \ll 1$, derivando as equações diferenciais para os campos e comparando os resultados obtidos das soluções aproximadas com experimentos realizados a priori. Assim, seguindo a teoria de Reynolds, para um fluido incompressível, newtoniano e viscoso, as equações de Navier-Stokes e de continuidade podem ser reduzidas para \cite{Oron1997}:
+
+\begin{align}
+    \mu \frac{\partial^2 u}{\partial z^2} - \frac{\partial p}{\partial x} = 0  \label{eq:oron_tangente} \\
+    -\frac{\partial p}{\partial z} = 0 \label{eq:oron_normal} \\
+    \frac{\partial u}{\partial x}  + \frac{\partial w}{\partial z} = 0, 
+    \label{eq:oron_continuidade}
+\end{align}
+
+Com $u = (u, w)$ sendo a velocidade e $p$ a pressão no escoamento, como no artigo original. As conclusões mais importantes que se tem com essas equações são que o escoamento, com variação de espessura sendo pequena, é localmente paralelo à superfície e a distribuição de pressão é uniforme na espessura do filme - ou hidrostática se a gravidade estiver presente no problema. As coordenadas desse sistema de equações sendo mostrado pela figura \ref{fig:oron_lubrication}
+
+\begin{figure}
+    \centering
+    \includegraphics[width = 1.0\textwidth]{./imagens/oron_lubrication.png}
+    \caption{Sistema de coordenadas considerado nas equações \ref{eq:oron_tangente} a \ref{eq:oron_normal}. Fonte: \citet{Oron1997}}
+    \label{fig:oron_lubrication}
+\end{figure}
 
 
-Este domínio da teoria nas implementações se da pela facilidade da implementação dos modelos derivados dessa teoria e pelos bons resultados que são obtidos com a mesma. Tais resultados, porém, só podem ser obtidos com segurança quando as hipóteses utilizadas para o desenvolvimento da teoria são atendidas \citep{Wray2017}. Dado a restritividade das hipóteses, não é incomum achar trabalhos que não as seguem totalmente ou que, por meio de artifícios matemáticos, estendem sua validade. O principal ponto de atenção quanto à validade da teoria de lubrificação e teoria integral é sua restrição quanto a geometria do problema - sendo este o principal motivo dos métodos disponíveis no MFSim não resolverem os desafios propostos - e a dimensão dos fenômenos associados ao mesmo como dimensões de ondas e instabilidades. 
+A partir de condições de contorno dadas, como mostrado didaticamente em \citet{Craster2009}, é possível chegar na equação de Reynolds para a lubrificação que, com a altura do filme dada, é uma EDO para P, Eq. \ref{eq:reynolds_lubrication}.
 
-%\falar dos autores e escoamentos em ordem
+\begin{equation}
+    \frac{\partial \(- \frac{1}{12}h^3 \frac{\partial p }{\partial x} + \frac{1}{2} \mu U_0 h \)}{\partial x} = 0,
+    \label{eq:reynolds_lubrication}
+\end{equation}
+
+sendo $U_0$ sendo a velocidade inicial do escoamento dada.
+
+A teoria de Reynolds foi posteriormente estendida para filmes com superfícies livres, no qual a variável se inverteu: dado um valor conhecido de $p$ o objetivo é analisar a evolução de h com o tempo e espaço \citep{Craster2009}. A equação que se obtém a partir disto é:
