@@ -4,32 +4,29 @@ Como mencionado n início deste trabalho, quando a espessura do filme $lembrar$ 
 
 \subsection{Teoria da Lubrificação e Aproximação de Onda Longa}
 
-A teoria da lubrificação nasceu a partir do artigo de \citet{Reynolds1886}, no qual ele trata sobre filme lubrificantes entre superfícies quase paralelas. Ele aplicou a teoria de escoamentos viscosos com baixos efeitos de inercia, $Re \ll 1$, e com $\epsilon \ll 1$, derivando as equações diferenciais para os campos e comparando os resultados obtidos das soluções aproximadas com experimentos realizados a priori. Assim, seguindo a teoria de Reynolds, para um fluido incompressível, newtoniano e viscoso, as equações de Navier-Stokes e de continuidade podem ser reduzidas para \cite{Oron1997}:
+A teoria da lubrificação nasceu a partir do artigo de \citet{Reynolds1886}, no qual ele trata sobre filme lubrificantes entre superfícies quase paralelas. Ele aplicou a teoria de escoamentos viscosos com baixos efeitos de inercia, $Re \ll 1$, e com $\epsilon \ll 1$, derivando as equações diferenciais para os campos e comparando os resultados obtidos das soluções aproximadas com experimentos realizados a priori. Assim, partindo de um fluido incompressível, newtoniano e viscoso; com escoamento limitado por uma superfície sólida na face inferior e por um gás na face superior, é possível escrever uma equação para a evolução da espessura do filme com o tempo.\cite{Oron1997}:
 
 \begin{align}
-    \mu \frac{\partial^2 u}{\partial z^2} - \frac{\partial p}{\partial x} = 0  \label{eq:oron_tangente} \\
-    -\frac{\partial p}{\partial z} = 0 \label{eq:oron_normal} \\
-    \frac{\partial u}{\partial x}  + \frac{\partial w}{\partial z} = 0, 
-    \label{eq:oron_continuidade}
+    \mu \frac{\partial h}{\partial t} - \vec{\nabla} \cdot \left[\left(\tau + \vec{\nabla} \sigma\right) \left( \frac{1}{2} + h^2 \beta h\right)\right]  - \vec{\nabla} \cdot \left[\left(\frac{1}{3}h^3 + \beta h^2\right) \vec{\nabla}p_{filme}\right]= 0  \label{eq:oron_tangente}
 \end{align}
 
-Com $u = (u, w)$ sendo a velocidade e $p$ a pressão no escoamento, como no artigo original. As conclusões mais importantes que se tem com essas equações são que o escoamento, com variação de espessura sendo pequena, é localmente paralelo à superfície e a distribuição de pressão é uniforme na espessura do filme - ou hidrostática se a gravidade estiver presente no problema. As coordenadas desse sistema de equações sendo mostrado pela figura \ref{fig:oron_lubrication}
+Sendo essa a equação normalmente utilizada de ponto de partida para os modelos de lubrificação de uma via.
 
-\begin{figure}
-    \centering
-    \includegraphics[width = 1.0\textwidth]{./imagens/oron_lubrication.png}
-    \caption{Sistema de coordenadas considerado nas equações \ref{eq:oron_tangente} a \ref{eq:oron_normal}. Fonte: \citet{Oron1997}}
-    \label{fig:oron_lubrication}
-\end{figure}
+Apesar de normalmente serem referenciados com o mesmo nome na literatura, existem duas teorias que tratam de filme fino com equações simplificadas, sendo uma delas a teoria da lubrificação, que considera escoamento com viscosidade dominante e acoplamento normalmente de uma via - do filme para o líquido -, e a outra a teoria integral, que leva em conta os efeitos inerciais, sendo mais aplicável aos escoamentos cotidianos e aplicada na maioria dos modelos. Uma diferenciação formal, bem como a dedução matemática formal de ambas as formulações podem ser encontradas em \citet{Obrien2006} e \citet{Craster2009}. Uma das diferenças entre as formulações é que normalmente a formulação integral é de duas vias.
 
 
-A partir de condições de contorno dadas, como mostrado didaticamente em \citet{Craster2009}, é possível chegar na equação de Reynolds para a lubrificação que, com a altura do filme dada, é uma EDO para P, Eq. \ref{eq:reynolds_lubrication}.
+As limitações e casos onde cada uma das teorias deixam de valer estão espalhados pela literatura, com alguns autores como \cite{Morris2017} e \cite{Wray2017} mensurando que o erro pode se tornar inaceitável com algumas condições específicas, como o aumento da espessura do filme, efeitos de inércia não desprezíveis com alto número de Reynolds e Froude. \citet{Craster2009} também menciona que detalhes topológicos grandes podem fazer com que os modelos percam a validade, apesar de existirem ferramentas que contornam esse problema.
 
-\begin{equation}
-    \frac{\partial \(- \frac{1}{12}h^3 \frac{\partial p }{\partial x} + \frac{1}{2} \mu U_0 h \)}{\partial x} = 0,
-    \label{eq:reynolds_lubrication}
-\end{equation}
+Uma das formulações comerciais mais utilizadas de modelo de filme fino é o chamado \textit{Eulerian Wall Film} (EWF) disponibilizado no fluent pela Ansys. O modelo usa uma formulação integral, resolvendo uma equação bidimensional para a continuidade e o momento com termo de pressão que levam em conta a pressão do gás e a capilaridade. O modelo apresenta bons resultados, dentro das limitações que suas hipóteses trazem, sendo utilizado por vários autores.
 
-sendo $U_0$ sendo a velocidade inicial do escoamento dada.
+Um dos primeiros artigos a trazer a formulação utilizada pela fluente é \citet{Ingle2014}, os autores utilizam um modelo de acoplamento de interação de partículas com o EWF obtendo bons resultados quando comparado com os experimentais, além de mostrarem como ele se comporta quando acoplado com outros modelos. \citet{Kakimpa2015} compara o modelo de filme com o método \textit{VOF} implementados no mesmo software e chegam a conclusão de que método tradicionais como esse são inviáveis de serem utilizados em problemas com grandes diferenças de dimensões. 
 
-A teoria de Reynolds foi posteriormente estendida para filmes com superfícies livres, no qual a variável se inverteu: dado um valor conhecido de $p$ o objetivo é analisar a evolução de h com o tempo e espaço \citep{Craster2009}. A equação que se obtém a partir disto é:
+\cite{Paz2017} Utilizou o EWF para simular o recobrimento mucoso do esôfago e analisar a expectoração humana, a geometria utilizada para o escoamento tem grandes variações topológicas maiores que a ordem de grandeza do filme, apesar dos autores relatarem que os resultados são promissores os mesmos relatam que seriam necessário que eles fossem comparados com dados quantitativos. há ainda exemplos de aplicações desse modelo utilizando geometrias apropriadas para as considerações da teoria, como \citet{Ding2022} conseguiu bons resultados modelando fluidos supersônicos e \citet{Yue2022} que simulou o escoamento em um ciclone hidráulico.
+
+Por ser um problema difundido na literatura, outros softwares amplamente utilizados pela comunidade apresentam seus próprios modelos de filmes finos. \citet{Meredith2011} desenvolveu um dos modelos disponíveis para o OpenFoam, utilizando equações semelhantes às utilizadas para o EWF, com mudanças na geração de malha. \cite{Bai1996} desenvolveu um modelo de filme muito referenciado, usado como base para os modelos EWF e os disponíveis no OpenFoam. O'Rourke trabalhou com o mesmo no software KIVA-3 nos trabalhos \citet{ORourke1996} e \cite{ORourke2000}, alguns modelos de fechamento e acoplamento em relação a fenômenos como tratamento de colisões e quinas desenvolvidos nestes artigos são os utilizados nos códigos comerciais e em soluções particulares ainda hoje 
+
+Para problemas específicos e ao longo do desenvolvimento da teoria de filme fino nas últimas duas décadas, vários grupos desenvolveram modelos próprios, geralmente especializados em suas aplicações. Dentre os modelos desenvolvidos se aproximam do presente trabalho aqueles que usam metodologias hibridas ou acopladas, com o escoamento principal trocando informações com o filme. \cite{Lavalle2015} criou um acoplamento no qual o modelo reduzido se comunica com o escoamento principal através de condições de contorno, o gás enxerga o filme como uma superfície móvel com velocidade imposta, sendo que esta velocidade vem das equações do filme, enquanto do lado do filme o gás fornece a taxa de cisalhamento e a pressão local. Lavalle realiza o tratamento numérico do acoplamento, com esquema explicito entre as equações. Os resultados obtidos pelo modelo do mesmo são satisfatórios, da ordem de 5 \% quando comparado com DNS. Apesar de geometria utilizada neste trabalho ser móvel, o autor validou o modelo em geometrias simples, como canais bidimensionais.
+
+
+
+
