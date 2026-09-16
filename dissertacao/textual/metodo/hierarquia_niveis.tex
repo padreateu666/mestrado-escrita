@@ -1,8 +1,8 @@
 \section{Sistema de Hierarquia de Níveis}
 
-O código utilizado (\textit{MFSim} (citar artigos de MFSIM)) possui uma hierarquia de níveis que atende tanto o método \textit{multigrid} quanto o \textit{AMR}. A figura \ref{fig:hierarquia_de_niveis} mostra como está estruturada esta hierarquia. O refino entre os níveis, para manter precisão dos interpoladores, é fixado em 2 ou seja, um nível mais fino em relação a um imediatamente mais grosseiro terá o dobro do número de células deste por direção.
+O  utilizado código possui uma estrutura hierárquica de níveis aninhados, que serve para fornecer estrutura aos algorítimos de refinamento de malha adaptativa (\textit{AMR}) e \textit{multigrid} (cite trabalhos). Essa hierarquia de níveis é mostrada na Figura \ref{fig:hierarquia_de_niveis}. Cada um dos níveis possui resíduos das variáveis calculadas pelo multigrid ou campos vetoriais completos quando esses níveis pertencerem aos níveis físicos do AMR.
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{imagens/estrutura_grid_mfsim.png}
     \caption{Esquema de como os níveis de malha se comportam no MFSim.}

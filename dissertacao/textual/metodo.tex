@@ -1,9 +1,15 @@
-\chapter{Metodo}
+\chapter{Método}
 
-\section{visão geral}
+\section{Visão Geral}
 
+Conforme o que foi discutido nos capítulos anteriores, o custo para simular os problemas de filmes finos utilizando métodos tradicionais multifásicos é proibitivo, isso se dá pela malha exigida nesses métodos e ao custo de extender esse refino para todo o domínio. O método proposto parte dessa propriedade e divide o problema a ser resolvido em dois subproblemas resolvidos em domínios destintos que se sobrepõem e são acoplados entre si. Isto confina o problema de refinamento apenas no domínio que contém o filme.
 
-A ideia principal da metodologia é tratar o problema do filme e escoamento principal de forma separada, utilizando uma abordagem multiescala, visto que o problema ocorre em duas dimensões de escalas diferentes. A comunicação entre os dois domínios é feita através das condições de contorno de ambas, de forma a minimzar o custo computacional mantendo a precisão do resultado. Como o método foi implementado em um código CFD já estruturado, aproveitou-se a hierarquia de níveis utilizada pelo AMR e pelo multigrid para separar os domínios e para extrair os dados necessários no acoplamento. O filme é resolvido de forma simplificada, porém mantendo o máximo possível as informações necessárias para não se perder a física do escoamento. A figura \ref{fig:metodo-esquema} mostra um esquema do que foi implementado.
+O primeiro domínio $\Omega_f$ resolve o filme e sua interface com o escoamento principal \textit{core flow}. O domínio consiste em uma faixa refinada próxima à parede do domínio, com espessura suficiente para capturar a física do filme e da região de interface. Neste domínio o escoamento resolvido é bifásico e as equações presentes resolvem a física nas três dimensões do problema, sem as hipóteses dos modelos integrais e de filme finos. Em um primeiro momento, a pressão não é resolvida neste domínio, sendo alimentada pelo outro escoamento.
+
+O segundo domínio é o do escoamento principal, resolvido em um domínio $\Omega_p$ que envolve toda a extensão do problema, resolvendo um escoamento monofásico sem a presença do filme. A ausência da segunda fase permite que a discretização desse domínio utilize um espaçamento de células maior que o de $\Omega_f$, visto que os critérios de malha exigidos pelos modelos bifásicos não estão presentes aqui. 
+
+Os domínios resolvidos não são disjuntos. O domínio $\Omega_f$ sobrepõe o  domínio $\Omega_p$ na região que o filme junto à parede existe, de modo que essa faixa de sobreposição possui uma solução diferente para cada domínio, uma bifásica em malha mais refinada e outra monofásica em malha grosseira. Essa sobreposição é parte da estratégia de acoplamento entre as fases, já que as condições de contorno do escoamento em $\Omega_f$, nas faces que não tocam a fronteira do domínio computacional, são alimentadas pelo escoamento em $\Omega_p$. A figura \ref{fig:metodo-esquema} ilustra a divisão dos problemas. 
+
 
 \begin{figure}
     \centering
@@ -12,11 +18,43 @@ A ideia principal da metodologia é tratar o problema do filme e escoamento prin
     \label{fig:metodo-esquema}
 \end{figure}
 
-Tem-se então uma simulação dividida em dois domínios, o domínio mais refinado na hierarquia de níveis tem ambos os fluidos e resolve todas as equações da VOF, como reconstrução da interface, forçagem, etc. além de conter a fronteira física. Os níveis mais grosseiros resolvem apenas o escoamento principal, sendo estão uma simulação monofásica clássica, com as condições de contorno transmitindo a influencia do filme. Existem ainda, na metodologia, a possibilidade de níveis intermediários, considerando que o salto entre o nível mais fino e os grosseiros pode ser maior que 1 nível, tais níveis intermediários servem apenas para fornecer infomações do escoamento para o filme, sendo preenchidos com propriedades interpoladas, os detalhes de cada etapa e domínio são apresentados adiante.
+O acoplamento entre os domínios é bidirecional. O escoamento principal fornece ao filme as condições de contorno nos limites que que o domínio não encontra fronteira computacional e o filme devolve sua influência ao escoamento principal por meio da condição de contorno aplicada às paredes, sem que o escoamento principal precise enxergar a interface. As grandezas transferidas em cada via do acoplamento e as condições de contorno entre o filme e o core flow são tratados na Seção \ref{sec:acoplamento}. Os domínios também possuem seu próprio passo de tempo, que será tratado na Seção \ref{sec:passo-tempo}.
+
+Dada a generalidade da proposta, o domínio $\Omega_f$ pode ser resolvido por
+qualquer técnica clássica de escoamentos multifásicos, como modelos Euler-Euler, VOF
+ou \textit{level-set}, desde que a técnica escolhida seja capaz de capturar a física
+envolvida no processo e de fornecer informação sobre a posição e o estado da
+interface, requisito imposto pelo acoplamento. Do escoamento principal exige-se que
+seja resolvido de forma completa, com acoplamento pressão-velocidade, uma vez que é
+dele que parte a informação de pressão para a banda. Em $\Omega_f$, por outro lado,
+propõe-se eliminar o cálculo da correção da pressão, com o campo de pressão sendo
+interpolado de $\Omega_p$, o que retira do domínio refinado a etapa mais cara da
+solução.
+
+A decomposição descrita se apoia nas seguintes hipóteses:
+
+Para uma distinção, onde for cabível, adota-se ao longo deste capítulo fluido 1 como aquele que compõe o filme e fluido 2 como aquele que compõe o escoamento principal.
+
+\begin{itemize}
+    \item o fluido 1 permanece confinado em $\Omega_f$ ao longo de toda a simulação,
+          de forma que $\Omega_p$ possa ser tratado como monofásico;
+    \item não há estruturas da segunda fase fora da banda, ficando fora do escopo os
+          regimes com entranhamento de gotas e com destacamento de porções do filme;
+    \item os fluidos são incompressíveis, newtonianos e imiscíveis, com tensão
+          superficial constante;
+    \item o escoamento é isotérmico e laminar, sem mudança de fase e sem modelagem
+          de turbulência.
+\end{itemize}
+
+
+\section{Particularização para o MFSim}
+
+A descrição da Seção \ref{sec:visao-geral} não fixa a forma como os dois domínios são construídos nem como a informação transita entre eles. Na implementação adotada neste trabalho, ambos são obtidos da hierarquia de níveis de malha do \textit{MFSim} (citar artigos de MFSim), código de simulação fluidodinâmica desenvolvido no MFLab/UFU, que resolve as equações de balanço pelo método dos volumes finitos em malha deslocada. Aproveitar essa estrutura dispensa a construção de duas malhas independentes e de um procedimento de busca entre elas, uma vez que os operadores de interpolação entre níveis já existem no código.
+
+\input{textual/metodo/hierarquia_niveis.tex}
 
 \input{textual/Modelo-matematico.tex}
 
-\input{textual/metodo/hierarquia_niveis.tex}
 
 %=====================================================================
 \input{textual/metodo/Escoamento_Principal}
