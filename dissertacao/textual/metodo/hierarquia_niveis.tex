@@ -15,23 +15,77 @@ Os chamados níveis físicos no MFSim, são aqueles que possuem campos completos
 
 Os níveis abaixo do \textit{Lbot}, que assim como ele ocupam todo o domínio, são chamados de níveis virtuais, eles são parte do algorítimos de \textit{multigrid}, guardando os campos de resíduos das variáveis resolvidas por esse método. 
 
-Para implementar os escoamentos separados do algoritmo proposto, a hierarquia de níveis foi segmentada em duas partes: uma contendo o escoamento do filme e outra contendo o \textit{coreflow}. Assim sendo, o \textit{Ltop} é destacado da hierarquia de níveis, sendo seu nível de refino o suficiente para resolver a dinâmica do filme de forma completa com os métodos bifásicos, como \textit{VOF}, e o escoamento principal é realizado em um nível abaixo, que pode ser apenas o nível físico mais grosseiro (\textit{lbot}) ou ele e outros níveis físicos que podem ser necessários para a resolução do mesmo, mantendo o v-grid do método multigrid intacto no domínio do \textit{core-flow}. Existem ainda níveis que estão entre os dois domínios, supondo por exemplo que o espaçamento de malha necessário para o filme seja $dx$ e o necessário para o \textit{coreflow} seja $8*dx$ tem-se três níveis de malha entre os dois escoamentos. Esses níveis são compartilhados pelos domínios e são aqui denominados de níveis intermediários. Os níveis intermediários possuem a função de fornecer condições de contorno ao filme, por meio de interpoladores presentes no código e que serão detalhados  em \ref{sec:interpolações_entre_domínios}. A figura \ref{fig:dominio_dividido} mostra como essa divisão é feita e a representação dos níveis intermediários calculados
+Para implementar os escoamentos separados do algoritmo proposto, a hierarquia de níveis foi segmentada em duas partes: uma contendo o escoamento do filme e outra contendo o \textit{coreflow}.
 
-\begin{figure}
+O escoamento do filme com a interface é confinado no nível mais refinado da hierarquia, sendo resolvido com métodos bifásicos tradicionais, no presente trabalho \textit{VOF} e contendo um número de células suficiente para capturar toda a física do escoamento. O nível que contém o filme deve estar junto à parede do escoamento resolvido, seja ela coincidente com o domínio computacional ou imposta por fronteira imersa.
+
+O escoamento principal fica confinado em níveis menos refinados da hierarquia, incluindo os níveis virtuais, ocupando todo o domínio computacional e podendo ser várias vezes menos refinado que o nível do filme. 
+
+Existem ainda níveis que estão entre os dois domínios, supondo por exemplo que o espaçamento de malha necessário para o filme seja $dx$ e o necessário para o \textit{coreflow} seja $8*dx$ tem-se três níveis de malha entre os dois escoamentos. Esses níveis são compartilhados pelos dois domínios e são aqui denominados de níveis intermediários. A figura \ref{fig:dominio_dividido} mostra como essa divisão é feita e a representação dos níveis intermediários calculados.
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{imagens/dominio_dividido.png}
     \caption{Divisão da estrutura hierárquica de níveis nos dois domínios da metodologia}
     \label{fig:dominio_dividido}
 \end{figure}
 
-Assim sendo, os níveis mais grosseiros, incluindo o \textit{Lbot} e os níveis virtuais, resolvem o escoamento principal monofásico com as equações completas e acoplamento pressão-velocidade, as sequencias de restrições e interpolações da estrutura de níveis que vem do algoritmo de malha adaptativa é mantido aqui, bem como os cálculos de resíduos do \textit{multigrid}. O \textit{Ltop} não participa dessas restrições. A solução bifásica não é restringida para os níveis inferiores, de forma que, na região coberta pela banda, os níveis do escoamento principal mantêm sua própria solução monofásica, e a influência do filme chega a eles apenas pela condição de contorno aplicada na parede. Como os dois conjuntos de níveis resolvem problemas distintos, não há solução composta entre eles e não se aplicam as correções de fluxo usuais das metodologias de malha adaptativa. Após resolver as equações de balanço do domínio grosseiro, os campos de velocidade são interpolados pelos níveis intermediários até o último nível antes do filme, para fornecer as condições de contorno ao mesmo. A pressão é interpolada até o \textit{Ltop}, uma vez que esse domínio não à resolve. E então, no nível mais refinado, o filme é resolvido com as simplificações cabíveis. A figura \ref{fig:hierarquia_metodo} mostra como fica o esquema de níveis na prática.
+Apesar do código utilizar a estrutura de malhas aninhadas do algoritmo de AMR, o refinamento adaptativo não é utilizado neste trabalho, sendo objeto de possíveis trabalhos futuros.
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.7\textwidth]{imagens/hierarquia_de_interpolacoes.png}
-    \caption{Esquema de como cada nível observa o outro e a direção na qual as interpolações são feitas.}
-    \label{fig:hierarquia_metodo}
-\end{figure}
+\subsection{Acoplamento e Pseudo Algoritmo}
 
-Com o método proposto, a ideia é atingir o ganho em custo computacional ao resolver o escoamento completo monofásico, com a pressão, em um domínio com grau de refinamento o suficiente para esta física, enquanto em um domínio refinado resolve-se, com a simplificação de pressão imposta pelo escoamento principal, um escoamento completo, porém em um domínio com poucas células, o escoamento completo bifásico. Os níveis intermediários são apenas interpolados, não representando custos significativos ao modelo.
+Os domínios são acoplados por meio de interpolações e condições de contorno, da seguinte forma:
+
+O escoamento principal recebe informações do filme através de condições de contorno nas paredes que são compartilhadas por ambos os domínios, quais condições de contorno são utilizadas é conteúdo da seção \ref{sec:condicoes_de_contorno}. 
+
+Enquanto isso, o filme recebe informações do filme de duas formas: os campos de velocidade vem como condição de contorno nas paredes internas do filme, sendo paredes internas aquelas que não coincidem nem com uma fronteira imersa nem com o domínio físico do escoamento, através dos níveis intermediários e o campo de pressão é interpolado diretamente do \textit{coreflow} para o filme, sendo que essa propriedade não é resolvida neste domínio.
+
+Para que os níveis intermediários sejam capazes de fornecer as condições de contorno, os campos de velocidade são interpolados do escoamento principal utilizando interpoladores conservativos para tal.
+
+convencionando o tempo precedente como $t^n$ e o tempo seguinte como $t^{n+1}$, temos que a sequência de passos para o método em um determinado passo de tempo começa com as condições do filme e do gás em $t^n$, seguindo a seguinte sequência de etapas:
+
+\begin{enumerate}
+    \item Calcula-se o passo de tempo do \textit{core flow}, $\Delta t_\mathrm{core}$.
+    \item Calcula-se o passo de tempo do filme, $\Delta t_\mathrm{filme}$.
+    \item Calcula-se o número de subciclos, arredondando para cima a razão entre os passos de tempo: $N_\mathrm{passos} = \left\lceil \Delta t_\mathrm{core} / \Delta t_\mathrm{filme} \right\rceil$.
+    \item Define-se o passo de tempo efetivo do filme, $\delta t_\mathrm{filme} = \Delta t_\mathrm{core} / N_\mathrm{passos}$, de modo que $\delta t_\mathrm{filme} \le \Delta t_\mathrm{filme}$ e $N_\mathrm{passos}\,\delta t_\mathrm{filme} = \Delta t_\mathrm{core}$.
+    \item O \textit{core flow} avança um passo de tempo $\Delta t_\mathrm{core}$ usando as condições de contorno do filme em $t^{n}$, obtendo os campos de velocidade e pressão em $t^{n+1}$.
+    \item O campo de velocidade do \textit{core flow} é interpolado no tempo para os níveis intermediários $t^{n,k} = t^{n} + k\,\delta t_\mathrm{filme}$, com $k = 1, \dots, N_\mathrm{passos}$.
+    \item O campo de pressão do \textit{core flow} é interpolado para os mesmos níveis $t^{n,k}$.
+    \item O filme avança $N_\mathrm{passos}$ subciclos de tamanho $\delta t_\mathrm{filme}$, usando em cada nível $t^{n,k}$ os campos interpolados do \textit{core flow} como condição de contorno, até obter o campo de velocidade do filme em $t^{n+1}$.
+    \item O processo se repete para o próximo passo de tempo do \textit{core flow}.
+\end{enumerate}
+
+Com o seguinte pseudo algoritmo equivalente:
+
+\begin{algorithm}[htbp]
+\caption{Sequência do algoritmo com subciclagem temporal do filme.}
+\label{alg:sequencia-subciclagem}
+\begin{algorithmic}[1]
+\Require $\mathbf{u}^0$, $p^0$, $\mathbf{u}_\mathrm{filme}^0$, $t^0$, $t_\mathrm{final}$
+\State $n \gets 0$
+\While{$t^n < t_\mathrm{final}$}
+  \State Calcular $\Delta t_\mathrm{core}$
+  \State Calcular $\Delta t_\mathrm{filme}$
+  \State $N_\mathrm{passos} \gets \lceil \Delta t_\mathrm{core} / \Delta t_\mathrm{filme} \rceil$
+  \State $\delta t_\mathrm{filme} \gets \Delta t_\mathrm{core} / N_\mathrm{passos}$
+  \State $(\mathbf{u}^{n+1}, p^{n+1}) \gets \textsc{AvançaCore}\big(\mathbf{u}^{n}, p^{n}, \mathcal{B}_\mathrm{filme}^{n}, \Delta t_\mathrm{core}\big)$
+  \For{$k = 1, \dots, N_\mathrm{passos}$}
+    \State $t^{n,k} \gets t^n + k\,\delta t_\mathrm{filme}$
+    \State $\mathbf{u}^{n,k} \gets \textsc{Interpola}\big(\mathbf{u}^{n}, \mathbf{u}^{n+1}, t^{n,k}\big)$
+    \State $p^{n,k} \gets \textsc{Interpola}\big(p^{n}, p^{n+1}, t^{n,k}\big)$
+  \EndFor
+  \State $\mathbf{u}_\mathrm{filme}^{n,0} \gets \mathbf{u}_\mathrm{filme}^{n}$
+  \For{$k = 1, \dots, N_\mathrm{passos}$}
+    \State $\mathbf{u}_\mathrm{filme}^{n,k} \gets \textsc{AvançaFilme}\big(\mathbf{u}_\mathrm{filme}^{n,k-1}, \mathbf{u}^{n,k}, p^{n,k}, \delta t_\mathrm{filme}\big)$
+  \EndFor
+  \State $\mathbf{u}_\mathrm{filme}^{n+1} \gets \mathbf{u}_\mathrm{filme}^{n,N_\mathrm{passos}}$
+  \State $t^{n+1} \gets t^n + \Delta t_\mathrm{core}$, \quad $n \gets n+1$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+{explicar cada simbolo}
+
+
 
