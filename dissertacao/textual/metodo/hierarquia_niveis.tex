@@ -38,7 +38,7 @@ Os domínios são acoplados por meio de interpolações e condições de contorn
 
 O escoamento principal recebe informações do filme através de condições de contorno nas paredes que são compartilhadas por ambos os domínios, as quais são detalhadas na \ref{sec:condicoes_de_contorno}. 
 
-Enquanto isso, o filme recebe informações do filme de duas formas: os campos de velocidade vem como condição de contorno nas paredes internas do filme, sendo paredes internas aquelas que não coincidem nem com uma fronteira imersa nem com o domínio físico do escoamento, através dos níveis intermediários e o campo de pressão é interpolado diretamente do \textit{coreflow} para o filme.
+Enquanto isso, o filme recebe informações do escoamento principal de duas formas: os campos de velocidade vem como condição de contorno nas paredes internas do filme, sendo paredes internas aquelas que não coincidem nem com uma fronteira imersa nem com o domínio físico do escoamento, através dos níveis intermediários e o campo de pressão é interpolado diretamente do \textit{coreflow} para o filme, sendo que essa propriedade não é resolvida neste domínio.
 
 Para que os níveis intermediários sejam capazes de fornecer as condições de contorno, os campos de velocidade são interpolados do escoamento principal utilizando interpoladores conservativos.
 
@@ -50,7 +50,7 @@ convencionando o tempo precedente como $t^n$ e o tempo seguinte como $t^{n+1}$, 
     \item Calcula-se o número de subciclos, arredondando para cima a razão entre os passos de tempo: $N_\mathrm{passos} = \left\lceil \Delta t_\mathrm{core} / \Delta t_\mathrm{filme} \right\rceil$.
     \item Define-se o passo de tempo efetivo do filme, $\delta t_\mathrm{filme} = \Delta t_\mathrm{core} / N_\mathrm{passos}$, de modo que $\delta t_\mathrm{filme} \le \Delta t_\mathrm{filme}$ e $N_\mathrm{passos}\,\delta t_\mathrm{filme} = \Delta t_\mathrm{core}$.
     \item O \textit{core flow} avança um passo de tempo $\Delta t_\mathrm{core}$ usando as condições de contorno do filme em $t^{n}$, obtendo os campos de velocidade e pressão em $t^{n+1}$.
-    \item O campo de velocidade do \textit{core flow} é interpolado no tempo para os níveis intermediários $t^{n,k} = t^{n} + k\,\delta t_\mathrm{filme}$, com $k = 1, \dots, N_\mathrm{passos}$.
+    \item O campo de velocidade do \textit{core flow} é interpolado para os níveis intermediários $t^{n,k} = t^{n} + k\,\delta t_\mathrm{filme}$, com $k = 1, \dots, N_\mathrm{passos}$.
     \item O campo de pressão do \textit{core flow} é interpolado para os mesmos níveis $t^{n,k}$.
     \item O filme avança $N_\mathrm{passos}$ subciclos de tamanho $\delta t_\mathrm{filme}$, usando em cada nível $t^{n,k}$ os campos interpolados do \textit{core flow} como condição de contorno, até obter o campo de velocidade do filme em $t^{n+1}$.
     \item O processo se repete para o próximo passo de tempo do \textit{core flow}.
