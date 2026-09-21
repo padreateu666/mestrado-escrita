@@ -1,6 +1,6 @@
 \section{Sistema de Hierarquia de Níveis}
 
-O utilizado código possui uma estrutura hierárquica de níveis aninhados, que serve para fornecer estrutura aos algorítimos de refinamento de malha adaptativa (\textit{AMR}) e \textit{multigrid} (cite trabalhos). Essa hierarquia de níveis é mostrada na Figura \ref{fig:hierarquia_de_niveis}. Cada um dos níveis possui resíduos das variáveis calculadas pelo multigrid ou campos vetoriais completos quando esses níveis pertencerem aos níveis físicos do AMR.
+O utilizado código possui uma estrutura hierárquica de níveis aninhados, que serve para fornecer estrutura aos algorítimos de refinamento de malha adaptativa (\textit{AMR}) e \textit{multigrid} (cite trabalhos). Essa hierarquia de níveis é mostrada na Figura \ref{fig:hierarquia_de_niveis}. Cada um dos níveis possui resíduos das variáveis calculadas pelo multigrid ou campos vetoriais completos quando esses níveis pertencerem aos níveis físicos do AMR. Apesar de utilizar a estrutura da malha adaptativa, a utilizada aqui é estática, pela etapa inicial em que o método de encontra.
 
 \begin{figure}[H]
     \centering
@@ -9,19 +9,19 @@ O utilizado código possui uma estrutura hierárquica de níveis aninhados, que 
     \label{fig:hierarquia_de_niveis}
 \end{figure}
 
-Nomeando os níveis como sendo: L1 o primeiro, L2 o segundo e assim por diante, indo do menor para o maior nível de refinamento, temos na figura 5 níveis de malha. Sendo que cada nível é 2 vezes mais refinado que o anterior na implementação atual.
+Nomeando os níveis como sendo: L1 o primeiro, L2 o segundo e assim por diante, indo do menor para o maior nível de refinamento, temos na figura 5 níveis de malha. Sendo que cada nível é 2 vezes mais refinado que o anterior. Os chamados níveis físicos no MFSim, são aqueles que possuem campos completos de velocidade, pressão e qualquer outra variável de interesse, sendo possível refinar apenas áreas específicas, como a faixa próxima à parede, sobrepondo níveis em uma mesma parte do domínio. 
 
-Os chamados níveis físicos no MFSim, são aqueles que possuem campos completos de velocidade, pressão e qualquer outra variável de interesse, sendo possível refinar apenas áreas específicas, como a faixa próxima à parede, sobrepondo níveis em uma mesma parte do domínio. Aqui o menor nível físico, sendo esse o nível com menor número de células computacionais que contém um campo completo de - no mínimo - pressão e velocidade, será denominado \textit{Lbot} e o nível maior nível físico como \textit{Ltop}.
+Aqui o menor nível físico, sendo esse o nível com menor número de células computacionais que contém um campo completo de - no mínimo - pressão e velocidade, será denominado \textit{Lbot} e o nível maior nível físico como \textit{Ltop}.
 
-Os níveis abaixo do \textit{Lbot}, que assim como ele ocupam todo o domínio, são chamados de níveis virtuais, eles são parte do algorítimos de \textit{multigrid}, guardando os campos de resíduos das variáveis resolvidas por esse método. 
+Os níveis abaixo do \textit{Lbot}, que assim como ele ocupam todo o domínio, são chamados de níveis virtuais, eles são parte do algorítimos de \textit{multigrid}, guardando os campos de resíduos das variáveis resolvidas por esse método. no exemplo da figura \ref{fig:hierarquia_de_niveis} os níveis 1 e 2 seriam virtuais e os demais físicos, sendo \textit{Lbot} o 3 e \textit{Ltop} o 5.
 
 Para implementar os escoamentos separados do algoritmo proposto, a hierarquia de níveis foi segmentada em duas partes: uma contendo o escoamento do filme e outra contendo o \textit{coreflow}.
 
-O escoamento do filme com a interface é confinado no nível mais refinado da hierarquia, sendo resolvido com métodos bifásicos tradicionais, no presente trabalho \textit{VOF} e contendo um número de células suficiente para capturar toda a física do escoamento. O nível que contém o filme deve estar junto à parede do escoamento resolvido, seja ela coincidente com o domínio computacional ou imposta por fronteira imersa.
+O escoamento do filme com a interface foi confinado no nível mais refinado da hierarquia, \textit{Ltop}, sendo resolvido com métodos bifásicos tradicionais, no presente trabalho \textit{VOF} e contendo um número de células proporcional ao método escolhido. O nível que contém o filme deve estar junto à parede do escoamento, seja ela coincidente com o domínio computacional ou imposta por fronteira imersa.
 
 O escoamento principal fica confinado em níveis menos refinados da hierarquia, incluindo os níveis virtuais, ocupando todo o domínio computacional e podendo ser várias vezes menos refinado que o nível do filme. 
 
-Existem ainda níveis que estão entre os dois domínios, supondo por exemplo que o espaçamento de malha necessário para o filme seja $dx$ e o necessário para o \textit{coreflow} seja $8*dx$ tem-se três níveis de malha entre os dois escoamentos. Esses níveis são compartilhados pelos dois domínios e são aqui denominados de níveis intermediários. A figura \ref{fig:dominio_dividido} mostra como essa divisão é feita e a representação dos níveis intermediários calculados.
+Existem ainda níveis que estão entre os dois domínios, supondo por exemplo que o espaçamento de malha necessário para o filme seja $dx$ e o necessário para o \textit{coreflow} seja $8dx$ tem-se três níveis de malha entre os dois escoamentos. Esses níveis são compartilhados pelos dois domínios e são aqui denominados de níveis intermediários. A figura \ref{fig:dominio_dividido} mostra como essa divisão é feita e a representação dos níveis intermediários calculados.
 
 \begin{figure}[H]
     \centering
@@ -30,17 +30,17 @@ Existem ainda níveis que estão entre os dois domínios, supondo por exemplo qu
     \label{fig:dominio_dividido}
 \end{figure}
 
-Apesar do código utilizar a estrutura de malhas aninhadas do algoritmo de AMR, o refinamento adaptativo não é utilizado neste trabalho, sendo objeto de possíveis trabalhos futuros.
+Parte do acoplamento passa pelos níveis intermediários.
 
 \subsection{Acoplamento e Pseudo Algoritmo}
 
 Os domínios são acoplados por meio de interpolações e condições de contorno, da seguinte forma:
 
-O escoamento principal recebe informações do filme através de condições de contorno nas paredes que são compartilhadas por ambos os domínios, quais condições de contorno são utilizadas é conteúdo da seção \ref{sec:condicoes_de_contorno}. 
+O escoamento principal recebe informações do filme através de condições de contorno nas paredes que são compartilhadas por ambos os domínios, as quais são detalhadas na \ref{sec:condicoes_de_contorno}. 
 
-Enquanto isso, o filme recebe informações do filme de duas formas: os campos de velocidade vem como condição de contorno nas paredes internas do filme, sendo paredes internas aquelas que não coincidem nem com uma fronteira imersa nem com o domínio físico do escoamento, através dos níveis intermediários e o campo de pressão é interpolado diretamente do \textit{coreflow} para o filme, sendo que essa propriedade não é resolvida neste domínio.
+Enquanto isso, o filme recebe informações do filme de duas formas: os campos de velocidade vem como condição de contorno nas paredes internas do filme, sendo paredes internas aquelas que não coincidem nem com uma fronteira imersa nem com o domínio físico do escoamento, através dos níveis intermediários e o campo de pressão é interpolado diretamente do \textit{coreflow} para o filme.
 
-Para que os níveis intermediários sejam capazes de fornecer as condições de contorno, os campos de velocidade são interpolados do escoamento principal utilizando interpoladores conservativos para tal.
+Para que os níveis intermediários sejam capazes de fornecer as condições de contorno, os campos de velocidade são interpolados do escoamento principal utilizando interpoladores conservativos.
 
 convencionando o tempo precedente como $t^n$ e o tempo seguinte como $t^{n+1}$, temos que a sequência de passos para o método em um determinado passo de tempo começa com as condições do filme e do gás em $t^n$, seguindo a seguinte sequência de etapas:
 
@@ -58,7 +58,7 @@ convencionando o tempo precedente como $t^n$ e o tempo seguinte como $t^{n+1}$, 
 
 Com o seguinte pseudo algoritmo equivalente:
 
-\begin{algorithm}[htbp]
+\begin{algorithm}[H]
 \caption{Sequência do algoritmo com subciclagem temporal do filme.}
 \label{alg:sequencia-subciclagem}
 \begin{algorithmic}[1]
