@@ -1,10 +1,12 @@
-\chapter{Modelo Físico}
+\chapter{Casos de verificação}
 
-Para verificar a validade da teoria e avaliar seu comportamento em ambiente isolado, utilizou-se primeiramente o escoamento de Poiseuille desenvolvido entre duas chapas planas com condições de simetria. (falar do tridimensional, quando tiver resultados).Todos os escoamentos foram realizados utilizando o método clássico de VOF presente no código e a metodologia proposta, para efeitos comparativos.
+Para verificar a validade e estabilidade do método, utilizou-se primeiramente o escoamento de Poiseuille desenvolvido entre duas chapas planas com condições de simetria. 
+
+É realizado um estudo de ordem de convergência e independência de malha, avaliando a velocidade real com que o erro decresce e comparando com a ordem teórica do código. A ordem de convergência da metodologia proposta foi comparada ao modelo tradicional para verificar possíveis perdas na ordem de convergência. Todos os resultados foram comparados com o modelo analítico dos escoamentos, quando disponível.
 
 \section{Escoamento de Poiseuille entre placas planas}
 
-O escoamento de Poiseuille em placas planas é utilizado para verificar a validade do modelo, avaliar as condições de contorno propostas e fazer estudos de independência de malha que são posteriormente transferidos para os casos mais complexos. O problema considerado utiliza as seguintes hipóteses simplificadoras:
+O escoamento de Poiseuille em placas planas é definido como um escoamento movido puramente pela diferença de pressão em uma geometria cartesiana, com as seguintes hipóteses simplificadoras:
 
 \begin{itemize}
     \item bifásico
@@ -26,9 +28,9 @@ Na figura \ref{fig:poiseuille_plano} é mostrado o domínio e coordenadas consid
     \label{fig:poiseuille_plano}
 \end{figure}
 
-O código utilizado é essencialmente tridimensional, sendo assim o que foi simulado foi um escoamento pseudo-unidimensional com as seguintes condições de contorno disponíveis na tabela \ref{tb:condicoes_de_contorno}.
+O código utilizado é essencialmente tridimensional, sendo assim o que foi simulado foi um escoamento pseudo-unidimensional com as seguintes condições de contorno mostradas na tabela \ref{tb:condicoes_de_contorno}.
 
-\begin{table}[htb]
+\begin{table}[H]
     \centering
     \caption{Condições de contorno impostas nas fronteiras do domínio}
     \label{tb:condicoes_de_contorno}
@@ -54,7 +56,7 @@ na qual a direção z é considerada periódica com um número mínimo de 4 cél
 
 \subsection{Convergência de malha}
 
-O estudo de convergência de malha foi realizado no problema 1D, utilizando as malhas e domínios mostrados na da tabela \ref{tab:malhas-independência}. O estudo foi feito comparando as curvas de velocidade obtidas com o perfil de velocidade analítico para o canal plano e verificando o critério de convergência, seguindo (citar roarse). Também foi utilizado a sequencia de report mostrada em (citar asme) e utilizdo o parâmetro (citar richardson) para determinar a malha ideal. 
+O estudo de convergência de malha foi realizado no problema 1D, utilizando as malhas e domínios mostrados na da tabela \ref{tab:malhas-independência}. O estudo foi feito comparando as curvas de velocidade obtidas com o perfil de velocidade analítico para o canal plano e verificando o critério de convergência, seguindo (citar roarse). Também foi utilizado a sequencia de report mostrada em (citar asme) e utilizdo o parâmetro (citar richardson) para determinar a malha ideal. A independência de malha obtida com a simulação utilizando \textit{VOF} tradicional foi estendida ao método. 
 
 
 \begin{table}[htb]
@@ -75,11 +77,11 @@ O estudo de convergência de malha foi realizado no problema 1D, utilizando as m
 \end{table}
 
 
-O domínio foi modificado ente uma interação e outra para preservar a razão de aspecto das células, visto que o número de células por simulação nas direções y e z é constante. As propriedades utilizadas para analisar a independência de malha são:
+O domínio foi modificado ente uma interação e outra para preservar a razão de aspecto das células, visto que o número de células por simulação nas direções y e z é constante. As propriedades utilizadas para analisar a independência de malha foram:
 
 
 \begin{itemize}
-    \item falar das propriedades físicas
+    \item $rho_1$
 \end{itemize}
 
 \subsection{Comparação entre as Condições de contorno}
@@ -91,7 +93,4 @@ Foram avaliadas as seguintes condições de contorno para verificar qual fornece
     \item 
 \end{itemize}
 
-
-Os valores utilizados para simular essas condições são (decidir o que usar depois dos testes)
- 
-As curvas obtidas por cada uma das malhas comparadas com a solução analítica estão mostradas na figura (citar figura). O erro relativo de cada um dos pontos no espaço para a malha mais refinada está mostrado na figura (citar figura). É possível verificar que o erro em si é desprezível e cresce exatamente na região de interface, esse erro de interface então se propaga para a região do fluido 2 (confirmar) e sofre pequenas alterações na mesma, mantendo um patamar.
+( falar do estudo de ordem de convergência)

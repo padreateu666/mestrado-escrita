@@ -49,12 +49,27 @@ O código adotado utiliza o Método de Volumes Finitos (\textit{FVM}) para a dis
 
 Utiliza-se um arranjo de malha deslocada (\textit{sttagered grid}), no qual as grandezas escalares, como pressão e fração volumétrica, são armazenadas no centro das células e grandezas vetoriais são armazenadas nas faces normais a cada componente. Esta configuração faz com que variações no gradiente de pressão sejam capturadas com mais facilidade, além de influenciar no estêncil utilizado nas interpolações entre níveis para cada variavel \cite{versteeg2007} (citar milena.)
 
-O termo advectivo e o termo difusivos são discretizados por meio de diferenças centradas de segunda ordem, sendo que o termo advectivo é resolvido na forma divergente e a difusão resolve o tensor completo. A escolha por diferenças de segunda ordem se dá pelos escoamentos se desenvolverem principalmente por difusão. O avanço temporal utiliza um esquema chamado sbdf2, com a avecção utilizando Adams-Bashforth de segunda ordem e a difusão totalmente implícita \citar artigos temporais.
+O termo advectivo e o termo difusivos são discretizados por meio de diferenças centradas de segunda ordem, sendo que o termo advectivo é resolvido na forma divergente e a difusão resolve o tensor completo. A escolha por diferenças de segunda ordem se dá pelos escoamentos se desenvolverem principalmente por difusão. O avanço temporal utiliza um esquema chamado sbdf2, com a avecção utilizando Adams-Bashforth de segunda ordem e a difusão totalmente implícita (citar artigos temporais).
 
 As condições de contorno são impostas por células fantasmas, por meio de camadas de células adjacentes a cada limite do domínio computacional, tais células são preenchidas de modo a representar a condição de Neumann ou Dirichlet desejadas na interface. Cada nível possui seu próprio conjunto de células fantasmas, de forma que no nível mais fino elas são preenchidas por meio de interpolações, apresentadas por (citar milena).
 
-O acoplamento pressão velocidade utilizado segue o passo fracionado de Chorin (citar).
+O acoplamento pressão velocidade utilizado é o método da projeção de Chorin(citar) ou método do passo fracionado. Tal método de acoplamento funciona de quatro etapas:
 
+Primeiro resolve-se a equação de uma estimativa da velocidade, resolvendo Navier-Stokes com pressão vindo do tempo precedente:
+
+\begin{equation}
+    \frac{3\vec{u}^{*} - 4\vec{u}^{n} + \vec{u}^{n-1}}{2\Delta t}
+    + 2\,\nabla \cdot \left( \vec{u}\,\vec{u} \right)^{n}
+    - \nabla \cdot \left( \vec{u}\,\vec{u} \right)^{n-1}
+    = \frac{1}{\rho^{n+1}} \left[
+        - \nabla p^{n}
+        + \nabla \cdot \left( \mu^{n+1} \left( \nabla \vec{u}^{*} + (\nabla \vec{u}^{*})^{T} \right) \right)
+        + \vec{f}_{\sigma}^{\,n+1}
+        + \vec{f}_{ib}
+    \right]
+    + \vec{g}
+    \label{eq:predicao-velocidade}
+\end{equation}
 
 % A massa específica e viscosidade são funções do campo de volume fracionário $f$, que representa a fração de volume do fluido 1 em cada célula do domínio computacional. As equações de transporte do volume fracionário são resolvidas utilizando o método VOF, com reconstrução geométrica da interface, a equação de transporte de $f$ é representada pela EQ. \ref{eq:transporte-f}.
 
