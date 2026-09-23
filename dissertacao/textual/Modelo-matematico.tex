@@ -41,7 +41,7 @@ As particularidades na implementação de cada fluido pertencem ao modelo numér
 
 \section{Modelo Numérico}
 
-O método proposto não introduz uma discretização nova às equações apresentadas na Seção \ref{sec:modelagem-matematica}. Ambos os domínios são resolvidos pelo núcleo implementado no MFSim (cite milena e joao). Assim sendo, a modelagem numérica é dividida em duas partes, tratando as particularidades de cada domínio, como acoplamento, interpolações e condições de contorno. O acoplamento pressão-velocidade também será detalhado, uma vez que ele é objeto principal da formulação do filme. Esta seção descreve, primeiramente, os códigos comuns aos dois domínios, que são herdados do código, e posteriormente a descrição de cada um deles de forma separada.
+O método proposto não introduz uma discretização nova às equações apresentadas na Seção \ref{sec:modelagem-matematica}. Ambos os domínios são resolvidos pelo núcleo implementado no MFSim (cite milena e joao). Assim sendo, a modelagem numérica é dividida em duas partes, tratando as particularidades de cada domínio, como acoplamento, interpolações e condições de contorno. O acoplamento pressão-velocidade também será detalhado, uma vez que sua ausência é objeto principal da formulação do filme. Esta seção descreve, primeiramente, os códigos comuns aos dois domínios, que são herdados do código, e posteriormente a descrição de cada um deles de forma separada.
 
 \subsection{Visão Geral}
 
@@ -49,7 +49,7 @@ O código adotado utiliza o Método de Volumes Finitos (\textit{FVM}) para a dis
 
 Utiliza-se um arranjo de malha deslocada (\textit{sttagered grid}), no qual as grandezas escalares, como pressão e fração volumétrica, são armazenadas no centro das células e grandezas vetoriais são armazenadas nas faces normais a cada componente. Esta configuração faz com que variações no gradiente de pressão sejam capturadas com mais facilidade, além de influenciar no estêncil utilizado nas interpolações entre níveis para cada variavel \cite{versteeg2007} (citar milena.)
 
-O termo advectivo e o termo difusivos são discretizados por meio de diferenças centradas de segunda ordem, sendo que o termo advectivo é resolvido na forma divergente e a difusão resolve o tensor completo. A escolha por diferenças de segunda ordem se dá pelos escoamentos se desenvolverem principalmente por difusão. O avanço temporal utiliza um esquema chamado sbdf2, com a avecção utilizando Adams-Bashforth de segunda ordem e a difusão totalmente implícita (citar artigos temporais).
+O termo advectivo e o termo difusivos são discretizados por meio de diferenças centradas de segunda ordem, sendo que o termo advectivo é resolvido na forma divergente e a difusão resolve o tensor completo. A escolha por diferenças de segunda ordem se dá pelos escoamentos utilizados no presente trabalho para validarem se desenvolverem principalmente por difusão. O avanço temporal utiliza um esquema chamado sbdf2, com a avecção utilizando Adams-Bashforth de segunda ordem e a difusão totalmente implícita (citar artigos temporais).
 
 As condições de contorno são impostas por células fantasmas, por meio de camadas de células adjacentes a cada limite do domínio computacional, tais células são preenchidas de modo a representar a condição de Neumann ou Dirichlet desejadas na interface. Cada nível possui seu próprio conjunto de células fantasmas, de forma que no nível mais fino elas são preenchidas por meio de interpolações, apresentadas por (citar milena).
 
@@ -71,78 +71,171 @@ Primeiro resolve-se a equação de uma estimativa da velocidade, resolvendo Navi
     \label{eq:predicao-velocidade}
 \end{equation}
 
-% A massa específica e viscosidade são funções do campo de volume fracionário $f$, que representa a fração de volume do fluido 1 em cada célula do domínio computacional. As equações de transporte do volume fracionário são resolvidas utilizando o método VOF, com reconstrução geométrica da interface, a equação de transporte de $f$ é representada pela EQ. \ref{eq:transporte-f}.
+As propriedades $\rho^{n+1}$ e $\mu^{n+1}$ são conhecidas nesta etapa.
 
-% \begin{equation}
-%     \frac{\partial f}{\partial t} V + F_{net} = \int_{V} c \vec{\nabla} \cdot \vec{u} dv,
-%     \label{eq:transporte-f}
-% \end{equation}
+O campo $\vec{u}^{*}$ não satisfaz a Eq. \ref{eq:continuidade-completa}. Impondo $\nabla \cdot \vec{u}^{\,n+1} = 0$ sobre a etapa de correção e subtraindo a Eq. \ref{eq:predicao-velocidade} da mesma equação escrita com $p^{n+1}$, obtém-se uma equação elíptica para a correção de pressão $p' = p^{n+1} - p^{n}$, Eq. \ref{eq:poisson}:
 
-% sendo $F_{net}$ o fluxo líquido de fração volumétrica através das faces.
-% A Eq. \ref{eq:transporte-f} é resolvida pelo esquema conservativo com separação direcional proposto por \citet{Weymouth2010}. A cada passo de tempo são executadas três varreduras unidimensionais, uma por direção $d$, com permutação cíclica da ordem entre passos consecutivos para evitar viés direcional. O termo $c$ é aproximado por \citet{Weymouth2010} como função indicadora $c^*$ na célula:
+\begin{equation}
+    \nabla \cdot \left( \frac{1}{\rho^{n+1}} \nabla p' \right)
+    = \frac{3}{2\Delta t} \, \nabla \cdot \vec{u}^{*}
+    \label{eq:poisson}
+\end{equation}
 
-% \begin{equation}
-%     c^* =
-%     \begin{cases}
-%         1, & f > 1/2 \\
-%         0, & \text{caso contrário,}
-%     \end{cases}
-%     \label{eq:indicadora-wy}
-% \end{equation}
+Corrige-se então o campo de velocidade, Eq. \ref{eq:correcao-velocidade}:
+
+\begin{equation}
+    \vec{u}^{\,n+1} = \vec{u}^{*}
+    - \frac{2\Delta t}{3} \, \frac{1}{\rho^{n+1}} \nabla p'
+    \label{eq:correcao-velocidade}
+\end{equation}
+
+e, por fim, o campo de pressão, Eq. \ref{eq:correcao-pressao}:
+
+\begin{equation}
+    p^{n+1} = p^{n} + p'
+    \label{eq:correcao-pressao}
+\end{equation}
+
+A Eq. \ref{eq:poisson} domina o custo do avanço, por exigir a solução de um sistema linear elíptico sobre todo o domínio, obtida no código por multigrid. É essa constatação que motiva a supressão da correção de pressão em $\Omega_f$, tratada na Seção \ref{sec:numerico-filme}.
 
 
-% Após a obtenção de $f$ no domínio, os campos de $\rho$ e $\mu$ são reconstruídos utilizando Eq. \ref{eq:rho-reconstruido} e Eq. \ref{eq:mu-reconstruido}:
+A partir desses elementos nativos do código, tem-se particularidades de cada domínio, para a solução e acoplamento. 
 
-% \begin{equation}
-%     \rho = \rho_1^f \cdot \rho_2^{1-f}
-%     \label{eq:rho-reconstruido}
-% \end{equation}
+\subsection{Escoamento Principal}
+\label{sec:numerico-core}
 
-% \begin{equation}
-%     \mu = f \mu_1 + (1-f) \mu_2
-%     \label{eq:mu-reconstruido}
-% \end{equation}
+O escoamento resolvido no filme é monofásico, com $\rho$ e $\mu$ constantes e $f_{\sigma}$ nulo, reduzindo a Eq. \ref{eq:predicao-velocidade}. O escoamento é representado pela figura \ref{fig:escoamento_principal}. 
 
-% Sendo $\mu$ reconstruído com a formulação clássica e $\rho$ reconstruído com média geométrica que suaviza o gradiente na interface, de forma a evitar saltos abruptos e problemas de convergência. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.2\textwidth]{imagens/principal_core.png}
+    \caption{Escoamento principal com condições de contorno arbitrárias}
+    \label{fig:escoamento_principal}
+\end{figure}
 
-% A tensão superficial é tratada como força de campo pelo modelo \textit{Continuum Surface Force} \citep{Brackbill1992}, Eq.\ref{eq:csf}: 
+O esquema continua utilizando a estrutura do multigrid para a solução da pressão, com o passo fracionado completo. O multigrid utiliza a estrutura dos níveis físicos e virtuais escolhidos para este escoamento.
 
-% \begin{equation}
-%     \vec{f}_{\sigma} = \frac{\sigma \kappa \nabla f}{\langle \rho \rangle},
-%     \label{eq:csf}
-% \end{equation}
+A principal mudança neste domínio é o acoplamento, feito por meio das condições de contorno de parede. 
 
-% na qual $\sigma$ é a tensão superficial, $\kappa$ é a curvatura obtido a partir do método mostrado por \citet{Shirani2004} e ${\langle \rho \rangle = \frac{\rho_1 + \rho_2}{2}}$ que é a ponderação por massa específica que faz com que a aceleração resultante deste termo dependa da média das fases, sem saltos.
+\subsubsection{Condições de Contorno}
 
-% %Falta IB
 
-% Para o escoamento principal, tem-se uma consideração adicional de escoamento monofásico, visto que o filme é confinado no nível mais fino, como explicado na (citar capitulo de escoamento principal).
+A condição de contorno ideal para transmitir o efeito do filme para o escoamento principal foi um dos objetos de estudo deste trabalho. Sendo assim, várias condições foram testadas e seus resultados comparados, a tabela \ref{tab:condições_de_contorno} mostra cada uma das condições e seus tipos:
 
-% \section{Modelagem Numérica}
+\begin{table}[htbp]
+  \centering
+  \caption{Condições de contorno da simulação.}
+  \label{tab:condicoes}
+  \begin{tabular}{l l l}
+    \toprule
+    \textbf{Tipo de condição} & \textbf{Nome} & \textbf{Valor} \\
+    \midrule
+    Dirichlet   & Sem acoplamento & $V_{wall} = 0$ \\
+    \midrule
+    Dirichlet   & velocidade igual a interface     & $V_{wall} = V_{interface}$ \\
+    \midrule
+    Neumann     & igualdade das derivadas     & $\frac{\partial v}{\partial x}\|_{wall} = \frac{\partial v}{\partial x}\|_{interface}$ \\
+    \midrule
+    Neumann   & Adapted Navier-Slip condition     & $\frac{\partial V_{wall}}{\partial x} = \frac{v_{interface}}{\delta_{film}}$ \\
+    \midrule
+    Dirichlet   & Adapted Navier-Slip condition Dirichlet version     & $v_{wall} = \frac{\mu_{film} - \mu_{film}}{|\mu_{film} - \mu_{film}|} \cdot \delta_{film} \frac{\partial v_{film}}{\partial x}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
-% Apesar da modelagem numérica ser complexa, são abordados os detalhes essenciais para o desenvolvimento do método. Adota-se o sobrescrito $n$ para o passo de tempo.
+A primeira condição de contorno foi utilizada apenas para verificar como o gás se comporta sem a presença do fluido e quanto de erro isso gera, também verifica a diferença entre o acoplamento de uma via e os acoplamentos de duas vias.
 
-% Como padrão na literatura para malhas estruturadas cartesianas \citep{versteeg2007}, o método de volumes finitos (\textit{MVF} ou, em inglês, \textit{FVM}) foi utilizado para a discretização das equações propostas e as demais na ferramenta computacional. Além disto, o esquema de malha deslocada para variáveis vetoriais e escalares (\textit{staggered grid}) também é utilizado.
+A segunda condição de contorno imposta visa reproduzir a tensão de cisalhamento na interface entre fluidos. Uma vez que o escoamento se desenvolve quase que puramente por difusão, já que não existe velocidade na direção normal ao mesmo nos escoamentos utilizados no presente trabalho, foram testadas três formas de se medir a derivada na interface, ilustradas na figura \ref{fig:medicao_normal}.
 
-% O esquema de acoplamento pressão-velocidade utilizado deriva do método de projeção de Chorin, também chamado de método do passo fracionado (Fractional Step em inglês), o método completo pode ser encontrado em (cite santos) e em (cite Luis), de forma resumida:
+\begin{figure}
+    \centering
+    \includegraphics[width =0.6\textwidth]{imagens/medicao_normal.png}
+    \caption{Ilustração dos três casos testados para obter a derivada na interface, sendo que as condições são upwind backwind e uma média centrada}
+    \label{fig:medicao_normal}
+\end{figure}
 
-% \begin{itemize}
-%     \item Determina-se, a partir do campo de pressão vindo do passo de tempo anterior, uma estimativa do campo e velocidade
-%     \item A partir da equação da continuidade, deriva-se uma equação para a correção da pressão
-%     \item A partir da correção do campo de pressão e do campo de velocidade estimado, chega-se na velocidade do tempo $n+1$
-%     \item a partir do campo de pressão do tempo anterior e da correção do campo de pressão, chega-se na pressão do tempo $n+1$
-% \end{itemize}
 
-% Considerando que o escoamento do fluido principal será monofásico, a Eq. \ref{eq:navier-stokes-incompressivel-completa} se resume a:
+Sendo assim foram feitas três tentativas de se obter a tensão cisalhante na interface. A primeira foi utilizar a ultima célula de filme e a célula de interface, dando mais enfase à influência do filme, em simetria, também considerou-se o oposto, uma célula de interface e uma célula de fluido principal. Considerou-se também uma diferença centrada, utilizando uma célula de filme e uma de fluido principal para estimar a derivada na interface.
 
-% \begin{equation}
-% \frac{\partial \vec{u^{*}}}{\partial t} + \vec{u^{*}} \cdot \nabla \vec{u^{*}}
-%     = -\frac{1}{\rho_2}\nabla p^n
-%     + \nu_2 \nabla^2 \vec{u^{*}}
-%     + \vec{g}
-%     + \vec{f}_{ib}
-%     \label{eq:momento-simplificada-estrela}
-% \end{equation}
+A condição de Navier-Slip adaptada surgiu a partir da manipulação da condição original de deslizamento de Navier, dada pela EQ. \ref{eq:Navier-Slip}
 
-% Sendo $\vec{u^{*}}$ a estimativa do vetor velocidade e $\nu_2 = \frac{\mu_2}{\rho_2}$.
+\begin{equation}
+    v_{wall} + b\frac{\partial v}{\partial x}\|_{wall} = 0
+    \label{eq:Navier-Slip}
+\end{equation}
 
+Nessa equação b é chamado de comprimento de deslizamento, e representa o comprimento equivalente ao qual o fluido está deslocado. A figura \ref{fig:Navier-slip} mostra o efeito de vários comprimentos de deslizamento. Um ramo da mecânica dos fluidos que estuda muito essas condições é o de nanofluidos (citar), os nanofluidos apresentam deslizamento relativos às paredes de acordo com várias características do fluido e da parede, uma delas é a afinidade quimica do material da parede com o fluido. Um exemplo disso é quando um nanofluido a base d'água é transportado ao longo deu ma parede hidrofílica, o fluido se desenvolve mais do que ele se desenvolveria na presença de uma parede normal, sendo assim o comprimento de deslizamento deve refletir esse deslocamento. Por outro lado, se este mesmo fluido está em contato com uma superfície hidrofóbica, ele se desenvolverá menos que caso estivesse em contato com uma parede normal, levando a um comprimento de deslizamento negativo. 
+
+A mesma analogia feita no paragrafo anterior pode se extender à filmes finos: um filme com viscosidade maior que o fluido principal faz com que o escoamento obtenha uma velocidade terminal menor que caso o fluido principal estivesse sozinho na tubulação. Na condição oposta, usada nos casos de filme de lubrificação - em transporte de petróleo por exemplo -, o filme com menor viscosidade que o principal faz com que ele desenvolva uma velocidade terminal maior no escoamento. Este ultimo caso faz com que seja possível observar um deslizamento do escoamento principal em relação as paredes, o mesmo efeito que se observa ao movimentar-se sobre superfícies lubrificadas.
+
+Utilizando os resultados obtidos e a analogia apresentada, desenvolveu-se a condição de Navier-Slip com Dirichlet. Essa condição visa sanar uma limitação do método de fronteira imersa implementado no software utilizado, o código só consegue aplicar condições de primeira espécie.
+
+Os resultados de cada condição de contorno são analisados separadamente nos resultados, para cada um dos escoamentos.
+
+
+\subsection{Escoamento do Filme}
+
+O domínio do filme é significativamente menor que o do escoamento principal. O tamanho exato do mesmo deve ser mensurado, tanto com análises de independência de malha quanto mensurando a altura esperada de ondas no filme, de forma que todo o conteúdo do fluido 1 deve permanecer confinado no domínio sem remalhagem.
+
+O domínio do filme é representado pela figura \ref{fig:dominio_filme}, as condições nas faces que encontram as paredes do domínio computacional ou a fronteira imersa são de não deslizamento, com velocidade zero para essas paredes. As condições de contorno para as faces internas ao domínio são fornecidas pelos níveis intermediários para a velocidade, utilizando a interpolação para as ghost cells trazida por (citar milena). Essas interpolações garantem o acoplamento do core flow para o filme. 
+
+\begin{figure}
+    \centering
+    \includegraphics[options]{name}
+    \caption{}
+    \label{}
+\end{figure}
+
+
+O acoplamento pressão velocidade não é resolvido no domínio do filme, uma vez que a pressão é inteiramente fornecida pelo escoamento principal, assim sendo o acoplamento mostrado se resume á primeira equação, que ao em vez de fornecer uma estimativa para a velocidade, fornece seu valor exato para o próximo passo de tempo.
+
+No domínio do filme o tratamento escolhido para o problema bifásico foi o \textit{VOF}.
+A massa específica e viscosidade são funções do campo de volume fracionário $f$, que representa a fração de volume do fluido 1 em cada célula do domínio computacional. As equações de transporte do volume fracionário são resolvidas utilizando o método VOF, com reconstrução geométrica da interface, a equação de transporte de $f$ é representada pela EQ. \ref{eq:transporte-f}.
+
+\begin{equation}
+    \frac{\partial f}{\partial t} V + F_{net} = \int_{V} c \vec{\nabla} \cdot \vec{u} dv,
+    \label{eq:transporte-f}
+\end{equation}
+
+sendo $F_{net}$ o fluxo líquido de fração volumétrica através das faces.
+A Eq. \ref{eq:transporte-f} é resolvida pelo esquema conservativo com separação direcional proposto por \citet{Weymouth2010}. A cada passo de tempo são executadas três varreduras unidimensionais, uma por direção $d$, com permutação cíclica da ordem entre passos consecutivos para evitar viés direcional. O termo $c$ é aproximado por \citet{Weymouth2010} como função indicadora $c^*$ na célula:
+
+\begin{equation}
+    c^* =
+    \begin{cases}
+        1, & f > 1/2 \\
+        0, & \text{caso contrário,}
+    \end{cases}
+    \label{eq:indicadora-wy}
+\end{equation}
+
+
+Após a obtenção de $f$ no domínio, os campos de $\rho$ e $\mu$ são reconstruídos utilizando Eq. \ref{eq:rho-reconstruido} e Eq. \ref{eq:mu-reconstruido}:
+
+\begin{equation}
+    \rho = \rho_1^f \cdot \rho_2^{1-f}
+    \label{eq:rho-reconstruido}
+\end{equation}
+
+\begin{equation}
+    \mu = f \mu_1 + (1-f) \mu_2
+    \label{eq:mu-reconstruido}
+\end{equation}
+
+Sendo $\mu$ reconstruído com a formulação clássica e $\rho$ reconstruído com média geométrica que suaviza o gradiente na interface, de forma a evitar saltos abruptos e problemas de convergência. 
+
+A tensão superficial é tratada como força de campo pelo modelo \textit{Continuum Surface Force} \citep{Brackbill1992}, Eq.\ref{eq:csf}: 
+
+\begin{equation}
+    \vec{f}_{\sigma} = \frac{\sigma \kappa \nabla f}{\langle \rho \rangle},
+    \label{eq:csf}
+\end{equation}
+
+na qual $\sigma$ é a tensão superficial, $\kappa$ é a curvatura obtido a partir do método mostrado por \citet{Shirani2004} e ${\langle \rho \rangle = \frac{\rho_1 + \rho_2}{2}}$ que é a ponderação por massa específica que faz com que a aceleração resultante deste termo dependa da média das fases, sem saltos.
+
+
+\subsection{Avanço temporal}
+
+Os domínios possuem restrições e, consequentemente, passos de tempo distintos. No domínio do filme critérios de restrição dinâmicos e de capilaridade são utilizados, seguindo as seguintes formulas:
+
+Restrição de capilaridade e de viscosidade

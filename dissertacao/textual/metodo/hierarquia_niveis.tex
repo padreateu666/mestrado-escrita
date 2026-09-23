@@ -51,7 +51,7 @@ convencionando o tempo precedente como $t^n$ e o tempo seguinte como $t^{n+1}$, 
     \item Define-se o passo de tempo efetivo do filme, $\delta t_\mathrm{filme} = \Delta t_\mathrm{core} / N_\mathrm{passos}$, de modo que $\delta t_\mathrm{filme} \le \Delta t_\mathrm{filme}$ e $N_\mathrm{passos}\,\delta t_\mathrm{filme} = \Delta t_\mathrm{core}$.
     \item O \textit{core flow} avança um passo de tempo $\Delta t_\mathrm{core}$ usando as condições de contorno do filme em $t^{n}$, obtendo os campos de velocidade e pressão em $t^{n+1}$.
     \item O campo de velocidade do \textit{core flow} é interpolado para os níveis intermediários $t^{n,k} = t^{n} + k\,\delta t_\mathrm{filme}$, com $k = 1, \dots, N_\mathrm{passos}$.
-    \item O campo de pressão do \textit{core flow} é interpolado para os mesmos níveis $t^{n,k}$.
+    \item O campo de pressão do \textit{core flow} é interpolado até o ltop passando pelos níveis intermediários $t^{n,k}$.
     \item O filme avança $N_\mathrm{passos}$ subciclos de tamanho $\delta t_\mathrm{filme}$, usando em cada nível $t^{n,k}$ os campos interpolados do \textit{core flow} como condição de contorno, até obter o campo de velocidade do filme em $t^{n+1}$.
     \item O processo se repete para o próximo passo de tempo do \textit{core flow}.
 \end{enumerate}
