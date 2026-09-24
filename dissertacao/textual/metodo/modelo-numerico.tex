@@ -1,44 +1,3 @@
-\section{Modelagem matemática}
-\label{sec:modelagem-matematica}
-
-Ambos os domínios, $\Omega_f$ e $\Omega_p$, são definidas pelo mesmo conjunto de equações, o que os distingue é a presença ou não da interface e, por consequência, o tratamento dado às propriedades do fluido. A formulação é apresentada aqui em sua forma mais geral, bifásica, da qual o escoamento resolvido em $\Omega_p$ é recuperado como caso particular monofásico.
-
-Adota-se a formulação de um fluido (\textit{one-fluid formulation}), na qual as duas fases são descritas por um único conjunto de equações válido em todo o domínio. Em lugar de resolver um sistema de equações por fase, acoplados por condições de salto na interface, a massa específica $\rho(\vec{x},t)$ e a viscosidade dinâmica $\mu(\vec{x},t)$ passam a ser campos descontínuos através da interface.
-
-Sendo os campos de propriedades variáveis, o balaço de massa é tomado em sua forma geral, Eq. \ref{eq:conservacao-massa}:
-
-\begin{equation}
-    \frac{\partial \rho}{\partial t} + \nabla \cdot \left( \rho \vec{u} \right) = 0
-    \qquad \Longleftrightarrow \qquad
-    \frac{D \rho}{D t} + \rho \, \nabla \cdot \vec{u} = 0
-    \label{eq:conservacao-massa}
-\end{equation}
-
-Sendo os fluidos são incompressíveis e imiscíveis e não havendo mudança de fase. Cada partícula conserva, portanto, sua massa específica ao longo do escoamento, de modo que $D\rho / Dt = 0$, e a interface é uma superfície material, transportada pelo próprio campo de velocidade e sem fonte de volume associada. O primeiro termo da Eq. \ref{eq:conservacao-massa} se anula e resta a condição de divergência nula do campo de velocidade, Eq. \ref{eq:continuidade-completa}, válida mesmo com $\rho$ variável no domínio: a variação da massa específica decorre da distribuição das fases, e não da compressão do fluido. 
-
-\begin{equation}
-    \nabla \cdot \vec{u} = 0
-    \label{eq:continuidade-completa}
-\end{equation}
-
-O balanço de quantidade de movimento é dado pela Eq. \ref{eq:navier-stokes-incompressivel-completa}, com a dependência espacial e temporal das propriedades explicitada:
-
-\begin{equation}
-    \frac{\partial \vec{u}}{\partial t} + \vec{u} \cdot \nabla \vec{u}
-    = \frac{1}{\rho (\vec{x},t)} \left[
-        - \nabla p
-        + \nabla \cdot \left( \mu (\vec{x},t) \left( \nabla \vec{u} + (\nabla \vec{u})^{T} \right) \right)
-        + \vec{f}_{\sigma}
-        + \vec{f}_{ib}
-    \right]
-    + \vec{g}
-    \label{eq:navier-stokes-incompressivel-completa}
-\end{equation}
-
-nas quais $\vec{u}$ é o vetor velocidade, $p$ a pressão, $\vec{g}$ o vetor aceleração da gravidade, $\vec{f}_{\sigma}$ a força por unidade de volume devida à tensão superficial, não nula apenas sobre a interface, e $\vec{f}_{ib}$ a força por unidade de volume responsável por impor a condição de contorno sobre a fronteira imersa, quando presente.
-
-As particularidades na implementação de cada fluido pertencem ao modelo numérico e serão tratadas de forma separada.
-
 \section{Modelo Numérico}
 
 O método proposto não introduz uma discretização nova às equações apresentadas na Seção \ref{sec:modelagem-matematica}. Ambos os domínios são resolvidos pelo núcleo implementado no MFSim (cite milena e joao). Assim sendo, a modelagem numérica é dividida em duas partes, tratando as particularidades de cada domínio, como acoplamento, interpolações e condições de contorno. O acoplamento pressão-velocidade também será detalhado, uma vez que sua ausência é objeto principal da formulação do filme. Esta seção descreve, primeiramente, os códigos comuns aos dois domínios, que são herdados do código, e posteriormente a descrição de cada um deles de forma separada.
@@ -181,9 +140,9 @@ O domínio do filme é representado pela figura \ref{fig:dominio_filme}, as cond
 
 \begin{figure}
     \centering
-    \includegraphics[options]{name}
-    \caption{}
-    \label{}
+    \includegraphics[width=0.5\textwidth]{imagens/filme-domain.png}
+    \caption{Domínio do filme com as condições de contorno aplicadas}
+    \label{fig:dominio_filme}
 \end{figure}
 
 

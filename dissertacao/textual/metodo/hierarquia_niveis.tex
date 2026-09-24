@@ -32,60 +32,6 @@ Existem ainda níveis que estão entre os dois domínios, supondo por exemplo qu
 
 Parte do acoplamento passa pelos níveis intermediários.
 
-\subsection{Acoplamento e Pseudo Algoritmo}
-
-Os domínios são acoplados por meio de interpolações e condições de contorno, da seguinte forma:
-
-O escoamento principal recebe informações do filme através de condições de contorno nas paredes que são compartilhadas por ambos os domínios, as quais são detalhadas na \ref{sec:condicoes_de_contorno}. 
-
-Enquanto isso, o filme recebe informações do escoamento principal de duas formas: os campos de velocidade vem como condição de contorno nas paredes internas do filme, sendo paredes internas aquelas que não coincidem nem com uma fronteira imersa nem com o domínio físico do escoamento, através dos níveis intermediários e o campo de pressão é interpolado diretamente do \textit{coreflow} para o filme, sendo que essa propriedade não é resolvida neste domínio.
-
-Para que os níveis intermediários sejam capazes de fornecer as condições de contorno, os campos de velocidade são interpolados do escoamento principal utilizando interpoladores conservativos.
-
-convencionando o tempo precedente como $t^n$ e o tempo seguinte como $t^{n+1}$, temos que a sequência de passos para o método em um determinado passo de tempo começa com as condições do filme e do gás em $t^n$, seguindo a seguinte sequência de etapas:
-
-\begin{enumerate}
-    \item Calcula-se o passo de tempo do \textit{core flow}, $\Delta t_\mathrm{core}$.
-    \item Calcula-se o passo de tempo do filme, $\Delta t_\mathrm{filme}$.
-    \item Calcula-se o número de subciclos, arredondando para cima a razão entre os passos de tempo: $N_\mathrm{passos} = \left\lceil \Delta t_\mathrm{core} / \Delta t_\mathrm{filme} \right\rceil$.
-    \item Define-se o passo de tempo efetivo do filme, $\delta t_\mathrm{filme} = \Delta t_\mathrm{core} / N_\mathrm{passos}$, de modo que $\delta t_\mathrm{filme} \le \Delta t_\mathrm{filme}$ e $N_\mathrm{passos}\,\delta t_\mathrm{filme} = \Delta t_\mathrm{core}$.
-    \item O \textit{core flow} avança um passo de tempo $\Delta t_\mathrm{core}$ usando as condições de contorno do filme em $t^{n}$, obtendo os campos de velocidade e pressão em $t^{n+1}$.
-    \item O campo de velocidade do \textit{core flow} é interpolado para os níveis intermediários $t^{n,k} = t^{n} + k\,\delta t_\mathrm{filme}$, com $k = 1, \dots, N_\mathrm{passos}$.
-    \item O campo de pressão do \textit{core flow} é interpolado até o ltop passando pelos níveis intermediários $t^{n,k}$.
-    \item O filme avança $N_\mathrm{passos}$ subciclos de tamanho $\delta t_\mathrm{filme}$, usando em cada nível $t^{n,k}$ os campos interpolados do \textit{core flow} como condição de contorno, até obter o campo de velocidade do filme em $t^{n+1}$.
-    \item O processo se repete para o próximo passo de tempo do \textit{core flow}.
-\end{enumerate}
-
-Com o seguinte pseudo algoritmo equivalente:
-
-\begin{algorithm}[H]
-\caption{Sequência do algoritmo com subciclagem temporal do filme.}
-\label{alg:sequencia-subciclagem}
-\begin{algorithmic}[1]
-\Require $\mathbf{u}^0$, $p^0$, $\mathbf{u}_\mathrm{filme}^0$, $t^0$, $t_\mathrm{final}$
-\State $n \gets 0$
-\While{$t^n < t_\mathrm{final}$}
-  \State Calcular $\Delta t_\mathrm{core}$
-  \State Calcular $\Delta t_\mathrm{filme}$
-  \State $N_\mathrm{passos} \gets \lceil \Delta t_\mathrm{core} / \Delta t_\mathrm{filme} \rceil$
-  \State $\delta t_\mathrm{filme} \gets \Delta t_\mathrm{core} / N_\mathrm{passos}$
-  \State $(\mathbf{u}^{n+1}, p^{n+1}) \gets \textsc{AvançaCore}\big(\mathbf{u}^{n}, p^{n}, \mathcal{B}_\mathrm{filme}^{n}, \Delta t_\mathrm{core}\big)$
-  \For{$k = 1, \dots, N_\mathrm{passos}$}
-    \State $t^{n,k} \gets t^n + k\,\delta t_\mathrm{filme}$
-    \State $\mathbf{u}^{n,k} \gets \textsc{Interpola}\big(\mathbf{u}^{n}, \mathbf{u}^{n+1}, t^{n,k}\big)$
-    \State $p^{n,k} \gets \textsc{Interpola}\big(p^{n}, p^{n+1}, t^{n,k}\big)$
-  \EndFor
-  \State $\mathbf{u}_\mathrm{filme}^{n,0} \gets \mathbf{u}_\mathrm{filme}^{n}$
-  \For{$k = 1, \dots, N_\mathrm{passos}$}
-    \State $\mathbf{u}_\mathrm{filme}^{n,k} \gets \textsc{AvançaFilme}\big(\mathbf{u}_\mathrm{filme}^{n,k-1}, \mathbf{u}^{n,k}, p^{n,k}, \delta t_\mathrm{filme}\big)$
-  \EndFor
-  \State $\mathbf{u}_\mathrm{filme}^{n+1} \gets \mathbf{u}_\mathrm{filme}^{n,N_\mathrm{passos}}$
-  \State $t^{n+1} \gets t^n + \Delta t_\mathrm{core}$, \quad $n \gets n+1$
-\EndWhile
-\end{algorithmic}
-\end{algorithm}
-
-{explicar cada simbolo}
 
 
 
