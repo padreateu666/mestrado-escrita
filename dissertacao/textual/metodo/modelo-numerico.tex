@@ -3,7 +3,7 @@
 O método proposto não introduz uma discretização nova às equações apresentadas na Seção \ref{sec:modelagem-matematica}. Ambos os domínios são resolvidos pelo núcleo implementado no MFSim (cite milena e joao). Assim sendo, a modelagem numérica é dividida em duas partes, tratando as particularidades de cada domínio, como acoplamento, interpolações e condições de contorno. O acoplamento pressão-velocidade também será detalhado, uma vez que sua ausência é objeto principal da formulação do filme. Esta seção descreve, primeiramente, os códigos comuns aos dois domínios, que são herdados do código, e posteriormente a descrição de cada um deles de forma separada.
 
 \subsection{Visão Geral}
-
+\label{sec:visao-geral}
 O código adotado utiliza o Método de Volumes Finitos (\textit{FVM}) para a discretização de todas as equações de balanço \cite{versteeg2007}. As equações são integradas sobre cada volume de controle e os termos de divergência são convertidos em somatórios de fluxos através das faces, o que garante conservação discreta das grandezas transportadas no interior de cada nível de malha. A malha é cartesiana estruturada, com espaçamento uniforme dentro de um mesmo nível e razão de refino igual a dois entre níveis consecutivos.
 
 Utiliza-se um arranjo de malha deslocada (\textit{sttagered grid}), no qual as grandezas escalares, como pressão e fração volumétrica, são armazenadas no centro das células e grandezas vetoriais são armazenadas nas faces normais a cada componente. Esta configuração faz com que variações no gradiente de pressão sejam capturadas com mais facilidade, além de influenciar no estêncil utilizado nas interpolações entre níveis para cada variavel \cite{versteeg2007} (citar milena.)
@@ -133,7 +133,7 @@ Os resultados de cada condição de contorno são analisados separadamente nos r
 
 
 \subsection{Escoamento do Filme}
-
+\label{sec:numerico-filme}
 O domínio do filme é significativamente menor que o do escoamento principal. O tamanho exato do mesmo deve ser mensurado, tanto com análises de independência de malha quanto mensurando a altura esperada de ondas no filme, de forma que todo o conteúdo do fluido 1 deve permanecer confinado no domínio sem remalhagem.
 
 O domínio do filme é representado pela figura \ref{fig:dominio_filme}, as condições nas faces que encontram as paredes do domínio computacional ou a fronteira imersa são de não deslizamento, com velocidade zero para essas paredes. As condições de contorno para as faces internas ao domínio são fornecidas pelos níveis intermediários para a velocidade, utilizando a interpolação para as ghost cells trazida por (citar milena). Essas interpolações garantem o acoplamento do core flow para o filme. 
@@ -194,7 +194,32 @@ na qual $\sigma$ é a tensão superficial, $\kappa$ é a curvatura obtido a part
 
 
 \subsection{Avanço temporal}
+\label{sec:passo-tempo}
+Para garantir a estabilidade dos métodos numéricos na solução de sistemas lineares, existem na literatura diversas análises que verificam os critérios de estabilidade desses sistemas baseados nos métodos que os resolvem. Tais critérios geralmente nascem de análises gerais como o método de análise de estabilidade de Von Neumann ou junto com os métodos numéricos específicos, como o encontrado em \citet{Brackbill1992}. Os critérios de passo de tempo utilizados neste trabalho são mostrados na Eq. \ref{eq:critério_de_Brackbill} e Eq \ref{eq:critério_advectivo}.
 
-Os domínios possuem restrições e, consequentemente, passos de tempo distintos. No domínio do filme critérios de restrição dinâmicos e de capilaridade são utilizados, seguindo as seguintes formulas:
+\begin{equation}
+    \Delta t_{capilar} \leq \sqrt{\frac{\rho_{eq}\,\Delta x^3}{2 \pi \sigma}}, \qquad \rho_{eq} = \frac{\rho_c + \rho_d}{2}
+    \label{eq:criterio_de_Brackbill}
+\end{equation}
 
-Restrição de capilaridade e de viscosidade
+\begin{equation}
+    \Delta t_{advectivo} = CFL \cdot \frac{1}{\dfrac{u_{max}}{\Delta x} + \dfrac{v_{max}}{\Delta y} + \dfrac{w_{max}}{\Delta z}}
+    \label{eq:criterio_advectivo}
+\end{equation}
+
+Sendo que o escoamento principal utiliza apenas a EQ. \ref{eq:critério_advectivo}, por não ter a equação de Brackbill, enquanto o filme utiliza ambas.
+
+Por terem critérios e refino de malha diferentes, os domínios terão necessariamente passos de tempo diferentes. A sincronização entre esses passos de tempo é feita por meio do seguinte algoritmo:
+
+\begin{equation}
+    \begin{aligned}
+        N_{passos} &= \left\lceil \frac{\Delta t_{core}}{\Delta t_{film}} \right\rceil \\
+        \delta t_{film} &= \frac{\Delta t_{core}}{N_{passos}}
+    \end{aligned}
+    \label{eq:sincronizacao_dt}
+\end{equation}
+
+Sendo $\lceil \cdot \rceil$ a função teto, que arredonda o quociente para o menor inteiro maior ou igual a ele, de forma que o passo de tempo efetivo do filme, $\delta t_{film}$, seja sempre menor ou igual ao passo de tempo calculado, $\Delta t_{film}$, garantindo que os critérios de estabilidade sejam atendidos.
+
+Dessa forma, o domínio do filme avança $N_{passos}$ passos de tempo valendo $\delta t_{film}$ em cada loop do código, sendo que ao final de cada passo de tempo global, tanto o filme quanto o \textit{coreflow} estão no mesmo tempo físico.
+
