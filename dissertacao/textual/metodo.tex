@@ -1,14 +1,14 @@
 \chapter{Método}
 
 \section{Visão Geral}
-
-Conforme o que foi discutido nos capítulos anteriores, o custo para simular os problemas de filmes finos utilizando métodos tradicionais multifásicos é proibitivo, isso se dá pela malha exigida nesses métodos e ao custo de extender esse refino para todo o domínio. O método proposto parte dessa propriedade e divide o escoamento em dois subproblemas resolvidos em domínios distintos que se sobrepõem parcialmente e são acoplados entre si. Isto confina a exigência de malha apenas no domínio que contém o filme.
+\label{sec:visao-geral}
+Conforme o que foi discutido nos capítulos anteriores, o custo para simular os problemas de filmes finos utilizando métodos tradicionais multifásicos é proibitivo, isso se dá pela malha exigida nesses métodos e ao custo de estender esse refino para todo o domínio. O método proposto parte dessa propriedade e divide o escoamento em dois subproblemas resolvidos em domínios distintos que se sobrepõem parcialmente e são acoplados entre si. Isto confina a exigência de malha apenas no domínio que contém o filme.
 
 O primeiro domínio $\Omega_f$ resolve o filme e sua interface com o escoamento principal, também referido como \textit{core flow}. Este domínio consiste em uma faixa refinada próxima à parede do problema, possuindo espessura suficiente para capturar a física do filme e da região de interface. Neste domínio o escoamento resolvido é bifásico e as equações presentes resolvem a física nas três dimensões do problema, sem as hipóteses dos modelos integrais ou de filme finos. Em um primeiro momento, a pressão, por hipótese, não é resolvida, sendo alimentada pelo escoamento principal.
 
 O segundo domínio é o do escoamento principal, resolvido em $\Omega_p$ que envolve toda a extensão do problema, resolvendo um escoamento monofásico sem a presença do filme. A ausência da segunda fase permite que a discretização desse escoamento utilize um espaçamento de células maior que o de $\Omega_f$, visto que os critérios de malha exigidos pelos modelos bifásicos não estão presentes aqui. 
 
-Os escoamentos resolvidos não são disjuntos. O domínio $\Omega_f$ sobrepõe o domínio $\Omega_p$ na região próxima à parede, de modo que essa faixa de sobreposição possui uma solução diferente para cada um, sendo uma bifásica em malha mais refinada e outra monofásica em malha grosseira. Essa sobreposição é parte da estratégia de acoplamento entre as fases, já que as condições de contorno do escoamento em $\Omega_f$, nas faces que não tocam a fronteira do problema computacional, são alimentadas pelo escoamento em $\Omega_p$. A figura \ref{fig:metodo-esquema} ilustra a divisão dos problemas. 
+Os escoamentos resolvidos não são disjuntos. O domínio $\Omega_f$ sobrepõe o domínio $\Omega_p$ na região próxima à parede, de modo que essa faixa de sobreposição possui uma solução diferente para cada um, sendo uma bifásica em malha mais refinada e outra monofásica em malha grosseira. Essa sobreposição é parte da estratégia de acoplamento entre as fases, já que as condições de contorno do escoamento em $\Omega_f$, nas faces que não tocam a fronteira do problema computacional, são alimentadas pelo escoamento em $\Omega_p$. A Figura \ref{fig:metodo-esquema} ilustra a divisão dos problemas. 
 
 
 \begin{figure}
@@ -18,7 +18,7 @@ Os escoamentos resolvidos não são disjuntos. O domínio $\Omega_f$ sobrepõe o
     \label{fig:metodo-esquema}
 \end{figure}
 
-O acoplamento é bidirecional. O escoamento principal fornece ao filme as condições de contorno nos limites em que não encontra fronteira computacional e o filme devolve sua influência ao \textit{core flow} por meio das condições de contorno aplicadas às paredes que estão em contato com o filme. As grandezas transferidas em cada via do acoplamento e as condições de contorno entre o filme e o core flow são tratados na Seção \ref{sec:acoplamento}. Os domínios também possuem seu próprio passo de tempo, que será tratado na Seção \ref{sec:passo-tempo}.
+O acoplamento é bidirecional. O escoamento principal fornece ao filme as condições de contorno nos limites em que não encontra fronteira computacional e o filme devolve sua influência ao \textit{core flow} por meio das condições de contorno aplicadas às paredes que estão em contato com o filme. As grandezas transferidas em cada via do acoplamento e as condições de contorno entre o filme e o core flow são tratados na Seção \ref{sec:modelo-numerico}. Os domínios também possuem seu próprio passo de tempo, que será tratado na Seção \ref{sec:passo-tempo}.
 
 Dada a generalidade da proposta, o domínio $\Omega_f$ pode ser resolvido por qualquer técnica clássica de escoamentos multifásicos, como modelos VOF ou \textit{level-set}, desde que a técnica escolhida seja capaz de capturar a física envolvida no processo e de fornecer informação sobre a posição e o estado da interface, necessários para o acoplamento. Do escoamento principal exige-se que seja resolvido de forma completa, com acoplamento pressão-velocidade, uma vez que é dele que parte a informação de pressão para a banda.
 
@@ -27,7 +27,7 @@ Para uma distinção, onde for cabível, adota-se ao longo deste capítulo fluid
 
 \section{Particularização para o MFSim}
 
-A descrição da Seção \ref{sec:visao-geral} não fixa a forma como os dois domínios são construídos nem como a informação transita entre eles. Na implementação realizada neste trabalho, ambos são obtidos da hierarquia de níveis de malha do \textit{MFSim} (citar artigos de MFSim), código de simulação fluidodinâmica desenvolvido no MFLab/UFU, que resolve as equações de balanço pelo método dos volumes finitos em malha deslocada. Aproveitar essa estrutura dispensa a construção de duas malhas independentes e de um procedimento de busca entre elas, uma vez que os operadores de interpolação entre níveis já existem no código.
+A descrição da Seção \ref{sec:visao-geral} não fixa a forma como os dois domínios são construídos nem como a informação transita entre eles. Na implementação realizada neste trabalho, ambos são obtidos da hierarquia de níveis de malha do \textit{MFSim} \cite{Villar2007}, código de simulação fluidodinâmica desenvolvido no MFLab/UFU, que resolve as equações de balanço pelo método dos volumes finitos em malha deslocada. Aproveitar essa estrutura dispensa a construção de duas malhas independentes e de um procedimento de busca entre elas, uma vez que os operadores de interpolação entre níveis já existem no código.
 
 \input{textual/metodo/hierarquia_niveis.tex}
 

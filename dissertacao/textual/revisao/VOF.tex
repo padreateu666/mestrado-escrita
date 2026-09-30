@@ -1,6 +1,6 @@
 \section{Volume of Fluid (VOF)}
 
-O método \textit{Volume of Fluid} é pertencente à família dos métodos de captura de interface, formulado segundo a abordagem de um único fluido (\textit{one-fluid}) que resolve um conjunto de equações para ambas as fases, com a interface entre elas sendo definida por uma função de volume de fluido. Foi primeiramente apresentado por \citet{Hirt1981} cuja ideia de representar a interface por uma fração volumétrica já estava presente em métodos anteriores, como o \textit{SLIC} de \citet{Noh1976}. O método \textit{VOF} é amplamente utilizado devido sua versatilidade, robustez e capacidade de lidar com problemas de interface e topologias complexas, com grandes deformações, além de conservar massa e volume. Enquanto algums das equações mostradas abaixo para exemplificar a $VOF$ são os mesmos utilizados no código base para o desenvolvimento do presente trabalho, uma recente revisão mais detalhada do estado da arte do mesmo pode ser encontrado em \citet{Mohan2024}. A figura \ref{fig:vof-esquema} mostra um esquema do que foi utilizado localmente.
+O método \textit{Volume of Fluid} é pertencente à família dos métodos de captura de interface, formulado segundo a abordagem de um único fluido (\textit{one-fluid}) que resolve um conjunto de equações para ambas as fases, com a interface entre elas sendo definida por uma função de volume de fluido. Foi primeiramente apresentado por \citet{Hirt1981} cuja ideia de representar a interface por uma fração volumétrica já estava presente em métodos anteriores, como o \textit{SLIC} de \citet{Noh1976}. O método \textit{VOF} é amplamente utilizado devido sua versatilidade, robustez e capacidade de lidar com problemas de interface e topologias complexas, com grandes deformações, além de conservar massa e volume. Enquanto algums das equações mostradas abaixo para exemplificar a $VOF$ são os mesmos utilizados no código base para o desenvolvimento do presente trabalho, uma recente revisão mais detalhada do estado da arte do mesmo pode ser encontrado em \citet{Mohan2024}. A Figura \ref{fig:vof-esquema} mostra um esquema do que foi utilizado localmente.
 
 \begin{figure}
     \centering
@@ -38,7 +38,7 @@ com $0 < f < 1$. Integrando a Eq.\ref{eq:advection-vof} sobre o volume de cada c
 \end{equation}
 
 
-Sendo $F_{net} = \oint_{\partial V} c\, \vec{u}\cdot\vec{n} \, dS$ o fluxo líquido de fração volumétrica através das faces da célula computacional e $\oint_{V} c^* \vec{\nabla} \cdot \vec{u} dv$ o termo de dilatação, que é igual a zero em um escoamento incompressível. É possível reconstruir a interface entre os fluidos utilizando $f$, sendo que a forma como isso é feito depende do método de reconstrução utilizado. A figura \ref{fig:vof-exemplo} mostra um exemplo de como a interface é representada. 
+Sendo $F_{net} = \oint_{\partial V} c\, \vec{u}\cdot\vec{n} \, dS$ o fluxo líquido de fração volumétrica através das faces da célula computacional e $\oint_{V} c^* \vec{\nabla} \cdot \vec{u} dv$ o termo de dilatação, que é igual a zero em um escoamento incompressível. É possível reconstruir a interface entre os fluidos utilizando $f$, sendo que a forma como isso é feito depende do método de reconstrução utilizado. A Figura \ref{fig:vof-exemplo} mostra um exemplo de como a interface é representada. 
 
 
 \begin{figure}

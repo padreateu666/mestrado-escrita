@@ -1,6 +1,6 @@
 \section{Sistema de Hierarquia de Níveis}
 
-O utilizado código possui uma estrutura hierárquica de níveis aninhados, que serve para fornecer estrutura aos algorítimos de refinamento de malha adaptativa (\textit{AMR}) e \textit{multigrid} (cite trabalhos). Essa hierarquia de níveis é mostrada na Figura \ref{fig:hierarquia_de_niveis}. Cada um dos níveis possui resíduos das variáveis calculadas pelo multigrid ou campos vetoriais completos quando esses níveis pertencerem aos níveis físicos do AMR. Apesar de utilizar a estrutura da malha adaptativa, a utilizada aqui é estática, pela etapa inicial em que o método de encontra.
+O código utilizado possui uma estrutura hierárquica de níveis aninhados, que serve para fornecer estrutura aos algoritmos de refinamento de malha adaptativa (\textit{AMR}) e \textit{multigrid}. Essa hierarquia de níveis é mostrada na Figura \ref{fig:hierarquia_de_niveis}. Cada um dos níveis possui resíduos das variáveis calculadas pelo multigrid ou campos vetoriais completos quando esses níveis pertencerem aos níveis físicos do AMR. Apesar de utilizar a estrutura da malha adaptativa, a utilizada aqui é estática, pela etapa inicial em que o método se encontra.
 
 \begin{figure}[H]
     \centering
@@ -9,11 +9,11 @@ O utilizado código possui uma estrutura hierárquica de níveis aninhados, que 
     \label{fig:hierarquia_de_niveis}
 \end{figure}
 
-Nomeando os níveis como sendo: L1 o primeiro, L2 o segundo e assim por diante, indo do menor para o maior nível de refinamento, temos na figura 5 níveis de malha. Sendo que cada nível é 2 vezes mais refinado que o anterior. Os chamados níveis físicos no MFSim, são aqueles que possuem campos completos de velocidade, pressão e qualquer outra variável de interesse, sendo possível refinar apenas áreas específicas, como a faixa próxima à parede, sobrepondo níveis em uma mesma parte do domínio. 
+Partindo do esquema da Figura \ref{fig:hierarquia_de_niveis} os níveis podem ser nomeados como: L1 o primeiro, L2 o segundo e assim por diante, indo do menor para o maior nível de refinamento. Temos, na Figura \ref{fig:hierarquia_de_niveis}, cinco níveis de malha, sendo que cada nível é 2 vezes mais refinado que o anterior. Os chamados níveis físicos no MFSim, são aqueles que possuem campos completos de velocidade, pressão e qualquer outra variável de interesse, sendo possível refinar apenas áreas específicas, como a faixa próxima à parede, sobrepondo níveis em uma mesma parte do domínio. 
 
-Aqui o menor nível físico, sendo esse o nível com menor número de células computacionais que contém um campo completo de - no mínimo - pressão e velocidade, será denominado \textit{Lbot} e o nível maior nível físico como \textit{Ltop}.
+Aqui o menor nível físico, sendo esse o nível com menor número de células computacionais que contém um campo completo de - no mínimo - pressão e velocidade, será denominado \textit{Lbot} e o maior nível físico como \textit{Ltop}.
 
-Os níveis abaixo do \textit{Lbot}, que assim como ele ocupam todo o domínio, são chamados de níveis virtuais, eles são parte do algorítimos de \textit{multigrid}, guardando os campos de resíduos das variáveis resolvidas por esse método. no exemplo da figura \ref{fig:hierarquia_de_niveis} os níveis 1 e 2 seriam virtuais e os demais físicos, sendo \textit{Lbot} o 3 e \textit{Ltop} o 5.
+Os níveis abaixo do \textit{Lbot}, que assim como ele ocupam todo o domínio, são chamados de níveis virtuais, eles são parte do algoritmo de \textit{multigrid}, guardando os campos de resíduos das variáveis resolvidas por esse método. No exemplo da Figura \ref{fig:hierarquia_de_niveis} os níveis 1 e 2 seriam virtuais e os demais físicos, sendo \textit{Lbot} o 3 e \textit{Ltop} o 5.
 
 Para implementar os escoamentos separados do algoritmo proposto, a hierarquia de níveis foi segmentada em duas partes: uma contendo o escoamento do filme e outra contendo o \textit{coreflow}.
 
@@ -21,7 +21,7 @@ O escoamento do filme com a interface foi confinado no nível mais refinado da h
 
 O escoamento principal fica confinado em níveis menos refinados da hierarquia, incluindo os níveis virtuais, ocupando todo o domínio computacional e podendo ser várias vezes menos refinado que o nível do filme. 
 
-Existem ainda níveis que estão entre os dois domínios, supondo por exemplo que o espaçamento de malha necessário para o filme seja $dx$ e o necessário para o \textit{coreflow} seja $8dx$ tem-se três níveis de malha entre os dois escoamentos. Esses níveis são compartilhados pelos dois domínios e são aqui denominados de níveis intermediários. A figura \ref{fig:dominio_dividido} mostra como essa divisão é feita e a representação dos níveis intermediários calculados.
+Existem ainda níveis que estão entre os dois domínios, supondo por exemplo que o espaçamento de malha necessário para o filme seja $dx$ e o necessário para o \textit{coreflow} seja $8dx$ tem-se três níveis de malha entre os dois escoamentos. Esses níveis são compartilhados pelos dois domínios e são aqui denominados de níveis intermediários. A Figura \ref{fig:dominio_dividido} mostra como essa divisão é feita e a representação dos níveis intermediários calculados.
 
 \begin{figure}[H]
     \centering
@@ -30,7 +30,6 @@ Existem ainda níveis que estão entre os dois domínios, supondo por exemplo qu
     \label{fig:dominio_dividido}
 \end{figure}
 
-Parte do acoplamento passa pelos níveis intermediários.
 
 
 
