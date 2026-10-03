@@ -1,8 +1,54 @@
-\chapter{Casos de verificação}
+\chapter{Modelo FísicoCasos de verificação}
 
-Para verificar a validade e estabilidade do método, utilizou-se primeiramente o escoamento de Poiseuille desenvolvido entre duas chapas planas com condições de simetria. 
+Para testar os limites de validade, a ordem de convergência e a acurácia do modelo proposto quando comparado com o original foram realizados diversas simulações em dois problemas de escoamento, sendo um unidimensional e outro tridimensional.
 
-É realizado um estudo de ordem de convergência e independência de malha, avaliando a velocidade real com que o erro decresce e comparando com a ordem teórica do código. A ordem de convergência da metodologia proposta foi comparada ao modelo tradicional para verificar possíveis perdas na ordem de convergência. Todos os resultados foram comparados com o modelo analítico dos escoamentos, quando disponível.
+O primeiro escoamento a ser testado foi o de Poiseuille desenvolvido entre placas planas, para este escoamento nenhuma fronteira imersa é utilizada e os limites do mesmo coincidem com os limítes do domínio computacional. Foram testados diferentes razões de propriedades físicas, diferentes valores de espessura de filme e diferentes velocidades para avaliar o comportamento do modelo. Além disto estudos de ordem de convergência e convergência de malha são propostos. Os escoamentos são inicialmente realizados utilizando o método clássico de \textit{VOF} para que se estabeleça um padrão de compara ção a ser seguido. 
+
+(falar do 3D)
+\section{Métricas de erro e critérios de malha}
+
+Para verificar a ordem de convergência observada e a independência de malha do método original e do proposto, foram empregados os procedimentos descritos na \cite{Asme2008} que segue os procedimentos de \cite{roarche1994}. 
+
+O procedimento sugerido pela \textit{ASME} segue cinco etapas:
+
+\begin{enumerate}
+    \item Escolher um espaçamento de malha representativo para o problema, o que é feito de forma empírica no presente trabalho. 
+    \item Selecionar três sequencias de malha, com razão de refino $r$ constante entre as mesmas, para obter o valor de uma variável de interesse que será utilizada para mensurar o erro. 
+    \item verificar qual a ordem observada do método, utilizando a Eq. \ref{eq:estimativa_de_roache}
+    \item Calcular os valores de erro extrapolados a partir da ordem de convergência observada, utilizando a EQ \ref{eq:extrapolação}
+    \item Calcular o índice de convergência de malha (ou Grid Convergence Index GCI) que estima qual a incerteza na discretização e qual a malha esperada que levaria à independência de malha.
+\end{enumerate}
+
+A equação da estimativa da ordem observada é dada pela Eq. \ref{eq:estimativa_de_roache}
+
+\begin{equation}
+    p = \frac{1}{r}\left|ln\left|\frac{\epsilon_{32}}{\epsilon_{21}}\right| + q(p)\right|,
+\end{equation}
+
+com $p$ sendo a ordem de convergência observada, $\epsilon_{32}$ sendo o erro absoluto da malha 3 em relação a malha 2 e $q(p)$ sendo dado pela Eq. \ref{eq:q_definition}
+
+\begin{equation}
+    q(p) = ln\big(\frac{r^p_{21} - s}{r^p_{32} - s}\big); s = 1sgn(\frac{\epsilon_{32}}{\epsilon_{21}}),
+\end{equation}
+
+
+sendo $r$ a razão de refino de malhas e $sgn$ a função sinal. Note que $q(p) = 0$ se $r_{32} = r_{21}$, como as razões de refino do presente trabalho são tomadas constantes e iguais a 2, essa variável é anulada na equação.
+
+A equação para a extrapolação do erro para a próxima malha depois da terceira é dado pela Eq. \ref{eq:extrapolação}
+
+\begin{equation}
+    \phi_{ext} = \frac{r^p_{21}\phi_1 - \phi_2}{r^p_{21}\phi_1 - 1},
+\end{equation}
+
+e finalmente o cálculo do GCI é dado pela Eq. \ref{GCI}
+
+\begin{equation}
+    GCI^{21} = \frac{1.25e_a^{21}}{r^p_{21} -1}
+\end{equation}
+
+Sendo que $e_a^{21}$ é o erro relativo da malha 1 em relação a malha 2.
+
+Um estudo complementar de ordem de convergência foi realizado considerando como erro a solução analítica dos problemas, mostrando o quanto as simulações se aproximaram do mesmo e com qual velocidade.
 
 \section{Escoamento de Poiseuille entre placas planas}
 
@@ -54,10 +100,7 @@ O código utilizado é essencialmente tridimensional, sendo assim o que foi simu
 
 na qual a direção z é considerada periódica com um número mínimo de 4 células para garantir o funcionamento do código, a parede mais externa de x também utiliza condição de simetria. O escoamento é desenvolvido, sendo assim, a pressão é imposta em ambas as faces da direção y. 
 
-\subsection{Convergência de malha}
-
-O estudo de convergência de malha foi realizado no problema 1D, utilizando as malhas e domínios mostrados na da Tabela \ref{tab:malhas-independência}. O estudo foi feito comparando as curvas de velocidade obtidas com o perfil de velocidade analítico para o canal plano e verificando o critério de convergência, seguindo (citar roarse). Também foi utilizado a sequencia de report mostrada em (citar asme) e utilizdo o parâmetro (citar richardson) para determinar a malha ideal. A independência de malha obtida com a simulação utilizando \textit{VOF} tradicional foi estendida ao método. 
-
+\subsection{Solução analítica }
 
 \begin{table}[htb]
     \centering
@@ -77,20 +120,3 @@ O estudo de convergência de malha foi realizado no problema 1D, utilizando as m
 \end{table}
 
 
-O domínio foi modificado ente uma interação e outra para preservar a razão de aspecto das células, visto que o número de células por simulação nas direções y e z é constante. As propriedades utilizadas para analisar a independência de malha foram:
-
-
-\begin{itemize}
-    \item $rho_1$
-\end{itemize}
-
-\subsection{Comparação entre as Condições de contorno}
-
-Foram avaliadas as seguintes condições de contorno para verificar qual forneceria os melhores resultado:
-
-\begin{itemize}
-    \item falar das condições de contorno
-    \item 
-\end{itemize}
-
-( falar do estudo de ordem de convergência)
