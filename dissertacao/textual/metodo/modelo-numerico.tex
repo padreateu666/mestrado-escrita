@@ -155,28 +155,35 @@ O domínio do filme é representado pela Figura \ref{fig:dominio_filme}, as cond
 \end{figure}
 
 
-O acoplamento pressão velocidade não é resolvido no domínio do filme, uma vez que a pressão é inteiramente fornecida pelo escoamento principal, assim sendo o acoplamento mostrado se resume à primeira equação, que ao em vez de fornecer uma estimativa para a velocidade, fornece seu valor para o próximo passo de tempo.
+O acoplamento pressão-velocidade não é resolvido no domínio do filme: a pressão é inteiramente fornecida pelo escoamento principal, de modo que, das etapas do método de projeção, resta apenas a Eq. \ref{eq:predicao-velocidade}, que deixa de fornecer uma estimativa e passa a fornecer a própria velocidade no novo passo de tempo.
 
-No domínio do filme o tratamento escolhido para o problema bifásico foi o \textit{VOF}.
-A massa específica e viscosidade são funções do campo de volume fracionário $f$, que representa a fração de volume do fluido 1 em cada célula do domínio computacional. As equações de transporte do volume fracionário são resolvidas utilizando o método VOF, com reconstrução geométrica da interface, a equação de transporte de $f$ é representada pela Eq. \ref{eq:transporte-f}.
+O problema bifásico em $\Omega_f$ é tratado utilizando o método \textit{VOF} (Seção \ref{sec:vof}). Integrando a Eq. \ref{eq:advection-vof} sobre cada célula computacional de volume $V$ e aplicando o teorema da divergência, obtém-se a equação de transporte da fração volumétrica:
 
 \begin{equation}
-    \frac{\partial f}{\partial t} V + F_{net} = \int_{V} c \vec{\nabla} \cdot \vec{u} dv,
+    V \frac{\partial f}{\partial t} + F_{net} = \int_{V} c^* \, \nabla \cdot \vec{u} \, dV,
     \label{eq:transporte-f}
 \end{equation}
 
-sendo $F_{net}$ o fluxo líquido de fração volumétrica através das faces.
-A Eq. \ref{eq:transporte-f} é resolvida pelo esquema conservativo com separação direcional proposto por \citet{Weymouth2010}. A cada passo de tempo são executadas três varreduras unidimensionais, uma por direção $d$, com permutação cíclica da ordem entre passos consecutivos para evitar viés direcional. O termo $c$ é aproximado por \citet{Weymouth2010} como função indicadora $c^*$ na célula:
+na qual $F_{net} = \oint_{\partial V} c \, \vec{u} \cdot \vec{n} \, dS$ é o fluxo líquido de fluido 1 através das faces da célula e o termo à direita é o termo de dilatação, no qual a função coloração é aproximada pela função indicadora de \citet{Weymouth2010}, avaliada no início do passo de tempo e mantida fixa durante todas as varreduras:
 
 \begin{equation}
     c^* =
     \begin{cases}
-        1, & f > 1/2 \\
-        0, & \text{caso contrário,}
+        1, & f > 1/2, \\
+        0, & \text{caso contrário.}
     \end{cases}
     \label{eq:indicadora-wy}
 \end{equation}
 
+
+$F_{net}$ representa os fluxos de um fluido por cada interface e são calculados a partir de uma reconstrução geométrica dessa interface utilizando uma reconstrução do tipo PLIC \citep{Youngs1982}, na qual a interface em cada célula é aproximada pelo plano
+
+\begin{equation}
+    \vec{m} \cdot \vec{x} = \alpha,
+    \label{eq:plic}
+\end{equation}
+
+sendo $\vec{m}$ o vetor normal à interface, estimado a partir do campo de $f$ pelo método de mínimos quadrados de \citet{Aulisa2007}, e $\alpha$ a constante que posiciona o plano na célula, obtida por inversão analítica do valor de $f$ \citep{Scardovelli2000}. Com o plano reconstruído, o volume de fluido 1 que atravessa cada face durante o passo de tempo é calculado geometricamente. A Eq. \ref{eq:transporte-f} é resolvida pelo esquema com separação direcional de \citet{Weymouth2010},sendo que a cada passo de tempo são executadas três varreduras unidimensionais, uma por direção, com permutação cíclica da ordem entre passos consecutivos para evitar viés direcional.
 
 Após a obtenção de $f$ no domínio, os campos de $\rho$ e $\mu$ são reconstruídos utilizando Eq. \ref{eq:rho-reconstruido} e Eq. \ref{eq:mu-reconstruido}:
 
@@ -190,7 +197,7 @@ Após a obtenção de $f$ no domínio, os campos de $\rho$ e $\mu$ são reconstr
     \label{eq:mu-reconstruido}
 \end{equation}
 
-Sendo $\mu$ reconstruído com a formulação clássica e $\rho$ reconstruído com média geométrica que suaviza o gradiente na interface, de forma a evitar saltos abruptos e problemas de convergência. 
+Sendo $\mu$ reconstruído com uma média algébrica e $\rho$ reconstruído com média geométrica que suaviza o gradiente na interface, de forma a evitar saltos abruptos e problemas de convergência. 
 
 A tensão superficial é tratada como força de campo pelo modelo \textit{Continuum Surface Force} \citep{Brackbill1992}, Eq.\ref{eq:csf}: 
 

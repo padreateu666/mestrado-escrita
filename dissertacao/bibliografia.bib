@@ -65,13 +65,6 @@
    year = {2015}
 }
 
-@article{Morris2017,
-  title={Comparison of Lubrication Approximation and Navier-Stokes Solutions for Dam-Break Flows in Thin Films},
-  author={Morris, Sandy and Sellier, Mathieu and Al Behadili, Abdul Rahman},
-  journal={arXiv preprint arXiv:1708.00976},
-  year={2017}
-}
-
 @article{Ghosh2009,
    abstract = {The emerging energy efficient technology in the field of high viscous oil transportation is water-lubricated transport of heavy oil, known as core annular flow or CAF. This paper provides a brief review of the past studies on oil-water core annular flows-including studies on hydrodynamics as well as stability of flow. © 2009 Elsevier Ltd. All rights reserved.},
    author = {S. Ghosh and T. K. Mandal and G. Das and P. K. Das},
@@ -145,6 +138,7 @@
    city = {New Delhi, India},
    doi = {10.1115/GTINDIA2014-8230},
    keywords = {GTINDIA2014-8230},
+   booktitle = {Proceedings of the ASME 2014 Gas Turbine India Conference},
    month = {12},
    title = {MODELING OF PARTICLE WALL INTERACTION AND FILM TRANSPORT USING EULERIAN WALL FILM MODEL},
    url = {http://www.asme.org/about-asme/terms-of-use},
@@ -530,18 +524,138 @@ abstract = {This study employs the thin liquid film method (TLFM) to analyze ann
    year = {2021}
 }
 
-@phdthesis{Villar2007,
-   author = {Millena Martins Villar},
-   title = {Análise Numérica Detalhada de Escoamentos Multifásicos Bidimensionais},
-   school = {Universidade Federal de Uberlândia},
-   address = {Uberlândia, MG, Brasil},
-   type = {Tese de Doutorado},
-   year = {2007}
-}
 
 @unpublished{Martini2024,
    author = {João Emanuel Fermino Martini},
    title = {Modelagem computacional de escoamentos utilizando a metodologia da fronteira imersa dos volumes fantasmas com direção local},
    note = {Exame de Qualificação (Doutorado) -- Programa de Pós-Graduação em Engenharia Mecânica, Universidade Federal de Uberlândia, Uberlândia},
    year = {2024}
+}
+
+@article{Ceniceros2010,
+   abstract = {We present a variable time step, fully adaptive in space, hybrid method for the accurate simulation of incompressible two-phase flows in the presence of surface tension in two dimensions. Themethod is based on the hybrid level set/front-tracking approach proposed in [H. D. Ceniceros and A. M. Roma, J. Comput. Phys., 205, 391-400, 2005]. Geometric, interfacial quantities are computed from front-tracking via the immersed-boundary setting while the signed distance (level set) function, which is evaluated fast and to machine precision, is used as a fluid indicator. The surface tension force is obtained by employing the mixed Eulerian/Lagrangian representation introduced in [S. Shin, S. I. Abdel-Khalik, V. Daru and D. Juric, J. Comput. Phys., 203, 493-516, 2005] whose success for greatly reducing parasitic currents has been demonstrated. The use of our accurate fluid indicator together with effective Lagrangian marker control enhance this parasitic current reduction by several orders of magnitude. To resolve accurately and efficiently sharp gradients and salient flow featureswe employ dynamic, adaptive mesh refinements. This spatial adaption is used in concert with a dynamic control of the distribution of the Lagrangian nodes along the fluid interface and a variable time step, linearly implicit time integration scheme. We present numerical examples designed to test the capabilities and performance of the proposed approach as well as three applications: the long-time evolution of a fluid interface undergoing Rayleigh-Taylor instability, an example of bubble ascending dynamics, and a drop impacting on a free interface whose dynamics we compare with both existing numerical and experimental data. © 2010 Global-Science Press.},
+   author = {Hector D. Ceniceros and Alexandre M. Roma and Aristeu Silveira-Neto and Millena M. Villar},
+   doi = {10.4208/CICP.050509.141009A},
+   issn = {1815-2406},
+   issue = {1},
+   journal = {Communications in Computational Physics},
+   keywords = {Adaptive mesh refinements,Closest point transform,Front-tracking,Immersed boundary method,Level set method,Multilevel multigrid,Semi-backward difference formula,Semi-implicit methods},
+   month = {8},
+   pages = {51-94},
+   publisher = {Global Science Press},
+   title = {A Robust, Fully Adaptive Hybrid Level-Set/Front-Tracking Method for Two-Phase Flows with an Accurate Surface Tension Computation},
+   volume = {8},
+   url = {https://www.global-sci.com/cicp/article/view/5716},
+   year = {2010}
+}
+
+@article{Berger1991,
+  author  = {Berger, Marsha J. and Rigoutsos, Isidore},
+  title   = {An Algorithm for Point Clustering and Grid Generation},
+  journal = {IEEE Transactions on Systems, Man, and Cybernetics},
+  volume  = {21},
+  number  = {5},
+  pages   = {1278--1286},
+  year    = {1991},
+  doi     = {10.1109/21.120081}
+}
+
+@phdthesis{Roma1996,
+  author  = {Roma, Alexandre Megiorin},
+  title   = {A Multilevel Self Adaptive Version of the {I}mmersed {B}oundary {M}ethod},
+  school  = {Courant Institute of Mathematical Sciences, New York University},
+  address = {New York},
+  year    = {1996},
+  type    = {{PhD} Thesis}
+}
+
+@phdthesis{Villar2007,
+  author  = {Villar, Millena Martins},
+  title   = {Análise numérica detalhada de escoamentos multifásicos bidimensionais},
+  school  = {Universidade Federal de Uberlândia},
+  address = {Uberlândia},
+  year    = {2007},
+  type    = {Tese (Doutorado em Engenharia Mecânica)},
+  url     = {https://repositorio.ufu.br/handle/123456789/14664}
+}
+
+@article{Fedorenko1962,
+   author = {R. P. Fedorenko},
+   doi = {10.1016/0041-5553(62)90031-9},
+   issn = {0041-5553},
+   issue = {4},
+   journal = {USSR Computational Mathematics and Mathematical Physics},
+   month = {1},
+   pages = {1092-1096},
+   publisher = {No longer published by Elsevier},
+   title = {A relaxation method for solving elliptic difference equations},
+   volume = {1},
+   url = {https://www.sciencedirect.com/science/article/pii/0041555362900319?via%3Dihub},
+   year = {1962}
+}
+
+@article{Fedorenko1964,
+   author = {R. P. Fedorenko},
+   doi = {10.1016/0041-5553(64)90253-8},
+   issn = {0041-5553},
+   issue = {3},
+   journal = {USSR Computational Mathematics and Mathematical Physics},
+   month = {1},
+   pages = {227-235},
+   publisher = {No longer published by Elsevier},
+   title = {The speed of convergence of one iterative process},
+   volume = {4},
+   url = {https://www.sciencedirect.com/science/article/pii/0041555364902538?via%3Dihub},
+   year = {1964}
+}
+
+@article{Brandt1977,
+   abstract = { The boundary-value problem is discretized on several grids (or finite-element spaces) of widely different mesh sizes. Interactions between these levels enable us (i) to solve the possibly nonlinear system of n discrete equations in     O ( n )  O(n)    operations (40 n additions and shifts for Poisson problems); (ii) to conveniently adapt the discretization (the local mesh size, local order of approximation, etc.) to the evolving solution in a nearly optimal way, obtaining "     ∞   \infty    -order" approximations and low n , even when singularities are present. General theoretical analysis of the numerical process. Numerical experiments with linear and nonlinear, elliptic and mixed-type (transonic flow) problems-confirm theoretical predictions. Similar techniques for initial-value problems are briefly discussed. },
+   author = {Achi Brandt},
+   doi = {10.1090/S0025-5718-1977-0431719-X},
+   issn = {0025-5718},
+   issue = {138},
+   journal = {Mathematics of Computation},
+   pages = {333-390},
+   publisher = {American Mathematical Society (AMS)},
+   title = {Multi-level adaptive solutions to boundary-value problems},
+   volume = {31},
+   year = {1977}
+}
+
+@book{Briggs2000,
+  author    = {Briggs, William L. and Henson, Van Emden and McCormick, Steve F.},
+  title     = {A Multigrid Tutorial},
+  edition   = {2},
+  publisher = {Society for Industrial and Applied Mathematics},
+  address   = {Philadelphia},
+  year      = {2000},
+  isbn      = {978-0-89871-462-3},
+  doi       = {10.1137/1.9780898719505}
+}
+
+@article{Celik2008,
+  author  = {Celik, Ismail B. and Ghia, Urmila and Roache, Patrick J. and
+             Freitas, Christopher J. and Coleman, Hugh and Raad, Peter E.},
+  title   = {Procedure for Estimation and Reporting of Uncertainty Due to
+             Discretization in {CFD} Applications},
+  journal = {Journal of Fluids Engineering},
+  year    = {2008},
+  volume  = {130},
+  number  = {7},
+  pages   = {078001},
+  month   = jul,
+  doi     = {10.1115/1.2960953}
+}
+
+@article{Roache1994,
+  author  = {Roache, Patrick J.},
+  title   = {Perspective: A Method for Uniform Reporting of Grid Refinement Studies},
+  journal = {Journal of Fluids Engineering},
+  year    = {1994},
+  volume  = {116},
+  number  = {3},
+  pages   = {405--413},
+  month   = sep,
+  doi     = {10.1115/1.2910291}
 }

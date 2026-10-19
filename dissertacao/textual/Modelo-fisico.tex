@@ -1,13 +1,13 @@
-\chapter{Modelo FísicoCasos de verificação}
+\chapter{Modelo Físico e Casos de verificação}
 
-Para testar os limites de validade, a ordem de convergência e a acurácia do modelo proposto quando comparado com o original foram realizados diversas simulações em dois problemas de escoamento, sendo um unidimensional e outro tridimensional.
+Para testar os limites de validade, a ordem de convergência e a acurácia do modelo proposto quando comparado com o original foram realizadas diversas simulações em dois problemas de escoamento, sendo um unidimensional e outro tridimensional.
 
-O primeiro escoamento a ser testado foi o de Poiseuille desenvolvido entre placas planas, para este escoamento nenhuma fronteira imersa é utilizada e os limites do mesmo coincidem com os limítes do domínio computacional. Foram testados diferentes razões de propriedades físicas, diferentes valores de espessura de filme e diferentes velocidades para avaliar o comportamento do modelo. Além disto estudos de ordem de convergência e convergência de malha são propostos. Os escoamentos são inicialmente realizados utilizando o método clássico de \textit{VOF} para que se estabeleça um padrão de compara ção a ser seguido. 
+O primeiro escoamento a ser testado foi o de Poiseuille desenvolvido entre placas planas, para este escoamento nenhuma fronteira imersa é utilizada e os limites do mesmo coincidem com os limites do domínio computacional. Foram testadas diferentes razões de propriedades físicas, diferentes valores de espessura de filme e diferentes velocidades para avaliar o comportamento do modelo. Além disto estudos de ordem de convergência e convergência de malha são propostos. Os escoamentos são inicialmente realizados utilizando o método clássico de \textit{VOF} para que se estabeleça um padrão de comparação a ser seguido. 
 
 (falar do 3D)
 \section{Métricas de erro e critérios de malha}
 
-Para verificar a ordem de convergência observada e a independência de malha do método original e do proposto, foram empregados os procedimentos descritos na \cite{Asme2008} que segue os procedimentos de \cite{roarche1994}. 
+Para verificar a ordem de convergência observada e a independência de malha do método original implementado e do proposto, foram empregados os procedimentos descritos na \cite{Celik2008} que segue os procedimentos de \cite{Roache1994}. 
 
 O procedimento sugerido pela \textit{ASME} segue cinco etapas:
 
@@ -16,55 +16,49 @@ O procedimento sugerido pela \textit{ASME} segue cinco etapas:
     \item Selecionar três sequencias de malha, com razão de refino $r$ constante entre as mesmas, para obter o valor de uma variável de interesse que será utilizada para mensurar o erro. 
     \item verificar qual a ordem observada do método, utilizando a Eq. \ref{eq:estimativa_de_roache}
     \item Calcular os valores de erro extrapolados a partir da ordem de convergência observada, utilizando a EQ \ref{eq:extrapolação}
-    \item Calcular o índice de convergência de malha (ou Grid Convergence Index GCI) que estima qual a incerteza na discretização e qual a malha esperada que levaria à independência de malha.
+    \item Calcular o índice de convergência de malha (ou Grid Convergence Index GCI) que estima qual a incerteza na discretização.
 \end{enumerate}
 
 A equação da estimativa da ordem observada é dada pela Eq. \ref{eq:estimativa_de_roache}
 
 \begin{equation}
-    p = \frac{1}{r}\left|ln\left|\frac{\epsilon_{32}}{\epsilon_{21}}\right| + q(p)\right|,
+    p = \frac{1}{\ln(r_{21})}\left|\ln\left|\frac{\epsilon_{32}}{\epsilon_{21}}\right| + q(p)\right|,
+    \label{eq:estimativa_de_roache}
 \end{equation}
 
 com $p$ sendo a ordem de convergência observada, $\epsilon_{32}$ sendo o erro absoluto da malha 3 em relação a malha 2 e $q(p)$ sendo dado pela Eq. \ref{eq:q_definition}
 
 \begin{equation}
-    q(p) = ln\big(\frac{r^p_{21} - s}{r^p_{32} - s}\big); s = 1sgn(\frac{\epsilon_{32}}{\epsilon_{21}}),
+    q(p) = \ln\big(\frac{r^p_{21} - s}{r^p_{32} - s}\big); s = \operatorname{sgn}(\frac{\epsilon_{32}}{\epsilon_{21}}),
+    \label{eq:q_definition}
 \end{equation}
 
 
 sendo $r$ a razão de refino de malhas e $sgn$ a função sinal. Note que $q(p) = 0$ se $r_{32} = r_{21}$, como as razões de refino do presente trabalho são tomadas constantes e iguais a 2, essa variável é anulada na equação.
 
-A equação para a extrapolação do erro para a próxima malha depois da terceira é dado pela Eq. \ref{eq:extrapolação}
+A equação para a extrapolação do erro para a situação em que $\Delta x \to 0$ é dada pela Eq. \ref{eq:extrapolação}
 
 \begin{equation}
-    \phi_{ext} = \frac{r^p_{21}\phi_1 - \phi_2}{r^p_{21}\phi_1 - 1},
+    \phi_{ext} = \frac{r^p_{21}\phi_1 - \phi_2}{r^p_{21} - 1},
+    \label{eq:extrapolação}
 \end{equation}
 
-e finalmente o cálculo do GCI é dado pela Eq. \ref{GCI}
+e finalmente o cálculo do GCI é dado pela Eq. \ref{eq:GCI}
 
 \begin{equation}
     GCI^{21} = \frac{1.25e_a^{21}}{r^p_{21} -1}
+    \label{eq:GCI}
 \end{equation}
 
 Sendo que $e_a^{21}$ é o erro relativo da malha 1 em relação a malha 2.
 
-Um estudo complementar de ordem de convergência foi realizado considerando como erro a solução analítica dos problemas, mostrando o quanto as simulações se aproximaram do mesmo e com qual velocidade.
+Um estudo complementar de ordem de convergência foi realizado considerando como erro a solução analítica dos problemas, mostrando o quanto as simulações se aproximaram do mesmo e com qual velocidade. Para este escoamento, a propriedade $\phi$ escolhida foi a velocidade no centro do canal.
 
 \section{Escoamento de Poiseuille entre placas planas}
+\subsection{Descrição do Problema}
+O escoamento de Poiseuille em placas planas é definido como um escoamento movido puramente pela diferença de pressão em uma geometria cartesiana, o escoamento é considerado bifásico, desenvolvido, unidirecional simétrico em z e com simetria no centro do canal.
 
-O escoamento de Poiseuille em placas planas é definido como um escoamento movido puramente pela diferença de pressão em uma geometria cartesiana, com as seguintes hipóteses simplificadoras:
-
-\begin{itemize}
-    \item bifásico
-    \item desenvolvido
-    \item unidirecional
-    \item incompressível
-    \item simetria no meio do domínio
-    \item simetria em z
-\end{itemize}
-
-
-Na figura \ref{fig:poiseuille_plano} é mostrado o domínio e coordenadas consideradas. O problema é considerado unidimensional pois o perfil de velocidade varia apenas em $x$.
+Na Figura \ref{fig:poiseuille_plano} é mostrado o domínio e coordenadas consideradas. O problema é considerado unidimensional pois o perfil de velocidade varia apenas em $x$, com $p_1>p_2$ o escoamento é descendente.
 
 
 \begin{figure}
@@ -74,7 +68,7 @@ Na figura \ref{fig:poiseuille_plano} é mostrado o domínio e coordenadas consid
     \label{fig:poiseuille_plano}
 \end{figure}
 
-O código utilizado é essencialmente tridimensional, sendo assim o que foi simulado foi um escoamento pseudo-unidimensional com as seguintes condições de contorno mostradas na Tabela \ref{tb:condicoes_de_contorno}.
+O código utilizado é essencialmente tridimensional, sendo assim o que foi simulado foi um escoamento pseudo-unidimensional, com 4 células nas regiões z e y e utilizando as seguintes condições de contorno mostradas na Tabela \ref{tb:condicoes_de_contorno}.
 
 \begin{table}[H]
     \centering
@@ -86,21 +80,96 @@ O código utilizado é essencialmente tridimensional, sendo assim o que foi simu
         \cmidrule(lr){2-4}
                                     & $u$                              & $v$                              & $w$                              &                                         \\
         \midrule
-        $x = 0$                     & $0$                              & $0$                              & $0$                              & $\partial p / \partial x = 0$           \\
-        $x = x_\mathrm{max}$        & $0$                              & $\partial v / \partial x = 0$    & $\partial w / \partial x = 0$    & $p$                                     \\
+        $x = x_\mathrm{max}$        & $ u = 0$                              & $\partial v / \partial x = 0$    & $\partial w / \partial x = 0$    & $\partial p / \partial x = 0$                                     \\
         \addlinespace
-        $y = 0$                     & $\partial p / \partial x = 0$    & $\partial p / \partial x = 0$    & $\partial p / \partial x = 0$    & $p = p_\mathrm{max}$                    \\
-        $y = y_\mathrm{max}$        & $\partial p / \partial x = 0$    & $\partial p / \partial x = 0$    & $\partial p / \partial x = 0$    & $p = 0$                                 \\
+        $y = 0$                     & $\partial u / \partial y = 0$    & $\partial v / \partial y = 0$    & $\partial w / \partial y = 0$    & $p = 0$                    \\
+        $y = y_\mathrm{max}$        & $\partial u / \partial y = 0$    & $\partial v / \partial y = 0$    & $\partial w / \partial y = 0$    & $p = p_\mathrm{max}$                                 \\
         \addlinespace
-        $w = 0$                     & $\partial p / \partial x = 0$    & $\partial p / \partial x = 0$    & $w = 0$                          & $\partial p / \partial x = 0$           \\
-        $w = w_\mathrm{max}$        & $\partial p / \partial x = 0$    & $\partial p / \partial x = 0$    & $w = 0$                          & $\partial p / \partial x = 0$           \\
+        $z = 0$                     & $\partial u / \partial z = 0$    & $\partial v / \partial z = 0$    & $w = 0$                          & $\partial p / \partial z = 0$           \\
+        $z = z_\mathrm{max}$        & $\partial u / \partial z = 0$    & $\partial v / \partial z = 0$    & $w = 0$                          & $\partial p / \partial z = 0$           \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-na qual a direção z é considerada periódica com um número mínimo de 4 células para garantir o funcionamento do código, a parede mais externa de x também utiliza condição de simetria. O escoamento é desenvolvido, sendo assim, a pressão é imposta em ambas as faces da direção y. 
+As condições de contorno em $x = 0$ para o escoamento principal, são variadas, sendo testadas todas as condições mostradas na Tabela \ref{tab:condicoes}. Para o filme foram utilizadas condições de parede com velocidades igual a zero. Como a pressão não é resolvida no domínio do filme as condições de contorno para a pressão valem apenas para o escoamento principal.
 
-\subsection{Solução analítica }
+A simulação considerada ocorre em três níveis físicos, um para o escoamento principal com maiores células, um intermediário para as interpolações e um mais refinado para o filme, em uma região $h^*$ que é uma faixa fixa de refinamento próximo a parede. A razão de refino entre níveis é fixa em dois. O critério de regime permanente utilizado é a diferença entre resultados menor que $0.1\%$ entre os passos de tempo reportados, sendo que a condição inicial do escoamento é o fluido partindo do repouso. Para todos os casos o critério $CFL$ é fixado em $0.8$.
+
+\subsection{Solução Analítica}
+
+Para efeitos comparativos, os resultados da simulação do canal plano foram comparados com a solução analítica do mesmo, obtida para o escoamento bifásico. As equações apresentadas estão divididas por domínio, sendo:
+
+\begin{equation}
+    v_1(x) = \frac{\lambda_1 x^2}{2} + \left[\frac{\mu_2 \lambda_2 \left(h-H\right)}{\mu_1} - \lambda_1 h\right]x
+    \label{eq:filme_analitico}
+\end{equation}
+
+\begin{equation}
+    v_2(x) = \frac{\lambda_2 x^2}{2} - \lambda_2 H x + \left[\frac{\mu_2 \lambda_2 \left(h-H\right)}{\mu_1} - \frac{\lambda_1 h}{2}\right]h + \lambda_2 h \left(H - \frac{h}{2}\right)
+    \label{eq:principal_analitico}
+\end{equation}
+
+Na qual $v_1$ e $v_2$ são as velocidades do fluido 1 e do fluido 2 respectivamente. $H$ a meia largura do canal $h$ a espessura do filme, $x$ a coordenada normal a parede, $\mu_1$ e $\mu_2$ as viscosidades do fluido 1 e 2 respectivamente. As constantes $\lambda_1$ e $\lambda_2$ representam as forças potenciais do escoamento, $\lambda = \frac{1}{\mu} \frac{\partial p}{\partial y} - \frac{\rho g}{\mu}$, considerando que a gravidade neste problema é nula, com exceção dos casos em que ela é objeto de estudo. A dedução das Eq. \ref{eq:filme_analitico} e Eq. \ref{eq:principal_analitico} é mostrada em detalhes no Apêndice \ref{apen:Deducao_solucao_analitica_transiente}.
+
+Nos estudos do escoamento unidimensional, o erro em relação a solução analítica de cada resultado é mostrado, de forma que a formula utilizada é o erro máximo entre os pontos da solução em regime permanente contra a solução analítica, para uma solução com $N$ pontos a equação utilizada é mostrada na Eq. \ref{eq:erro_analitico}.
+
+\begin{equation}
+    E_{an} = \frac{\max_k \left| v_{an}(x_k) - v_k \right|}{\max_k \left| v_{an}(x_k) \right|}
+    \label{eq:erro_analitico}
+\end{equation}
+
+\subsection{Propriedades Físicas usadas e Variadas nos Escoamentos}
+
+Para verificar a validade do método e como ele se comporta com a variação de propriedades físicas, algumas propriedades foram variadas, como mostrado pela Tabela \ref{tab:Variaveis-modificadas}.
+
+ 
+Para que fosse isolada a contribuição de cada uma das alterações, as demais propriedades foram mantidas constantes, as propriedades bases do escoamento são mostradas na Tabela \ref{tab:propriedades-base}, elas são utilizadas em todas as simulações, inclusive na parte de independência de malha, salvo dito o oposto nas propriedades que serão variadas.
+
+\begin{table}
+    \centering
+    \caption{Propriedades bases dos escoamentos de Poiseuille entre placas planas}
+    \label{tab:propriedades-base}
+    \begin{tabular}{@{}l cc@{}}
+        \toprule
+        Propriedade     & Valor         & Definição \\
+        \midrule
+        $H$             & $0.256 [m]$           & Tamanho do domínio e meia largura do canal \\
+        $h$             & $0.02  [m]$           & Espessura inicial do filme \\
+        $h^*$           & $0.03  [m]$           & Espessura da faixa refinada próxima a parede \\
+        $\mu_1$         & $0.4 [Pa \cdot s]$ & Viscosidade dinâmica do fluido 1 \\
+        $\mu_2$         & $0.8 [Pa \cdot s]$ & Viscosidade dinâmica do fluido 2 \\
+        $\rho_1$        & $100 [\frac{kg}{m^3}]$& Massa específica do fluido 1 \\
+        $\rho_2$        & $1000[\frac{kg}{m^3}]$& Massa específica do fluido 2 \\
+        $\frac{\partial p}{\partial y}$ & $1 [\frac{Pa}{m}]$    & Gradiente de pressão na direção $y$\\
+        $\sigma$        & $0.07 [\frac{N}{m}]$    & Tensão interfacial \\
+        $g_y$             & $0 [\frac{m}{s^2}]$    & Aceleração gravitacional presente no escoamento \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+A pressão imposta em $y = y_\mathrm{max}$ é ajustada ao domínio de forma que todas as malhas estejam submetidas ao mesmo gradiente de pressão.
+
+\begin{table}
+    \centering
+    \caption{Propriedades variadas durante as simulações de testes do modelo}
+    \label{tab:Variaveis-modificadas}
+    \begin{tabular}{@{}l cc@{}}
+        \toprule
+        Propriedade     & Valores         & Seção \\
+        \midrule
+        $h$             & $0.02, 0.01, 0.005, 0.0025, 0.001 [m]$            & Seção \ref{sec:sensibilidade-a-espessura} \\
+        $\mu_2$         & $0.1, 0.2, 0.4, 0.8, 1.6[Pa \cdot s]$             & Seção \ref{sec:sensibilidade-a-espessura} \\
+        $\rho_2$        & $50, 100, 500, 1000 [\frac{kg}{m^3}]$             & Seção \ref{sec:sensibilidade-a-espessura} \\
+        $g_y$           & $0, - 10^{-3} [\frac{m}{s^2}]$                  & Seção \ref{sec:sensibilidade-a-espessura} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Na variação de $h$ o nível de refino é modificado de forma que o número de células ao longo do filme não seja modificado, uma análise desse refino de malha também é conduzida, na qual são alterados tanto o número de células do nível base quanto o número de níveis entre o nível do filme e o do escoamento principal, $h^*$ também é ajustado para 1.5 vezes a espessura do filme. $\mu_2$ é variado para que se tenha diferentes razões de viscosidade entre os fluidos, com $\mu_1$ mantido constante, também são testadas aqui as condições do filme ser mais ou menos viscoso que o fluido principal, verificando como o escoamento se comporta em ambos os casos. De forma semelhante, mantendo $\rho_1$ constante, varia-se a razão entre massas específicas do escoamento com $\rho_2$ sendo esperado que esse resultado interfira diretamente no tempo total de simulação e no passo de tempo utilizado pelo escoamento pela restrição de capilaridade, além disso - como $\rho$ não está presente na solução final em regime permanente para o caso em que a gravidade é igual a zero - qualquer erro associado à variação da razão de massas específicas é numérico.
+
+\subsection{Independência de Malha}
+
+Para que fosse verificada a malha necessária para resolver o filme e sua interface de maneira satisfatória utilizando o método $VOF$, uma sequência de malhas uniformes foi utilizada para que fosse possível reportar ordem de convergência observada e estimar incerteza da discretização utilizada, a Tabela \ref{tab:malhas-independência} mostra a sequência de malhas utilizadas.
 
 \begin{table}[htb]
     \centering
@@ -110,13 +179,13 @@ na qual a direção z é considerada periódica com um número mínimo de 4 cél
         \toprule
         Malha                       & Domínio                          & $dx = dy = dz$                          \\
         \midrule
-        $64 \times 4 \times 4$      & $0{,}256 \times 0{,}016 \times 0{,}016$   & $0{,}004$                      \\
-        $128 \times 4 \times 4$     & $0{,}256 \times 0{,}008 \times 0{,}008$   & $0{,}002$                      \\
-        $256 \times 4 \times 4$     & $0{,}256 \times 0{,}004 \times 0{,}004$   & $0{,}001$                      \\
-        $512 \times 4 \times 4$     & $0{,}256 \times 0{,}002 \times 0{,}002$   & $0{,}0005$                     \\
-        $1024 \times 4 \times 4$    & $0{,}256 \times 0{,}001 \times 0{,}001$   & $0{,}00025$                    \\
+        $64     \times 4 \times 4$      & $0{.}256 \times 0{.}016 \times 0{.}016$   & $0{.}004$                      \\
+        $128    \times 4 \times 4$      & $0{.}256 \times 0{.}008 \times 0{.}008$   & $0{.}002$                      \\
+        $256    \times 4 \times 4$      & $0{.}256 \times 0{.}004 \times 0{.}004$   & $0{.}001$                      \\
+        $512    \times 4 \times 4$      & $0{.}256 \times 0{.}002 \times 0{.}002$   & $0{.}0005$                     \\
+        $1024   \times 4 \times 4$      & $0{.}256 \times 0{.}001 \times 0{.}001$   & $0{.}00025$                    \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-
+Apesar de a malha utilizada neste trabalho ser dividida em três níveis, o estudo de independência de malha foi feito considerando malha uniforme no domínio com um único nível. Por hipótese esse estudo de independência foi transferido para as demais simulações unidimensionais de forma que o nível de refinamento escolhido foi mantido no nível do filme, com três níveis totais no escoamento sendo os demais um intermediário e um do escoamento principal.

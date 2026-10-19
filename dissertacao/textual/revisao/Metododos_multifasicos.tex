@@ -1,5 +1,14 @@
-\section{Métodos de Captura de Interface}
+\section{método single fluid}
 
-A forma mais simples e completa de se resolver o problema do escoamento de filmes finos é através dos métodos tradicionais de escoamentos multifásicos. Tais métodos não utilizam hipóteses simplificadoras específicas para o filme, em comparação aos métodos de filme reduzido. A formulação de fluido único (single-fluid) para escoamentos multifásicos, resolve um único conjunto de equações para todo domínio, variando as propriedades do fluido por meio de funções indicadoras que representam a quantidade de cada um dos fluidos em cada célula de fluido, de modo que fenômenos como ruptura, coalescência e escoamentos em topologias complexas são resolvidos diretamente. Dentre os métodos dessa família estão os de captura de interface (interface-capturing) na qual a interface é identificada de forma implícita, uma revisão relacionada a essa família de métodos pode ser achada em \citet{Mirjalili2017}.
+Dentre as estratégias computacionais para se modelar o escoamento entre dois ou mais fluidos, está a modelagem chamada de single-fluid. A modelagem recebe esse nome por representar todo o domínio por um mesmo conjunto de equações de balanço, com propriedades físicas variáveis com a presença de cada fluido ao longo do domínio. a variação dessas propriedades ao longo do domínio é descrita por uma função coloração $c$ que no caso de dois fluidos vale $c = 1$ para as regiões ocupadas pelo fluido 1 e $c =0$ nas regiões ocupadas pelo fluido 2, e que é transportada pelo próprio campo de velocidades (tryggvason):
 
-O método \textit{Volume of Fluid}, pertencente aos de captura de interface é amplamente usado e consolidado na comunidade devido sua propriedade de garantir o balanço de massa e pela sua capacidade de lidar com grandes deformações. A 
+\begin{equation}
+    \frac{\partial c}{\partial t} + \vec{u} \cdot \nabla c = 0.
+    \label{eq:advection-vof}
+\end{equation}
+
+Várias vertentes surgiram para solucionar os dois principais problemas dessa formulação, a definição da função coloração e a definição da interface entre os fluidos. Nos métodos de rastreio de interface, a interface é representada de forma explicita, geralmente com pontos lagrangianos. Enquanto no métodos de captura de interface, ela é obtida de forma implícita a partir de um campo euleriano.
+
+O método \textit{Volume of Fluid}, pertencente aos de captura de interface, é amplamente usado e consolidado na comunidade devido à sua propriedade de garantir o balanço de massa e pela sua capacidade de lidar com grandes deformações. A garantia dos balanços de forma discreta é particularmente relevante no caso de filmes finos, nos quais o volume de líquido é pequeno frente ao domínio e eventuais erros de balanço se acumulam rapidamente ao longo da simulação. Por essa razão, e por já estar implementado no código utilizado, o \textit{VOF} é o método adotado neste trabalho para resolver o escoamento no domínio do filme, sendo detalhado na Seção \ref{sec:vof}.
+
+\input{textual/revisao/VOF.tex}

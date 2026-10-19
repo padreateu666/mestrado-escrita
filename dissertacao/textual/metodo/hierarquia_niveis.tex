@@ -1,5 +1,5 @@
 \section{Sistema de Hierarquia de Níveis}
-
+\label{sec:hierarquia}
 O código utilizado possui uma estrutura hierárquica de níveis aninhados, que serve para fornecer estrutura aos algoritmos de refinamento de malha adaptativa (\textit{AMR}) e \textit{multigrid}. Essa hierarquia de níveis é mostrada na Figura \ref{fig:hierarquia_de_niveis}. Cada um dos níveis possui resíduos das variáveis calculadas pelo multigrid ou campos vetoriais completos quando esses níveis pertencerem aos níveis físicos do AMR. Apesar de utilizar a estrutura da malha adaptativa, a utilizada aqui é estática, pela etapa inicial em que o método se encontra.
 
 \begin{figure}[H]
